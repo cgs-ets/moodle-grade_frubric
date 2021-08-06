@@ -1,0 +1,103 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package   gradingform_frubric
+ * @copyright 2021 Veronica Bermegui
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+define(["core/log"], function (Log) {
+  "use strict";
+
+  return {
+    // Helper function to get the closest parent with a matching selector
+    getClosest: function (elem, selector) {
+      for (; elem && elem !== document; elem = elem.parentNode) {
+        if (elem.matches(selector)) {
+          return elem;
+        }
+      }
+      return null;
+    },
+
+    getPreviousElement: function (elem, selector) {
+      // Get the previous sibling element
+      var sibling = elem.previousElementSibling;
+
+      // If there's no selector return.
+      if (!selector) {
+        return;
+      }
+
+      // If the sibling matches our selector, use it
+      // If not, jump to the next sibling and continue the loop
+      while (sibling) {
+        if (sibling.matches(selector)) {
+          return sibling;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+    },
+
+    getDistanceFromCriterionHeader: function (elem, selector) {
+      var sibling = elem.previousElementSibling;
+      var distance = -1;
+       // If there's no selector return.
+       if (!selector) {
+        return;
+      }
+
+      while (sibling) {
+        distance++;
+        if (sibling.matches(selector)) {
+          return distance;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+
+    },
+
+    getNextElement: function (elem, selector) {
+      // Get the next sibling element
+      var sibling = elem.nextElementSibling;
+      // If there's no selector, return
+      if (!selector) {
+        return;
+      }
+      // If the sibling matches our selector, use it
+      // If not, jump to the next sibling and continue the loop
+      while (sibling) {
+        if (sibling.matches(selector)) {
+          return sibling;
+        }
+        sibling = sibling.nextElementSibling;
+      }
+    },
+
+    getCriteriaJSON: function () {
+      return document.getElementById("id_criteria").value
+        ? JSON.parse(document.getElementById("id_criteria").value)
+        : [];
+    },
+
+    getMode: function () {
+      return document
+        .querySelector(".criterion-header")
+        .getAttribute("data-mode");
+    },
+
+  };
+});

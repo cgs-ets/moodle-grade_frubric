@@ -1,0 +1,156 @@
+table#criteriaTable {
+    width: 70%;
+}
+
+table#criteriaTable th,
+table#criteriaTable td {
+    border: solid 1px #ddd;
+    border-collapse: collapse;
+    padding: 2px 3px;
+    text-align: center;
+    width: auto;
+}
+
+.criterion-tr {
+    background-color: #f2f2f2;
+}
+
+textarea.noscrollbars {
+    overflow: hidden;
+    width: 300px;
+    height: 100px;
+}
+
+.fr-header {
+    height: 78px;
+    background-color: #f2f2f2;
+}
+
+span.del-criterion,
+span.action-el,
+span.add-level,
+span.copy-level,
+span.move-up-criterion,
+span.move-down-criterion {
+    font-size: 17px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+th.fr-header.act {
+    width: 10%;
+}
+
+div.flex-actions {
+    display: inline-block;
+    width: 25px;
+    cursor: pointer;
+}
+
+.custom-footer-buttons {
+    text-align: center;
+}
+
+.alert.alert-danger.alert-block.alert-flexrubirc-criterion {
+    display: inline-block;
+}
+
+div#fitem_id_criterionjson {
+    visibility: hidden;
+}
+
+textarea.criterion-description {
+    width: 100%;
+}
+
+textarea.mark_txtarea {
+    display: inline-block;
+    width: 10%;
+    margin-right: 1%;
+    text-align: center;
+    overflow: hidden;
+    resize: none;
+}
+
+textarea.level_descriptor_txtarea {
+    display: inline-block;
+    width: 89%;
+}
+
+select#frubric-options-sortlevelsasc {
+    width: auto;
+    display: inline;
+}
+
+/* Preview Template */
+
+textarea.preview {
+    resize: none;
+    position: relative;
+}
+
+.mark-desc-container {
+    position: relative;
+    display: flex;
+
+}
+
+textarea.mark_txtarea.preview {
+    margin: 0;
+}
+
+textarea.level_descriptor_txtarea.preview {
+    width: 90%;
+}
+/* New layout */
+label.standard-desc {
+    text-align: justify;
+    display: inline;
+    margin: 0.5rem;
+}
+
+.standard-desc-container {
+    text-align: left;
+    padding: 1rem;
+}
+
+.mark-desc-container {
+    display: grid;
+}
+
+table.level-mark-desc-table {
+    width: 100%;
+}
+
+.add-descriptor {
+    float: right;
+    margin-bottom: 0.5rem;
+}
+
+td.level-mark {
+    max-width: 34px;
+    max-height: 34px;
+    margin: auto;
+    text-align: center;
+}
+
+
+div.criterion-total-result {
+    text-align: left;
+    height: 3rem;
+    padding-top: 1rem;
+    padding-left: 1rem;
+}
+
+input.total-input {
+    outline-width: 0;
+    width: 4rem;
+}
+
+input.total-input-error {
+    border: solid red;
+}
+
+div.checkbox-container .action-el {
+    color: red;
+}

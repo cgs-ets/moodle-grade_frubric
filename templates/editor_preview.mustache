@@ -1,0 +1,45 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+}}
+
+<table id="criteriaTables">
+    <tbody>
+        {{#criteria}}
+        <tr data-criteria-group="{{id}}" class="criterion-header">
+            <th class="fr-header crit-desc">
+                <textarea rows="4" cols="110" class="criterion-description preview"
+                    disabled="true">{{description}}</textarea>
+            </th>
+        </tr>
+     
+        {{#levels}}
+        <tr data-criteria-group="{{id}}">
+            <td>
+                <div class="mark-desc-container">
+                    <textarea rows="4" cols="6" value="" class="mark_txtarea preview"
+                        disabled="true">{{score}}</textarea>
+                    <textarea rows="4" cols="110" value="" class="level_descriptor_txtarea preview"
+                        disabled="true">{{definition}}</textarea>
+                </div>
+            </td>
+        </tr>
+        {{/levels}}
+        {{/criteria}}
+    </tbody>
+</table>
+
+{{> gradingform_frubric/frubric_options}}
