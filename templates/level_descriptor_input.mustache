@@ -55,9 +55,9 @@
     }
 }}
 
-<div class="checkbox-container">
-    <input type="checkbox"  class="standard-check">
-    <label class="standard-desc" contenteditable="true">{{#str}}editleveldesc, gradingform_frubric{{/str}}</label>
+<div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{parentid}}">
+    <input type="checkbox"  class="standard-check" data-container-id="{{id}}">
+    <textarea class="standard-desc" rows="3" cols="85">{{#str}}editleveldesc, gradingform_frubric{{/str}}</textarea>
     <span class="action-el"><i class="fa fa-close" title="{{#str}}deletedescriptor, gradingform_frubric{{/str}}"></i></span>
     <br>
 </div>

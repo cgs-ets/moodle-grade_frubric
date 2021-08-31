@@ -60,7 +60,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     // Attach level listeners.
                     const cgid = currentRow.getAttribute('data-criterion-group');
                     const level = document.querySelector(`.level-${cgid}`);
-             
+
                     LevelControl.init(level);
 
                 } catch (error) {
@@ -68,7 +68,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 }
 
             } else {
-              //  const currentRow = document.getElementById(self.id);//document.querySelector("tbody"). firstElementChild; //lastElementChild; // Get the last row
                 self.setupEvents(currentRow);
             }
 
@@ -77,16 +76,16 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
         CriterionControl.prototype.setupEvents = function (currentRow) {
             let self = this;
             Log.debug('setupEvents');
-            // Log.debug(self);
-            Log.debug(currentRow); 
+            Log.debug(currentRow);
+
             const actions = currentRow.querySelector('.act'); // Get actions cell
-            
+
             if (!actions) {
                 return;
             }
 
             const actionChildren = actions.children;
-           
+
             // Criterion actions.
             actionChildren[0].addEventListener('click', self.moveCriterionUp.bind(self, currentRow));
             actionChildren[1].addEventListener('click', self.removeCriterion.bind(currentRow));
@@ -105,13 +104,14 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             // Get the previous criterion to attach events to the total criterion row at the top of this one.
             const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
+
             if (resultRow != undefined) {
                 const cgid = resultRow.getAttribute('data-criterion-group');
 
                 Log.debug("Result row");
-                resultRow.classList.remove('level-'); // Remove the class without the id.
-                resultRow.classList.add(`level-${cgid}`);
-                resultRow.setAttribute('data-criterion-group', cgid); 
+               // resultRow.classList.remove('level-'); // Remove the class without the id.
+                //resultRow.classList.add(`level-${cgid}`);
+                //resultRow.setAttribute('data-criterion-group', cgid);
                 Log.debug(resultRow);
 
                 const [criterionTitletd, criterionTotaltd] = resultRow.children;
@@ -119,7 +119,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 Log.debug(criterionTotaltd);
                 Log.debug(criterionTotaltd.querySelector('.total-input'));
                 criterionTotaltd.querySelector('.total-input').addEventListener('blur', self.validateTotal);
-                // TODO: ponerle los datos del criterion padre al criterion total.
             }
 
 
@@ -130,10 +129,10 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             Log.debug('moveCriterionUp');
 
             const criteriongroupid = row.getAttribute('data-criterion-group');
-            const currentCriterionInPlace = this.getPreviousElement(row, '.criterion-header'); // Get the criterion on top of this one.
+            const currentCriterionInPlace = FeditorHelper.getPreviousElement(row, '.criterion-header'); // Get the criterion on top of this one.
             const criteriontomove = Array.from(document.querySelectorAll(`[data-criterion-group='${criteriongroupid}']`));
             const firstCriterion = (currentCriterionInPlace.rowIndex == 0) ? true : false;
-            const notLastCriterion = this.getNextElement(document.querySelector(`[data-criterion-group='${criteriongroupid}']`), '.criterion-header');
+            const notLastCriterion = FeditorHelper.getNextElement(document.querySelector(`[data-criterion-group='${criteriongroupid}']`), '.criterion-header');
             const inBetween = !firstCriterion && !notLastCriterion;
             const criteriaCollection = this.getCriteriaJSON();
             // Get the criterion that will be moved and the one that is in place to update the rowIndex
@@ -190,8 +189,8 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             const criterionToMove = document.querySelector(`[data-criterion-group='${criteriongroupid}']`);
             const firstCriterion = criterionToMove.rowIndex == 0 ? true : false;
             const criterionToMoveArray = Array.from(document.querySelectorAll(`[data-criterion-group='${criteriongroupid}']`));
-            let criterionBelow = this.getNextElement(criterionToMove, '.criterion-header');
-            const notlastCriterion = this.getNextElement(criterionToMove, '.criterion-header');
+            let criterionBelow = FeditorHelper.getNextElement(criterionToMove, '.criterion-header');
+            const notlastCriterion = FeditorHelper.getNextElement(criterionToMove, '.criterion-header');
             const inBetween = !firstCriterion && (notlastCriterion != undefined);
 
             Log.debug('firstCriterion', firstCriterion);
@@ -205,7 +204,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 criterionBelow[0].children[0].children[0].setAttribute('hidden', true);
                 criterionBelow[0].children[0].children[4].removeAttribute('hidden');
                 // Check if the criterion below is the last one.
-                if (!this.getNextElement(criterionBelow, '.criterion-header')) {
+                if (!FeditorHelper.getNextElement(criterionBelow, '.criterion-header')) {
                     criterionToMoveArray[0].children[0].children[4].setAttribute('hidden', true);
                 }
             }
@@ -219,7 +218,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 criterionBelow[0].children[0].children[4].removeAttribute('hidden');
 
                 // Check if the criterion below is the last one.
-                if (!this.getNextElement(criterionBelow, '.criterion-header')) {
+                if (!FeditorHelper.getNextElement(criterionBelow, '.criterion-header')) {
                     criterionToMoveArray[0].children[0].children[4].setAttribute('hidden', true);
                 }
             }
@@ -246,12 +245,12 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
         CriterionControl.prototype.addLevel = function (row) {
             Log.debug('addLevel');
             let self = this;
-            const randomid = (Math.floor( Math.random() * 9999));
+            const randomid = FeditorHelper.getRandomID();
             const context = {
                 'score': 'Click to edit Mark',
                 'definition': 'Click to edit Level description',
                 'dcg': row.getAttribute('data-criterion-group'),
-                'id' : randomid,
+                'id': randomid,
             };
 
             Templates.render(self.LEVEL_ROW, context)
@@ -259,42 +258,53 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
                     var prevlevel;
                     const classname = `.level-${row.getAttribute('data-criterion-group')}`;
-                    Log.debug(classname);
                     let nextCriterion = FeditorHelper.getNextElement(row, '.criterion-header');
-
-                    Log.debug(nextCriterion);
 
                     if (nextCriterion != undefined) { //  If there is another criterion the level is on top of this row
 
                         const prevresultlevel = FeditorHelper.getPreviousElement(nextCriterion, '.result-r'); // The new level is on top of the result row for this criterion.
-                        Log.debug("prevresultlevel");
-                        Log.debug(prevresultlevel);
                         prevlevel = FeditorHelper.getPreviousElement(prevresultlevel, classname);
 
                         if (prevlevel == undefined) { // If undefined, the criterion represented by row has no levels. Add the level under the current criterion
                             prevlevel = row;
                         }
 
-                    } else {
-                        prevlevel = FeditorHelper.getNextElement(row, classname);
-                        if (prevlevel == undefined) {  // There are already levels
+                    }  else {
+
+                        const resultrow =  FeditorHelper.getNextElement(row, '.result-r'); // Get the result row for this criterion
+                        
+                        prevlevel = FeditorHelper.getPreviousElement(resultrow, classname); 
+                        
+                        if (prevlevel == undefined) {  // This criterion doesnt have levels yet.
                             prevlevel = row;
-                        }
+                        } 
                     }
 
-                    Log.debug(prevlevel);
+                  
 
                     prevlevel.insertAdjacentHTML('afterend', html);
 
+                    const levelObject = {
+                        score: 0,
+                        status: 'NEW',
+                        id: randomid,
+                        descriptors: []
+                    }
+                    const criterioncollection = FeditorHelper.getCriteriaJSON();
+                    const filterCriterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criterioncollection);
 
-                    LevelControl.init(randomid);
+                    filterCriterion[0].levels.push(levelObject);
+                    // Refresh the JSON input
+                    FeditorHelper.setCriteriaJSON(criterioncollection);
+
+                    LevelControl.init(randomid, self.id);
                 })
                 .fail(function (ex) {
                     Log.debug("error...");
                     Log.debug(ex);
                 });
 
-            
+
         };
 
 
@@ -320,13 +330,13 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
                     let criTable = document.getElementById('criteriaTable');
                     let criterionToDelete = row.target.parentNode.parentNode.parentNode.parentNode.rowIndex;
-                    
+
                     const criteariaID = row.target.parentNode.parentNode.parentNode.parentNode.getAttribute('data-criterion-group');
 
                     // Change the criterion status tu DELETE, to be able to delete from the DB.
                     let frc = JSON.parse(document.getElementById('id_criteria').value);
 
-                      // Change the description in the JSON
+                    // Change the description in the JSON
                     const frctodel = frc.filter(function (criterion, index) {
                         const criteariaID = this.getAttribute('data-criterion-group');
                         criterion.rowindex = index;
@@ -340,13 +350,13 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     const levels = frctodel[0].levels;
                     Log.debug(levels);
                     // Change the status for the levels in this criterion
-                    
+
                     for (let j = 0; j < levels.length; j++) {
                         levels[j].status = "DELETE";
                     }
 
                     document.getElementById('id_criteria').value = JSON.stringify(frc);
-                    
+
                     // Delete all the levels in that criterion.
                     for (let i = (criterionToDelete + 1); i < criTable.rows.length; i++) {
                         if (criTable.rows[i].getAttribute('data-criterion-group') == criteariaID) {
@@ -407,7 +417,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             const criterioncollection = (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
 
-            // Change the description in the JSON
+            // Change the description in the JSON.
             const filterCriterion = criterioncollection.filter(function (criterion, index) {
                 const id = e.target.parentNode.parentNode.getAttribute('data-criterion-group');
                 criterion.rowindex = index;
@@ -432,18 +442,8 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             return (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
         }; // TODO: borrar y usar el que cree en el helper
 
-        // Helper function to get the closest parent with a matching selector TODO: borrar y usar el que cree en el helper
-        CriterionControl.prototype.getClosest = function (elem, selector) {
-            for (; elem && elem !== document; elem = elem.parentNode) {
-                if (elem.matches(selector)) {
-                    return elem;
-                }
-            }
-            return null;
-        };
-
         CriterionControl.prototype.validateTotal = function (e) {
-            Log.debug(e.target.valueAsNumber);
+            
             // In case the user put the wrong value before, clean the sty;e
             e.target.classList.remove('total-input-error');
             e.target.removeAttribute('data-toggle');
@@ -459,47 +459,17 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 e.target.setAttribute('data-toggle', 'tooltip');
                 e.target.setAttribute('data-placement', 'right');
                 e.target.setAttribute('data-title', 'Value out of range');
+            } else {
+                // Change the description in the JSON.
+                const criteria = FeditorHelper.getCriteriaJSON();
+                const criterion = FeditorHelper.getCriterionFromCriteriaCollection(e.target.parentNode.parentNode.parentNode, criteria);
+
+                Log.debug(criterion);
+                criterion[0].sumscore = inputvalue;
+                FeditorHelper.setCriteriaJSON(criteria);
             }
+
         }
-
-
-        CriterionControl.prototype.getPreviousElement = function (elem, selector) {
-
-            // Get the previous sibling element
-            var sibling = elem.previousElementSibling;
-
-            // If there's no selector, return the first sibling
-            if (!selector) {
-                return;
-            }
-
-            // If the sibling matches our selector, use it
-            // If not, jump to the next sibling and continue the loop
-            while (sibling) {
-                if (sibling.matches(selector)) {
-                    return sibling;
-                }
-                sibling = sibling.previousElementSibling;
-            }
-        };
-
-        CriterionControl.prototype.getNextElement = function (elem, selector) {
-
-            // Get the next sibling element
-            var sibling = elem.nextElementSibling;
-            // If there's no selector, return
-            if (!selector) {
-                return;
-            }
-            // If the sibling matches our selector, use it
-            // If not, jump to the next sibling and continue the loop
-            while (sibling) {
-                if (sibling.matches(selector)) {
-                    return sibling;
-                }
-                sibling = sibling.nextElementSibling;
-            }
-        };
 
 
         return {

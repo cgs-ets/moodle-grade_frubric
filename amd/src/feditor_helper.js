@@ -14,6 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Helper
  * @package   gradingform_frubric
  * @copyright 2021 Veronica Bermegui
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,8 +56,8 @@ define(["core/log"], function (Log) {
     getDistanceFromCriterionHeader: function (elem, selector) {
       var sibling = elem.previousElementSibling;
       var distance = -1;
-       // If there's no selector return.
-       if (!selector) {
+      // If there's no selector return.
+      if (!selector) {
         return;
       }
 
@@ -88,9 +89,29 @@ define(["core/log"], function (Log) {
     },
 
     getCriteriaJSON: function () {
-      return document.getElementById("id_criteria").value
-        ? JSON.parse(document.getElementById("id_criteria").value)
-        : [];
+      return JSON.parse(document.getElementById("id_criteria").value) ;
+    },
+
+    setCriteriaJSON: function (criterioncollection) {
+      return document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+    },
+
+    getCriterionFromCriteriaCollection: function (row, criterioncollection) {
+
+      const filteredCriterion = criterioncollection.filter(function (criterion, index) {
+        const id = row.getAttribute('data-criterion-group');
+
+        criterion.rowindex = index;
+        if (id == criterion.id) {
+          return criterion;
+        }
+      }, row);
+
+      return filteredCriterion;
+    },
+
+    getRandomID: function () {
+      return (Math.floor(Math.random() * 9999));
     },
 
     getMode: function () {

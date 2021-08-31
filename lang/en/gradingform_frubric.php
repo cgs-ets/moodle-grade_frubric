@@ -56,4 +56,4 @@ $string['editleveldesc'] = 'Click to edit level descriptor';
 
 $string['adddescriptorlabel'] = 'Add descriptor';
 $string['deletedescriptor'] = 'Delete descriptor';
-$string['mark'] = '[Min-Max]';
+$string['mark'] = 'Min - Max';

@@ -46,6 +46,8 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                     .getElementById("cont")
                     .getAttribute("data-definition-id"), // Id from mdl_grading_definitions/
                   levels: [],
+                  sumscore:"",
+                  totaloutof:""
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions

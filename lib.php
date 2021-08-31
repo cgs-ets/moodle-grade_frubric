@@ -89,12 +89,12 @@ class gradingform_frubric_controller extends gradingform_controller {
 
          //   print_object($data); exit;
          
-            $frubric .= $OUTPUT->render_from_template('gradingform_frubric/editor_preview', $data);
+            $frubric .= $OUTPUT->render_from_template('gradingform_frubric/editor_preview_progress', $data);
         } else {
            
             $data->editfull = '1'; // Default is DISPLAY_EDIT_FULL TODO: HACER LOS TEMPLATES PARA ESTO
             // $frubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW_GRADED, 'rubric');
-            $frubric .=  $OUTPUT->render_from_template('gradingform_flexrubric/editor_preview', $data);
+            $frubric .=  $OUTPUT->render_from_template('gradingform_frubric/editor_preview_progress', $data);
         }
 
         return $frubric;
@@ -166,7 +166,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         } else if (!$definition) {
             $properties->flexrubric['criteria'] = array();
         }
-
+        
         return $properties;
     }
 
@@ -430,7 +430,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         // echo 'trackleveldbids';
         // print_object($trackleveldbids); exit;
          
-        print_object($newcriteria); exit;
+       // print_object($newcriteria); exit;
         
         foreach ($newcriteria as $i => $criterion) {
            

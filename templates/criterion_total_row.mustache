@@ -56,14 +56,13 @@
 }}
 
 
-<tr data-criterion-group="{{dcg}}" data-row-type="result" class="level-{{dcg}} result-r">
+<tr data-criterion-group="{{criteriongroupid}}" data-row-type="result" class="level-{{criteriongroupid}} result-r">
     <td>
-        <strong>CRITERION X</strong> 
+        <strong>CRITERION {{criteriongroupid}} </strong> 
     </td>
     <td>
         <div class="criterion-total-result">
-            <input type="number"class="total-input" min="0.0" max="6.0"><strong></strong><span> /6</span></strong>
-            
+            <input type="number" class="total-input"  value="0"><strong><span id="out-of-value-{{criteriongroupid}}"> /-</span></strong>
         </div>       
     </td>
 </tr>

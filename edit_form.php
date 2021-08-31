@@ -60,22 +60,22 @@ class gradingform_frubric_editrubric extends moodleform {
         list($d, $criteriajson) = $this->getCriterionData();
       //  print_object($d); exit;
         // Helper input to pass the criteria around JS
-        $form->addElement('text', 'criteria', 'Criteria JSON');
+        $form->addElement('text', 'criteria', 'Criteria JSON', ['hidden' => true]);
         $form->setType('criteria', PARAM_TEXT);
        
         if (!empty($criteriajson)) {
             $form->setDefault('criteria', $criteriajson);
         }
    
-        // Frubric editor
+        // Frubric editor.
         $flexrubireditorhtml =  $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $d);
         $form->addElement('html', $flexrubireditorhtml);
 
         $buttonarray = array();
-        $buttonarray[] = &$form->createElement('submit', 'savefrubric', get_string('savefrubric', 'gradingform_frubric'));
+        $buttonarray[] = &$form->createElement('submit', 'savefrubric', get_string('savefrubric', 'gradingform_frubric'), ['disabled' => true]);
 
         if ($this->_customdata['allowdraft']) {
-            $buttonarray[] = &$form->createElement('submit', 'savefrubricdraft', get_string('savefrubricdraft', 'gradingform_frubric'));
+            $buttonarray[] = &$form->createElement('submit', 'savefrubricdraft', get_string('savefrubricdraft', 'gradingform_frubric'), ['disabled' => true]);
         }
         
         $editbutton = &$form->createElement('submit', 'editfrubric', ' ');
@@ -116,6 +116,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $buttonar =& $form->getElement('buttonar');
         $elements =& $buttonar->getElements();
         foreach ($elements as $el) {
+            
             if ($el->getName() == $elementname) {
                 return $el;
             }
