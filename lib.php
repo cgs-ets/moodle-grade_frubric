@@ -40,7 +40,6 @@ class gradingform_frubric_controller extends gradingform_controller {
         }
 
         $criteria = $this->definition->frubric_criteria;
-        //print_object($criteria); 
         $options = $this->get_options();
         $frubric = '';
 
@@ -65,7 +64,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 // Warn about using grade calculation method where minimum number of points is flexible.
                 //$frubric .= $output->display_rubric_mapping_explained($this->get_min_max_score());
             }
-            //$frubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');  TODO: HACER LOS TEMPLATES PARA ESTO
+            //$frubric .= $output->display_rubric($criteria, $options, self::DISPLAY_PREVIEW, 'rubric');  TODO:   TEMPLATES
             $data = ['definitionid' => $this->definition->id];
             foreach($criteria as $c => $criterion) {
                 $crite = new \stdClass();
@@ -86,8 +85,6 @@ class gradingform_frubric_controller extends gradingform_controller {
                 array_splice($crite->levels, 0, 0); // Re index the array
                 $data['criteria'][] =  $crite;
             }
-
-         //   print_object($data); exit;
          
             $frubric .= $OUTPUT->render_from_template('gradingform_frubric/editor_preview_progress', $data);
         } else {
