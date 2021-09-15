@@ -244,19 +244,26 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
     LevelControl.prototype.changeDescriptorHandler = function (e, s) {
       Log.debug("changeDescriptorHandler");
-
+     
       const criteria = FeditorHelper.getCriteriaJSON();
-      const levelsdesc = e.getLevelDescriptors(e.id, criteria)
+      const containerid = s.target.getAttribute('data-container-id');
+      const descriptorIndex = Array.from(document.getElementById(containerid).parentNode.children).indexOf(s.target.parentNode);
+      const levelsdesc = e.getLevelDescriptors(e.id, criteria);
+      const desc = levelsdesc[0].descriptors[descriptorIndex];
 
-      Log.debug(levelsdesc);
+      if (desc == undefined) { // New entry
 
-      levelsdesc[0].descriptors.push({
+          levelsdesc[0].descriptors.push({
+              checked: false,
+              descText: s.target.value,
+              delete: 0
+          });
 
-        checked: false,
-        descText: s.target.value,
-        delete: 0
-      });
+      } else { // Existing entry, update text.
+        desc.descText = s.target.value;
+      }
 
+      Log.debug(levelsdesc[0].descriptors);
 
       FeditorHelper.setCriteriaJSON(criteria);
 
@@ -455,15 +462,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
       e.target.setAttribute('disabled', true);
     };
 
-    LevelControl.prototype.updateLevelObject = function () {
-
-      let criteria = FeditorHelper.getCriteriaJSON();
-
-      //Get the criterion
-      const filterCriterion = FeditorHelper.getCriterionFromCriteriaCollection(row);
-
-    }
-
     LevelControl.prototype.getLevelDescriptors = function (parentid, criteria) {
 
       const row = document.getElementById(parentid);
@@ -523,6 +521,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         level.querySelector('.level-mark').removeChild(level.querySelector('small'));
       }
 
+    }
+
+    LevelControl.prototype.countSelectedDescriptors = function () {
+        
     }
 
 

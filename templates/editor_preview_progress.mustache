@@ -17,3 +17,45 @@ along with Moodle. If not, see
 }}
 
 <h4>Work in progres...</h4>
+
+<div class="form-group">
+    <!-- the container to add the TABLE -->
+    <div id="criteria-preview" data-definition-id="{{definitionid}}">
+
+
+        {{#criteria}}
+        <table id="criteriaTable-preview">
+            {{> gradingform_frubric/editor_criterion_row}}
+            <table class="table table-bordered">
+                {{#definitions}}
+                <tr>
+                    <td>
+                        <p class="criteriaTable-preview__text">{{score}}</p>
+                    </td>
+                    {{#definition}}
+                        {{#descriptors}}
+                        <td>
+                            {{#descriptor}} 
+                                 <input disabled type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
+                            {{/descriptor}}
+                        </td>
+                        {{/descriptors}}
+                    {{/definition}}
+                </tr>
+                {{/definitions}}
+                <tr>
+                    <td>
+                        <p class="preview-def"><strong>{{description}} </strong> </p>
+                    </td>
+                    <td >
+                        <input disabled type="number" class="total-input" value="0"><strong><span id="out-of-value-2"> /6</span></strong>
+                    </td>
+                </tr>
+            </table>
+        </table>
+        {{/criteria}}
+
+
+    </div>
+
+</div>

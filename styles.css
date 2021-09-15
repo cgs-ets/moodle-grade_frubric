@@ -45,11 +45,11 @@ table.level-mark-desc-table td.level-mark {
     width: 10% !important;
 }
 
-#fitem_id_criteria,
+/* #fitem_id_criteria,
 #fitem_id_status {
     display: none;
-    /**/
-}
+    
+} */
 
 textarea.fmark {
     resize: none;
@@ -73,9 +73,9 @@ div.flex-actions {
     display: inline-block;
 }
 
-div#fitem_id_criterionjson {
+/* div#fitem_id_criterionjson {
     visibility: hidden;
-}
+} */
 
 textarea.criterion-description {
     width: 100%;
@@ -90,10 +90,7 @@ textarea.mark_txtarea {
     resize: none;
 }
 
-/* textarea.level_descriptor_txtarea {
-    display: inline-block;
-    width: 89%;
-} */
+
 textarea.standard-desc {
     width: 89%;
 }
@@ -176,6 +173,15 @@ input.total-input {
 
 div.checkbox-container .action-el {
     color: red;
+}
+
+#criteria-preview {
+    width: max-content;
+}
+
+p.preview-def {
+    overflow-wrap: break-word;
+    max-width: 55%;
 }
 
 @media screen (max-width: 950px) {
