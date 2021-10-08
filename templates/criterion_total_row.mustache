@@ -58,11 +58,17 @@
 
 <tr data-criterion-group="{{criteriongroupid}}" data-row-type="result" class="level-{{criteriongroupid}} result-r">
     <td>
-        <strong>CRITERION {{criteriongroupid}} </strong> 
+        {{^edit}}
+           <strong>CRITERION {{criteriongroupid}} </strong> 
+        {{/edit}}
+
+        {{#edit}}
+          <strong> {{description}} </strong> 
+         {{/edit}}
     </td>
     <td>
         <div class="criterion-total-result">
-            <input type="number" class="total-input"  value="0"><strong><span id="out-of-value-{{criteriongroupid}}"> /-</span></strong>
+            <input type="number" class="total-input"  value="{{sumscore}}"><strong><span id="out-of-value-{{criteriongroupid}}"> /{{totaloutof}}</span></strong>
         </div>       
     </td>
 </tr>

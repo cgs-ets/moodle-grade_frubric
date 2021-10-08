@@ -58,7 +58,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('select', 'status', get_string('frubricstatus', 'gradingform_frubric'), $choices)->freeze();
        
         list($d, $criteriajson) = $this->getCriterionData();
-     
+       // print_object($d); exit;
         // Helper input to pass the criteria around JS
         $form->addElement('text', 'criteria', 'Criteria JSON'); // ['hidden' => false]
         $form->setType('criteria', PARAM_TEXT);
@@ -140,14 +140,18 @@ class gradingform_frubric_editrubric extends moodleform {
         $edit =  0;
 
         if ($definitionid != 0) {
-            $criteariacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson');
-
-            foreach($criteariacollection as $i => $criterion) {
-                array_push($criteria, json_decode($criterion->criteriajson));
+            $criteariacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
+          //  print_object($criteariacollection); exit;
+            foreach($criteariacollection as  $criterion) {
+            //    var_dump($criterion); exit;
+                $criteria [] = json_decode($criterion->criteriajson);
+               // array_push($criteria, json_decode($criterion->criteriajson));
+             //  array_push($criteria, ($criterion->criteriajson));
             }
+           
+          //  print_object(json_decode($criterion->criteriajson)); exit;
 
             $criteriajson = json_encode($criteria); // I need it in the criteria json input to work on the JS.
-            
             foreach($criteria as $i => $criterion) {
                 $d = new \stdClass();
                 if (!empty($criterion)) {
@@ -161,11 +165,13 @@ class gradingform_frubric_editrubric extends moodleform {
                     foreach($criterion->levels as $l => $level) {
                         $level->dcg = $criterion->id;
                         $d->levels[] = $level;
-                        $leveldbids[] = strval($level->dbid);
+                        $leveldbids[] = strval($level->id);
                     }
                     $d->levelids = json_encode($leveldbids);
+                    $d->sumscore = $criterion->sumscore;
+                    $d->totaloutof = $criterion->totaloutof;
                     $data['criteria'][] =  $d;
-                    
+                   
                     
                 } else {
                     // $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL
@@ -193,7 +199,7 @@ class gradingform_frubric_editrubric extends moodleform {
         
 
      $data['edit'] = $edit;
-     
+     //print_object($data); exit;
      return [$data, $criteriajson];   
     }
 }

@@ -17,12 +17,11 @@ along with Moodle. If not, see <http: //www.gnu.org/licenses />.
 
 <table id="criteriaTable">
     {{#criteria}}
-       
         {{> gradingform_frubric/editor_criterion_row}}
-      
-            {{> gradingform_frubric/editor_level_row}}
-       
         
+        {{> gradingform_frubric/editor_level_row}}
+        
+        {{> gradingform_frubric/criterion_total_row}}
 
     {{/criteria}}
 </table>

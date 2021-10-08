@@ -36,6 +36,7 @@ $string['addcriterion'] = 'Add criterion';
 $string['addlevel'] = 'Add Level';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
 $string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
+$string['confirmdeletedescriptor'] = 'Are you sure you want to delete this descriptor?';
 $string['confirm'] = 'Confirmation';
 $string['editcriterion'] = 'Click to edit criterion';
 $string['criterioncantbeempty'] = 'Criterion cannot be empty';

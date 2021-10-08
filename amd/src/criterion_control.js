@@ -61,7 +61,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     const cgid = currentRow.getAttribute('data-criterion-group');
                     const level = document.querySelector(`.level-${cgid}`);
 
-                    LevelControl.init(level);
+                    LevelControl.init(self.id);
 
                 } catch (error) {
                     Log.debug(error);
@@ -249,7 +249,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             const context = {
                 'score': 'Click to edit Mark',
                 'definition': 'Click to edit Level description',
-                'dcg': row.getAttribute('data-criterion-group'),
+                'criteriongroupid': row.getAttribute('data-criterion-group'),
                 'id': randomid,
             };
 
