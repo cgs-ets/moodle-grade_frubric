@@ -184,6 +184,17 @@ p.preview-def {
     max-width: 55%;
 }
 
+/* Evaluation view*/
+
+div.criteria-eval {
+    width: 60%;
+}
+
+.gradingform_frubric-error {
+    color: red;
+    font-weight: 700;
+}
+
 @media screen (max-width: 950px) {
 
     td.level-mark {

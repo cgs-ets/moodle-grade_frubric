@@ -59,7 +59,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     self.setupEvents(currentRow);
                     // Attach level listeners.
                     const cgid = currentRow.getAttribute('data-criterion-group');
-                    const level = document.querySelector(`.level-${cgid}`);
+                   // const level = document.querySelector(`.level-${cgid}`);
 
                     LevelControl.init(self.id);
 
@@ -86,7 +86,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             const actionChildren = actions.children;
 
-            // Criterion actions.
+            // Criterion actions. TODO: REMOVE ARROWS AND COPY BUTTONS
             actionChildren[0].addEventListener('click', self.moveCriterionUp.bind(self, currentRow));
             actionChildren[1].addEventListener('click', self.removeCriterion.bind(currentRow));
             actionChildren[2].addEventListener('click', self.addLevel.bind(self, currentRow));
@@ -106,7 +106,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
 
             if (resultRow != undefined) {
-                const cgid = resultRow.getAttribute('data-criterion-group');
+               // const cgid = resultRow.getAttribute('data-criterion-group');
 
                 Log.debug("Result row");
                // resultRow.classList.remove('level-'); // Remove the class without the id.
@@ -444,7 +444,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
         CriterionControl.prototype.validateTotal = function (e) {
             
-            // In case the user put the wrong value before, clean the sty;e
+            // In case the user put the wrong value before, clean the style
             e.target.classList.remove('total-input-error');
             e.target.removeAttribute('data-toggle');
             e.target.removeAttribute('data-placement');

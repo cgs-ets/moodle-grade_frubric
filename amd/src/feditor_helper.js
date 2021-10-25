@@ -94,6 +94,10 @@ define(["core/log"], function (Log) {
       return JSON.parse(document.getElementById("id_criteria").value) ;
     },
 
+    getLevelsJSON: function(criteriaid) {
+        return document.getElementById(`advancedgrading-frubric-${criteriaid}-leveljson`).value;
+    },
+
     setCriteriaJSON: function (criterioncollection) {
       return document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
     },

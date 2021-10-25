@@ -58,6 +58,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
 
             if (self.mode == 'edit') {
+                Log.debug("self.level");
+                Log.debug(self.level);
                 self.editModeSetupEvents(self.level.nextElementSibling);
             } else {
                 if (self.level != null) {
@@ -68,14 +70,19 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
         };
 
-        LevelControl.prototype.editModeSetupEvents = function () {
+        LevelControl.prototype.editModeSetupEvents = function (level) {
 
             Log.debug("editModeSetupEvents");
             const self = this;
-            const level = self.level.nextElementSibling;
+            Log.debug(self);
+          //  const level = self.level;//.nextElementSibling;
             
             Log.debug(level.getAttribute('data-row-type'));  // TODO: ADD LEVEL y ADD CRITERION
-            if (level.getAttribute('data-row-type') == 'result') return;
+            if (level.getAttribute('data-row-type') == 'result') {  // get the current level. Its the new level added.
+                level = self.level.previousElementSibling;
+                Log.debug(level);
+                //return;
+            }
             self.setupEvents(level);
             const [del, markandesc] = level.children;
             const markdesctable = markandesc.querySelector('.level-mark-desc-table');
@@ -143,9 +150,11 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         LevelControl.prototype.setupEvents = function (level) {
             let self = this;
             Log.debug("Level control: setupEvents");
-
+            Log.debug(level);
             const [del, markandesc] = level.children;
+            Log.debug(markandesc);
             const markdesctable = markandesc.querySelector('.level-mark-desc-table');
+            Log.debug(markdesctable);
             const [marktd, descriptortd] = markdesctable.rows[0].children;
 
             marktd.querySelector('.level-mark > textarea').addEventListener('click', self.editmark.bind(self));
@@ -178,7 +187,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
         LevelControl.prototype.changeMarkHandler = function (s, e) {
             Log.debug("changeMarkHandler");
-
+            
             // If it came from validatePreviousMarkValue we need to remove the class warning
             s.cleanPreviousMarkWarning();
             // Remove error message if the user inserted wrong data before.
@@ -206,7 +215,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             let error = false;
             let message = '';
-
+            Log.debug("SCORE");
+            Log.debug(score);
             // First check if its 0. This value is valid in the last row. Meaning the student didnt reach the min. standard
             if (score == 0) {
 
@@ -229,7 +239,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 } else {
                     // Evaluate min/max 
                     var [min, max] = s.getMinMaxMark(score);
-
+                    Log.debug("min-max");
+                    Log.debug(min);
+                    Log.debug(max);
                     if (min.length == 0 || max.length == 0) {
                         error = true;
                     } else if ((min.length > 0 && max.length > 0) && (parseFloat(min) > parseFloat(max))) {
@@ -246,16 +258,17 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 return;
             }
 
+
             // Update the total result input. with the highest value.
             const groupid = document.getElementById(s.parentid).getAttribute('data-criterion-group');
             const resultRow = document.querySelector(`[data-criterion-group="${groupid}"][data-row-type="result"]`);
             var total = (resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML).split("/");
             const maxinput = resultRow.querySelector('.total-input');
-
+           
             levelsdesc[0].score = e.target.value;
             total = total[total.length - 1];
 
-            if (total == "-") { //  Its the first value available.
+            if (total === "") { //  Its the first value available.
                 resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${max}`;
                 total = max;
 
@@ -389,7 +402,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
         LevelControl.prototype.selectdescriptor = function (e, s) {
 
-            //TODO:  MODIFICAR PARA QUE LEVANTE LAS ACTUALIZACIONES.
+           
             Log.debug("selectdescriptor");
             Log.debug(e);
             Log.debug(s);
@@ -411,7 +424,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             d.checked = s.target.checked;
 
             // check if its already in teh DB, if so, change the status
-            if (levelsdesc[0].status == 'CREATED') {
+            if (levelsdesc[0].status == 'CREATED' || levelsdesc[0].status == 'UPDATED') {
                 levelsdesc[0].status = 'UPDATE';
             }
             // Update the input.

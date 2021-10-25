@@ -1,0 +1,84 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+
+}}
+
+
+        {{#incomplete}}
+            <div class = 'gradingform_frubric-error'>
+                {{#str}} frubricnotcompleted, gradingform_frubric {{/str}}
+            </div>
+        {{/incomplete}}
+
+        {{#needupdate}} 
+            <div class = 'gradingform_frubric-regrade'>
+                {{#str}} needregrademessage, gradingform_frubric {{/str}}
+            </div>
+        {{/needupdate}}
+<div class="form-group">
+        
+    <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric'>
+        {{#criteria}}
+        <table>
+            {{> gradingform_frubric/editor_criterion_row}}
+            <table class="table table-bordered" id = "{{name}}-frubric-criteria-{{criteriaid}}">
+                {{#definitions}}
+                <tr id= "{{name}}-frubric-criteria-{{criteriaid}}-level">
+                    <td>
+                        <p>{{score}}</p>
+                    </td>
+                    {{#definition}}
+                        {{#descriptors}}
+                        <td>
+                            {{#descriptor}} 
+                                <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-{{id}}-descriptor-{{descriptorid}}" 
+                                 name = "{{name}}[criteria][{{criteriaid}}][levelid]" value = "{{id}}"
+                                 type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
+                            {{/descriptor}}
+                        </td>
+                        {{/descriptors}}
+                    {{/definition}}
+                </tr>
+                {{/definitions}}
+                <tr>
+                    <td>
+                        <p><strong>{{description}} </strong> </p>
+                    </td>
+                    <td>
+                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input" max = "{{totaloutof}}" value= "{{sumscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
+                        <strong><span id="out-of-value"> /{{totaloutof}}</span></strong>
+
+                       
+                    </td>
+                </tr>
+                 <tr>
+                    <td>
+                        <p><strong>{{description}} FEEDBACK:</strong> </p>
+                    </td>
+                    <td >
+                        <textarea  name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
+                    </td>
+                </tr>
+                <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" value = "{{leveljson}}">
+            </table>
+        </table>
+        {{/criteria}}
+
+     <span><strong> Total:</strong></span> <input id="advancedgrading-frubric-total-grade" type="number" class="total-input" max="{{totalscore}}" > <strong><span> /{{totalscore}}</span></strong>
+    </div>
+
+</div>

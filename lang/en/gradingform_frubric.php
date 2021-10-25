@@ -58,3 +58,6 @@ $string['editleveldesc'] = 'Click to edit level descriptor';
 $string['adddescriptorlabel'] = 'Add descriptor';
 $string['deletedescriptor'] = 'Delete descriptor';
 $string['mark'] = 'Min - Max';
+
+$string['frubricnotcompleted'] = 'Please choose something for each criterion';
+$string['needregrademessage'] = 'The frubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';

@@ -58,23 +58,23 @@
 
 <tr data-criterion-group="{{criteriongroupid}}" data-mode="{{^edit}}create{{/edit}}{{#edit}}edit{{/edit}}" class="criterion-header" id="{{id}}" data-criterion-levels="{{levelids}}">
     {{^preview}}
-    <th class="fr-header act">
-        <div id="movecriterionup" class="flex-actions" hidden="">
-            <span class="move-up-criterion" title="Move criterion"><i class="fa fa-arrow-up"></i></span>
-        </div>
-        <div id="delCriterion" class="flex-actions">
-            <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
-        </div>
-        <div id="addRow" class="flex-actions"><span class="add-criterion" title="Add level"><i
-                    class="fa fa-plus"></i></span>
-        </div>
-        <div id="copyRow" class="flex-actions"><span class="copy-criterion" title="Copy criterion"><i
-                    class="fa fa-copy"></i></span>
-        </div>
-        {{! <div id="movecriteriondown" class="flex-actions" hidden="">
-            <span class="move-down-criterion" title="Move criterion"><i class="fa fa-arrow-down"></i></span>
-        </div> }}
-    </th>
+        <th class="fr-header act">
+            <div id="movecriterionup" class="flex-actions" hidden="">
+                <span class="move-up-criterion" title="Move criterion"><i class="fa fa-arrow-up"></i></span>
+            </div>
+            <div id="delCriterion" class="flex-actions">
+                <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
+            </div>
+            <div id="addRow" class="flex-actions"><span class="add-criterion" title="Add level"><i
+                        class="fa fa-plus"></i></span>
+            </div>
+            <div id="copyRow" class="flex-actions"><span class="copy-criterion" title="Copy criterion"><i
+                        class="fa fa-copy"></i></span>
+            </div>
+            {{! <div id="movecriteriondown" class="flex-actions" hidden="">
+                <span class="move-down-criterion" title="Move criterion"><i class="fa fa-arrow-down"></i></span>
+            </div> }}
+        </th>
     {{/preview}}
     <th class="fr-header crit-desc">
         <textarea rows="4" {{^preview}} cols="110" {{/preview}} {{#preview}} cols="131" {{/preview}}

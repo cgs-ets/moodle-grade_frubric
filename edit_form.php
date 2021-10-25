@@ -141,15 +141,10 @@ class gradingform_frubric_editrubric extends moodleform {
 
         if ($definitionid != 0) {
             $criteariacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
-          //  print_object($criteariacollection); exit;
             foreach($criteariacollection as  $criterion) {
-            //    var_dump($criterion); exit;
                 $criteria [] = json_decode($criterion->criteriajson);
-               // array_push($criteria, json_decode($criterion->criteriajson));
-             //  array_push($criteria, ($criterion->criteriajson));
             }
            
-          //  print_object(json_decode($criterion->criteriajson)); exit;
 
             $criteriajson = json_encode($criteria); // I need it in the criteria json input to work on the JS.
             foreach($criteria as $i => $criterion) {
