@@ -31,7 +31,7 @@ along with Moodle. If not, see
         {{/needupdate}}
 <div class="form-group">
         
-    <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric'>
+    <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}
         <table>
             {{> gradingform_frubric/editor_criterion_row}}
@@ -59,9 +59,8 @@ along with Moodle. If not, see
                         <p><strong>{{description}} </strong> </p>
                     </td>
                     <td>
-                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input" max = "{{totaloutof}}" value= "{{sumscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
+                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
                         <strong><span id="out-of-value"> /{{totaloutof}}</span></strong>
-
                        
                     </td>
                 </tr>
@@ -73,12 +72,12 @@ along with Moodle. If not, see
                         <textarea  name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
                     </td>
                 </tr>
-                <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" value = "{{leveljson}}">
+                <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" hidden value = "{{leveljson}}">
             </table>
         </table>
         {{/criteria}}
 
-     <span><strong> Total:</strong></span> <input id="advancedgrading-frubric-total-grade" type="number" class="total-input" max="{{totalscore}}" > <strong><span> /{{totalscore}}</span></strong>
+     <span><strong> Total:</strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input" max = "{{totalscore}}" value ="{{sumscores}}"> <strong><span> /{{totalscore}}</span></strong>
     </div>
 
 </div>

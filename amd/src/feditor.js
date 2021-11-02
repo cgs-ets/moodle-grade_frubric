@@ -87,6 +87,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
         };
 
         Feditor.prototype.addCriterion = function () {
+            Log.debug("Add criterion...");
             let self = this;
 
             const countcriteria = document.querySelectorAll('.criterion-header').length;
@@ -115,6 +116,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                         definitionid: document.getElementById('cont').getAttribute('data-definition-id'), // Id from mdl_grading_definitions
                         levels: [],
                     };
+
 
                     if (FeditorHelper.getCriteriaJSON() != '') {
                         self.criterioncollection = JSON.parse(document.getElementById('id_criteria').value);

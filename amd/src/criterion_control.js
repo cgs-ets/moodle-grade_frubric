@@ -85,18 +85,18 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
             }
 
             const actionChildren = actions.children;
-
-            // Criterion actions. TODO: REMOVE ARROWS AND COPY BUTTONS
-            actionChildren[0].addEventListener('click', self.moveCriterionUp.bind(self, currentRow));
-            actionChildren[1].addEventListener('click', self.removeCriterion.bind(currentRow));
-            actionChildren[2].addEventListener('click', self.addLevel.bind(self, currentRow));
-            actionChildren[3].addEventListener('click', self.copyCriterion);
+         
+            // Criterion actions. TODO: Remove commented code WHEN its going to prod.
+          //  actionChildren[0].addEventListener('click', self.moveCriterionUp.bind(self, currentRow));
+            actionChildren[0].addEventListener('click', self.removeCriterion.bind(currentRow));
+            actionChildren[1].addEventListener('click', self.addLevel.bind(self, currentRow));
+            //actionChildren[3].addEventListener('click', self.copyCriterion);
             // actionChildren[4].addEventListener('click', self.moveCriterionDown.bind(self, currentRow));
 
-            if (document.getElementsByClassName("criterion-header").length > 1) { // There is at least one criterion.
-                // Display row up
-                actionChildren[0].removeAttribute('hidden');
-            }
+            // if (document.getElementsByClassName("criterion-header").length > 1) { // There is at least one criterion.
+            //     // Display row up
+            //     actionChildren[0].removeAttribute('hidden');
+            // }
 
             const description = currentRow.querySelector('.crit-desc'); // Get description
             description.addEventListener('click', self.editCriterionDescription.bind(this));
@@ -367,8 +367,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     }
 
                     removeElementsByClass('to-remove');
-                    // TODO: CHECK THE UP AND DOWN ARROWS ON THE ELEMENT THAT TAKES PLACE OF THE DELETED ONE
-                    // TODO: KEEP TRACK OF THE DELETED ELEMENTS IN CASE WE HAVE TO UPDATE THE DB.
 
                     function removeElementsByClass(className) {
                         var elements = document.getElementsByClassName(className);

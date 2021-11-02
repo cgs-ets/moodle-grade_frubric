@@ -81,7 +81,7 @@
         <div class="standard-desc-container">
         {{#descriptors}}
             <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{definitionid}}">
-                <input type="checkbox" class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>
+                <input  type="checkbox" {{#edit}} disabled {{/edit}}  class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>
                 <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}-{{definitionid}}">{{descText}}</textarea>
                 <span class="action-el"><i class="fa fa-close" title="Delete descriptor"></i></span>
                 <br>

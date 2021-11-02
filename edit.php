@@ -72,14 +72,10 @@ if ($mform->is_cancelled()) {
 }
 
 
-
 // Try to keep the session alive on this page as it may take some time
 // before significant interaction happens with the server.
 \core\session\manager::keepalive();
 
-// $PAGE->requires->js_call_amd('gradingform_frubric/feditor', 'init');
-// $PAGE->requires->js_call_amd('gradingform_frubric/criterion_control', 'init');
-// $PAGE->requires->js_call_amd('gradingform_frubric/level_control', 'init');
 
 echo $OUTPUT->header();
 $mform->display();

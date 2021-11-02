@@ -51,6 +51,29 @@ table.level-mark-desc-table td.level-mark {
     
 } */
 
+#fitem_id_criteria {
+    display: none;
+}
+
+#fitem_id_criteria > div {
+    display: none;
+}
+
+#fitem_id_criteria.has-danger {
+    display: block;
+    height: 22px;
+    overflow: hidden;
+}
+
+#fitem_id_criteria.has-danger:before {
+
+    content: "Flexibe rubric must contain at least one criterion and Level(s) definition(s) can not be empty";
+    color: red;
+    width: 100%;
+    height: 22px;
+    margin-left: 15px;
+}
+
 textarea.fmark {
     resize: none;
     margin-top: 0;
@@ -194,6 +217,7 @@ div.criteria-eval {
     color: red;
     font-weight: 700;
 }
+
 
 @media screen (max-width: 950px) {
 

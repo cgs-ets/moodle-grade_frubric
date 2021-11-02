@@ -37,64 +37,68 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
         function EvaluateControl(criteria) {
             const self = this;
             self.criteria = criteria;
+            self.totalScore = 0.00;
+            self.definitionID = document.getElementById('advancedgrading-criteria').getAttribute('data-definition-id');
         }
 
         EvaluateControl.prototype.main = function () {
             const self = this;
             self.setupEvents(self.criteria);
-
+            document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`).value = self.totalScore;
         }
 
         EvaluateControl.prototype.setupEvents = function (criteria) {
             const self = this;
 
+
             criteria.forEach(function (element) {
                 const self = this;
                 const criterion = document.getElementById(`advancedgrading-frubric-criteria-${element.criteriaid}`);
                 const level = criterion.children[0].children;
-                // Log.debug("criteria.forEach");
-                // Log.debug(self);
-               // Log.debug(FeditorHelper.getLevelsJSON(element.criteriaid));
-            //    self.levelsJSON = JSON.parse(FeditorHelper.getLevelsJSON(element.criteriaid));
+                
                 Array.from(level).forEach(function (leveldetails) {
-                //   Log.debug("Array.from(level).forEach");
-                //   Log.debug(self);
-                    // Log.debug("levelsJSON");
-                    // Log.debug(self.levelsJSON);
                     const descriptorsCollection = leveldetails.children[1];
                     const descriptors = descriptorsCollection.children;
                     Array.from(descriptors).forEach(function (descriptor) {
-                        // Log.debug("criteriaid");
-                        // Log.debug(element.criteriaid);
+
                         if (descriptor instanceof HTMLInputElement) {
-                            descriptor.addEventListener('click', self.clickDescriptorHandler.bind(self));
+                            switch (descriptor.type) {
+                                case 'checkbox':
+                                    descriptor.addEventListener('click', self.clickDescriptorHandler.bind(self));
+                                    break;
+                                case 'number':
+                                    // Log.debug(descriptor);
+                                    // Log.debug(self.totalScore);
+                                    // Log.debug(parseFloat(descriptor.value).toFixed(2));
+                                    // self.totalScore += parseFloat(descriptor.value);
+                                   // descriptor.addEventListener('click', self.clickEvaluationHandler.bind(this, self));
+                                    //descriptor.addEventListener('blur', self.onblurScoreHandler.bind(this, self));
+                                    break;
+                            }
                         }
                     });
                 }, self);
 
-
             }, self);
-
 
         }
 
         EvaluateControl.prototype.clickDescriptorHandler = function (e) {
             const self = this;
-            
+
             Log.debug("CHECKED...");
             Log.debug(e);
             const id = (e.target.id).split('-');
             const criteriaID = id[3];
             const levelID = id[5];
-            const descriptorID = id [id.length - 1];
-            const levelsInput = JSON.parse(FeditorHelper.getLevelsJSON(criteriaID));
-            Log.debug(criteriaID);
-            Log.debug(levelID);
-            Log.debug(descriptorID);
-           
-
+            const descriptorID = id[id.length - 1];
+            let levelsInput = JSON.parse(FeditorHelper.getLevelsJSON(criteriaID));
+            // Log.debug(criteriaID);
+            // Log.debug(levelID);
+            // Log.debug(descriptorID);
+            levelsInput[levelID].definition.replace(/\\/g, ''); // Remove the //  from the string. 
+            let definition = JSON.parse(levelsInput[levelID].definition);
             const levelDescriptors = levelsInput[levelID].descriptors;
-            Log.debug(levelDescriptors)
 
             levelDescriptors.filter(descriptor => {
                 if (descriptor.descriptorid == descriptorID) {
@@ -102,11 +106,51 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                 }
             }, descriptorID);
 
-         
-            Log.debug(levelsInput);
+            definition.descriptors = levelDescriptors;
+            definition = JSON.stringify(definition);
 
+            levelsInput[levelID].definition = definition;
+
+            // Log.debug(levelsInput)
             // Replace the json value with the updated one
             document.getElementById(`advancedgrading-frubric-${criteriaID}-leveljson`).value = JSON.stringify(levelsInput);
+        }
+
+        EvaluateControl.prototype.onblurScoreHandler = function (s, e) {
+
+            Log.debug("onblurScoreHandler");
+            Log.debug(s);
+
+            const score = parseFloat(document.getElementById(e.target.id).value);
+            Log.debug(score);
+            s.totalScore = s.totalScore + score;
+            Log.debug(s.totalScore);
+            document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value = s.totalScore;
+        }
+
+        // TODO: recalculate Sum evalution values to display in total.
+        EvaluateControl.prototype.clickEvaluationHandler = function (s, e) {
+            Log.debug("clickEvaluationHandler");
+          //  Log.debug(e);
+            s.currentScore = parseFloat(document.getElementById(e.target.id).value);
+            s.totalScore = parseFloat(document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value);
+                       
+            document.getElementById(e.target.id).addEventListener('change', s.onChangeEvaluationHandler.bind(this, s));
+            //document.getElementById(e.target.id).addEventListener('blur', s.onblurScoreHandler.bind(this, s));
+            Log.debug(s);
+
+            
+        }
+
+        EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
+            Log.debug("onChangeEvaluationHandler");
+            //Log.debug(e);
+            s.totalScore = s.totalScore - s.currentScore;
+            s.totalScore = s.totalScore + parseFloat(document.getElementById(e.target.id).value);
+            document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value = s.totalScore;
+            s.currentScore = 0;
+            Log.debug(s);
+
         }
 
 

@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 class gradingform_frubric_editrubric extends moodleform {
-    
+
     /**
      * Defines forms elements
-    */
+     */
     public  function definition() {
         global $OUTPUT;
         $form = $this->_form;
-
+        //print
         $form->addElement('hidden', 'areaid');
         $form->setType('areaid', PARAM_INT);
 
@@ -56,17 +56,15 @@ class gradingform_frubric_editrubric extends moodleform {
         $choices[gradingform_controller::DEFINITION_STATUS_DRAFT]    = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status draft'));
         $choices[gradingform_controller::DEFINITION_STATUS_READY]    = html_writer::tag('span', get_string('statusready', 'core_grading'), array('class' => 'status ready'));
         $form->addElement('select', 'status', get_string('frubricstatus', 'gradingform_frubric'), $choices)->freeze();
-       
+
         list($d, $criteriajson) = $this->getCriterionData();
-       // print_object($d); exit;
         // Helper input to pass the criteria around JS
-        $form->addElement('text', 'criteria', 'Criteria JSON'); // ['hidden' => false]
-        $form->setType('criteria', PARAM_TEXT);
-       
+        $form->addElement('text', 'criteria', 'Criteria JSON'); 
+
         if (!empty($criteriajson)) {
             $form->setDefault('criteria', $criteriajson);
         }
-        // print_object($d); exit;
+        
         // Frubric editor.
         $flexrubireditorhtml =  $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $d);
         $form->addElement('html', $flexrubireditorhtml);
@@ -77,15 +75,39 @@ class gradingform_frubric_editrubric extends moodleform {
         if ($this->_customdata['allowdraft']) {
             $buttonarray[] = &$form->createElement('submit', 'savefrubricdraft', get_string('savefrubricdraft', 'gradingform_frubric'));
         }
-        
+
         $editbutton = &$form->createElement('submit', 'editfrubric', ' ');
         $editbutton->freeze();
         $buttonarray[] = &$editbutton;
         $buttonarray[] = &$form->createElement('cancel');
         $form->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $form->closeHeaderBefore('buttonar');
-
     }
+
+
+    /**
+     * Setup the form depending on current values. This method is called after definition(),
+     * data submission and set_data().
+     * All form setup that is dependent on form values should go in here.
+     *
+     * We remove the element status if there is no current status (i.e. rubric is only being created)
+     * so the users do not get confused
+     */
+    public function definition_after_data() {
+        $form = $this->_form;
+
+        $el = $form->getElement('status');
+        if (!$el->getValue()) {
+            $form->removeElement('status');
+        } else {
+            $vals = array_values($el->getValue());
+            if ($vals[0] == gradingform_controller::DEFINITION_STATUS_READY) {
+                $this->findButton('savefrubric')->setValue(get_string('save', 'gradingform_frubric'));
+            }
+        }
+    }
+
+
 
     /**
      * Return submitted data if properly submitted or returns NULL if validation fails or
@@ -95,13 +117,13 @@ class gradingform_frubric_editrubric extends moodleform {
      */
     public function get_data() {
         $data = parent::get_data();
-     
+
         if (!empty($data->savefrubric)) {
             $data->status = gradingform_controller::DEFINITION_STATUS_READY;
         } else if (!empty($data->savefrubricdraft)) {
             $data->status = gradingform_controller::DEFINITION_STATUS_DRAFT;
         }
-        
+
         return $data;
     }
 
@@ -113,10 +135,10 @@ class gradingform_frubric_editrubric extends moodleform {
      */
     protected function &findButton($elementname) {
         $form = $this->_form;
-        $buttonar =& $form->getElement('buttonar');
-        $elements =& $buttonar->getElements();
+        $buttonar = &$form->getElement('buttonar');
+        $elements = &$buttonar->getElements();
         foreach ($elements as $el) {
-            
+
             if ($el->getName() == $elementname) {
                 return $el;
             }
@@ -127,7 +149,7 @@ class gradingform_frubric_editrubric extends moodleform {
     // Generate the context for the feditor template.
     private function getCriterionData() {
         global $DB;
-      
+
         $definitionid = $this->_customdata['defid'];
         $criteriajson = '';
         $criteria = [];
@@ -141,23 +163,23 @@ class gradingform_frubric_editrubric extends moodleform {
 
         if ($definitionid != 0) {
             $criteariacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
-            foreach($criteariacollection as  $criterion) {
-                $criteria [] = json_decode($criterion->criteriajson);
+            foreach ($criteariacollection as  $criterion) {
+                $criteria[] = json_decode($criterion->criteriajson);
             }
-           
+
 
             $criteriajson = json_encode($criteria); // I need it in the criteria json input to work on the JS.
-            foreach($criteria as $i => $criterion) {
+            foreach ($criteria as $i => $criterion) {
                 $d = new \stdClass();
                 if (!empty($criterion)) {
                     $edit = 1;
-                    
+
                     $d->id = $criterion->id;
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
                     $leveldbids = [];
-                    foreach($criterion->levels as $l => $level) {
+                    foreach ($criterion->levels as $l => $level) {
                         $level->dcg = $criterion->id;
                         $d->levels[] = $level;
                         $leveldbids[] = strval($level->id);
@@ -166,20 +188,10 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->sumscore = $criterion->sumscore;
                     $d->totaloutof = $criterion->totaloutof;
                     $data['criteria'][] =  $d;
-                   
-                    
-                } else {
-                    // $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL
-                    // $d->definitionid = 0; // Default when its new rubric
-                    // $d->id = "frubric-criteria-NEWID1";
-                    // $d->criteriongroupid = 1;
-                    // $d->description = get_string('editcriterion', 'gradingform_frubric');
-                    // $d->new = 1;
-                    // $data['criteria'][] =  $d;
-                }
+                } 
             }
         }
-      
+
         if (count($data['criteria']) == 0) {
             $d = new \stdClass();
             $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL
@@ -191,10 +203,42 @@ class gradingform_frubric_editrubric extends moodleform {
             $data['criteria'][] =  $d;
         }
 
-        
 
-     $data['edit'] = $edit;
-     //print_object($data); exit;
-     return [$data, $criteriajson];   
+
+        $data['edit'] = $edit;
+        return [$data, $criteriajson];
+    }
+
+    /**
+     * Form vlidation.
+     * If there are errors return array of errors ("fieldname"=>"error message"),
+     * otherwise true if ok.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *               or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
+        $err = parent::validation($data, $files);
+        $err = array();
+
+        if (isset($data['savefrubric']) && $data['savefrubric']) {
+            $frubricel = json_decode($data['criteria']);
+      
+            foreach ($frubricel as $criterion) {
+                if ($criterion->description == '') {
+                    $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
+                }
+
+                foreach ($criterion->levels as $level) {
+                    if (count($level->descriptors) == 0) {
+                        $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
+                    }
+                }
+            }
+        }
+
+        return $err;
     }
 }

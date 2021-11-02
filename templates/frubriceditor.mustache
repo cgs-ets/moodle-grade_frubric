@@ -20,12 +20,12 @@ along with Moodle. If not, see
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 
-<div class="form-group">
+<div class="form-group" name = 'flexibleRubricDef'>
+
     <!-- the container to add the TABLE -->
     <div id = "cont" data-definition-id = "{{definitionid}}">
 
         {{^edit}}
-            
             {{#criteria}} 
                 <table id="criteriaTable" data-type="level" >
                     {{> gradingform_frubric/editor_criterion_row}}
