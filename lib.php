@@ -34,6 +34,42 @@ const FRUBRIC = 'frubric';
 class gradingform_frubric_controller extends gradingform_controller {
 
 
+    /**
+     * Extends the module settings navigation with the rubric grading settings
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING, the user has the permission moodle/grade:managegradingforms
+     * and there is an area with the active grading method set to 'rubric'.
+     *
+     * @param settings_navigation $settingsnav {@link settings_navigation}
+     * @param navigation_node $node {@link navigation_node}
+     */
+    public function extend_settings_navigation(settings_navigation $settingsnav, navigation_node $node=null) {
+        $node->add(get_string('definefrubric', 'gradingform_frubric'),
+            $this->get_editor_url(), settings_navigation::TYPE_CUSTOM,
+            null, null, new pix_icon('icon', '', 'gradingform_frubric'));
+    }
+
+    /**
+     * Extends the module navigation
+     *
+     * This function is called when the context for the page is an activity module with the
+     * FEATURE_ADVANCED_GRADING and there is an area with the active grading method set to the given plugin.
+     *
+     * @param global_navigation $navigation {@link global_navigation}
+     * @param navigation_node $node {@link navigation_node}
+     */
+    public function extend_navigation(global_navigation $navigation, navigation_node $node=null) {
+        if (has_capability('moodle/grade:managegradingforms', $this->get_context())) {
+            // no need for preview if user can manage forms, he will have link to manage.php in settings instead
+            return;
+        }
+        if ($this->is_form_defined() && ($options = $this->get_options()) && !empty($options['alwaysshowdefinition'])) {
+            $node->add(get_string('gradingof', 'gradingform_rubric', get_grading_manager($this->get_areaid())->get_area_title()),
+                    new moodle_url('/grade/grading/form/'.$this->get_method_name().'/preview.php', array('areaid' => $this->get_areaid())),
+                    settings_navigation::TYPE_CUSTOM);
+        }
+    }
     public function render_preview($page) {
         global $OUTPUT;
 
