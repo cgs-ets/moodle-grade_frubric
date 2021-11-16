@@ -45,11 +45,10 @@ table.level-mark-desc-table td.level-mark {
     width: 10% !important;
 }
 
-/* #fitem_id_criteria,
+#fitem_id_criteria,
 #fitem_id_status {
     display: none;
-    
-} */
+}
 
 #fitem_id_criteria {
     display: none;
@@ -57,6 +56,10 @@ table.level-mark-desc-table td.level-mark {
 
 #fitem_id_criteria > div {
     display: none;
+}
+
+.error_no_descriptors_selected {
+    border: 2px solid red !important;
 }
 
 #fitem_id_criteria.has-danger {

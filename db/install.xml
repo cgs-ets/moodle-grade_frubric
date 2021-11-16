@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="grade/grading/form/frubric/db" VERSION="20211026" COMMENT="XMLDB file for Moodle grade/grading/form/frubric"
+<XMLDB PATH="grade/grading/form/frubric/db" VERSION="20211112" COMMENT="XMLDB file for Moodle grade/grading/form/frubric"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >

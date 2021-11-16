@@ -57,17 +57,21 @@ class gradingform_frubric_editrubric extends moodleform {
         $choices[gradingform_controller::DEFINITION_STATUS_READY]    = html_writer::tag('span', get_string('statusready', 'core_grading'), array('class' => 'status ready'));
         $form->addElement('select', 'status', get_string('frubricstatus', 'gradingform_frubric'), $choices)->freeze();
 
-        list($d, $criteriajson) = $this->getCriterionData();
         // Helper input to pass the criteria around JS
-        $form->addElement('text', 'criteria', 'Criteria JSON'); 
+        $form->addElement('text', 'criteria', 'Criteria JSON');
+        list($d, $criteriajson) = $this->getCriterionData();
 
         if (!empty($criteriajson)) {
             $form->setDefault('criteria', $criteriajson);
         }
-        
+       // echo 'HOLA DESDE LA DEFINICION>>>'; exit;
         // Frubric editor.
         $flexrubireditorhtml =  $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $d);
-        $form->addElement('html', $flexrubireditorhtml);
+        $frdef = $form->addElement('html', $flexrubireditorhtml);
+        // $frdef->setLabel('hola');
+        // $frdef->setName('frubricdefinition');
+        // $frdef->settype('flexibleRubricDef',PARAM_RAW);
+        // print_object($frdef); exit;
 
         $buttonarray = array();
         $buttonarray[] = &$form->createElement('submit', 'savefrubric', get_string('savefrubric', 'gradingform_frubric'));
@@ -95,7 +99,7 @@ class gradingform_frubric_editrubric extends moodleform {
      */
     public function definition_after_data() {
         $form = $this->_form;
-
+        // print_object($form);
         $el = $form->getElement('status');
         if (!$el->getValue()) {
             $form->removeElement('status');
@@ -105,6 +109,7 @@ class gradingform_frubric_editrubric extends moodleform {
                 $this->findButton('savefrubric')->setValue(get_string('save', 'gradingform_frubric'));
             }
         }
+
     }
 
 
@@ -149,7 +154,9 @@ class gradingform_frubric_editrubric extends moodleform {
     // Generate the context for the feditor template.
     private function getCriterionData() {
         global $DB;
-
+        $form = $this->_form;
+        $frd = $form->getElement('criteria');
+        // print_object($frd); exit;
         $definitionid = $this->_customdata['defid'];
         $criteriajson = '';
         $criteria = [];
@@ -188,7 +195,7 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->sumscore = $criterion->sumscore;
                     $d->totaloutof = $criterion->totaloutof;
                     $data['criteria'][] =  $d;
-                } 
+                }
             }
         }
 
@@ -222,23 +229,44 @@ class gradingform_frubric_editrubric extends moodleform {
     public function validation($data, $files) {
         $err = parent::validation($data, $files);
         $err = array();
-
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
-      
             foreach ($frubricel as $criterion) {
+
                 if ($criterion->description == '') {
                     $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                 }
 
+
+                if (count($criterion->levels) == 0) {
+                    $err['criteria'] = get_string('err_levels', 'gradingform_frubric');
+                }
+
+
                 foreach ($criterion->levels as $level) {
+                    
+                    if ($level->score == '') {
+                        $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
+                    }
                     if (count($level->descriptors) == 0) {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
+                    } else {
+                        foreach ($level->descriptors as $descriptor) {
+                            if ($descriptor->descText == '') {
+                                $err['criteria'] = get_string('err_nodescriptiondef', 'gradingform_frubric');
+                               //S break;
+                            }
+
+                        }
                     }
+
+
                 }
             }
         }
-
+ 
         return $err;
     }
+
+    
 }

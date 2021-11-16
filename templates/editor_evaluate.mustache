@@ -56,11 +56,11 @@ along with Moodle. If not, see
                 {{/definitions}}
                 <tr>
                     <td>
-                        <p><strong>{{description}} </strong> </p>
+                        <p><strong>{{description}}</strong> </p>
                     </td>
                     <td>
                         <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
-                        <strong><span id="out-of-value"> /{{totaloutof}}</span></strong>
+                        <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}</span></strong>
                        
                     </td>
                 </tr>
@@ -77,7 +77,8 @@ along with Moodle. If not, see
         </table>
         {{/criteria}}
 
-     <span><strong> Total:</strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input" max = "{{totalscore}}" value ="{{sumscores}}"> <strong><span> /{{totalscore}}</span></strong>
+     <span><strong> Total:</strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input" max = "{{totalscore}}" value ="{{sumscores}}"> 
+     <strong><span id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade-given"> /{{totalscore}}</span></strong>
     </div>
 
 </div>
