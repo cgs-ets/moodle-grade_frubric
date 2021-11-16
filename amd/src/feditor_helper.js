@@ -126,5 +126,13 @@ define(["core/log"], function (Log) {
         .getAttribute("data-mode");
     },
 
+    getMinMax: function (score) {
+        if (score.indexOf('-') != -1) {
+            return score.split('-');
+        } else {
+            return score.split('/');
+        }
+    }
+
   };
 });

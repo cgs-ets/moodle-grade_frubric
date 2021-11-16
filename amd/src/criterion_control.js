@@ -426,9 +426,10 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             Log.debug(filterCriterion);
 
-            if (filterCriterion[0].description != e.target.value && FeditorHelper.getMode() == 'edit') {
-                filterCriterion[0].status = 'UPDATE';
-            }
+            if (filterCriterion[0].description != e.target.value && (FeditorHelper.getMode() == 'edit' 
+                && !filterCriterion[0].cid.includes('frubric-criteria-NEWID'))) { // A new criterion is added to an existing definition
+                    filterCriterion[0].status = 'UPDATE';
+                }
 
             filterCriterion[0].description = e.target.value;
             // Refresh the Criteria JSON input

@@ -37,14 +37,12 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
         function EvaluateControl(criteria) {
             const self = this;
             self.criteria = criteria;
-            self.totalScore = 0.00;
             self.definitionID = document.getElementById('advancedgrading-criteria').getAttribute('data-definition-id');
         }
 
         EvaluateControl.prototype.main = function () {
             const self = this;
             self.setupEvents(self.criteria);
-            document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`).value = self.totalScore;
         }
 
         EvaluateControl.prototype.setupEvents = function (criteria) {
@@ -55,7 +53,9 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                 const self = this;
                 const criterion = document.getElementById(`advancedgrading-frubric-criteria-${element.criteriaid}`);
                 const level = criterion.children[0].children;
-                
+                const score = document.getElementById(`advancedgrading-frubric-criteria-${element.criteriaid}-level-grade`);
+                score.addEventListener('focus', self.focusEvaluationHandler.bind(this, self));
+
                 Array.from(level).forEach(function (leveldetails) {
                     const descriptorsCollection = leveldetails.children[1];
                     const descriptors = descriptorsCollection.children;
@@ -66,20 +66,16 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                                 case 'checkbox':
                                     descriptor.addEventListener('click', self.clickDescriptorHandler.bind(self));
                                     break;
-                                case 'number':
-                                    // Log.debug(descriptor);
-                                    // Log.debug(self.totalScore);
-                                    // Log.debug(parseFloat(descriptor.value).toFixed(2));
-                                    // self.totalScore += parseFloat(descriptor.value);
-                                   // descriptor.addEventListener('click', self.clickEvaluationHandler.bind(this, self));
-                                    //descriptor.addEventListener('blur', self.onblurScoreHandler.bind(this, self));
-                                    break;
                             }
                         }
                     });
                 }, self);
 
             }, self);
+
+
+            const totalgrade = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`);
+            totalgrade.addEventListener('focus', self.focusEvaluationTotalHandler.bind(this, self));
 
         }
 
@@ -116,44 +112,47 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
             document.getElementById(`advancedgrading-frubric-${criteriaID}-leveljson`).value = JSON.stringify(levelsInput);
         }
 
-        EvaluateControl.prototype.onblurScoreHandler = function (s, e) {
 
-            Log.debug("onblurScoreHandler");
-            Log.debug(s);
-
-            const score = parseFloat(document.getElementById(e.target.id).value);
-            Log.debug(score);
-            s.totalScore = s.totalScore + score;
-            Log.debug(s.totalScore);
-            document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value = s.totalScore;
-        }
-
-        // TODO: recalculate Sum evalution values to display in total.
-        EvaluateControl.prototype.clickEvaluationHandler = function (s, e) {
-            Log.debug("clickEvaluationHandler");
-          //  Log.debug(e);
-            s.currentScore = parseFloat(document.getElementById(e.target.id).value);
-            s.totalScore = parseFloat(document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value);
-                       
+        EvaluateControl.prototype.focusEvaluationHandler = function (s, e) {
+            Log.debug("focusEvaluationHandler");
+            Log.debug(e);
             document.getElementById(e.target.id).addEventListener('change', s.onChangeEvaluationHandler.bind(this, s));
-            //document.getElementById(e.target.id).addEventListener('blur', s.onblurScoreHandler.bind(this, s));
-            Log.debug(s);
 
-            
+
         }
 
         EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
             Log.debug("onChangeEvaluationHandler");
-            //Log.debug(e);
-            s.totalScore = s.totalScore - s.currentScore;
-            s.totalScore = s.totalScore + parseFloat(document.getElementById(e.target.id).value);
-            document.getElementById(`advancedgrading-${s.definitionID}-frubric-total-grade`).value = s.totalScore;
-            s.currentScore = 0;
-            Log.debug(s);
+
+            e.target.classList.remove('total-input-error');
+
+            let enteredscore = parseFloat(document.getElementById(e.target.id).value);
+
+            let maxscore = document.getElementById(e.target.id + '-out-of-value').innerText.split('/');
+            maxscore = parseFloat(maxscore[maxscore.length - 1]);
+
+            if (enteredscore > maxscore || enteredscore < 0) {
+                e.target.classList.add('total-input-error');
+            }
 
         }
 
+        EvaluateControl.prototype.focusEvaluationTotalHandler = function (s, e) {
+            Log.debug("focusEvaluationHandler");
+            document.getElementById(e.target.id).addEventListener('change', s.onChangeTotalEvaluationHandler.bind(this, s));
+        }
 
+        EvaluateControl.prototype.onChangeTotalEvaluationHandler = function (s, e) {
+            Log.debug("onChangeTotalEvaluationHandler");
+            e.target.classList.remove('total-input-error');
+            let total = parseFloat(document.getElementById(e.target.id).value);
+            let maxtotal = document.getElementById(e.target.id + '-given').innerText.split('/');
+            maxtotal = parseFloat(maxtotal[maxtotal.length - 1]);
+            if (total > maxtotal) {
+                e.target.classList.add('total-input-error');
+            }
+
+        }
 
 
         return {
