@@ -16,29 +16,51 @@ along with Moodle. If not, see
 <http: //www.gnu.org/licenses />.
 }}
 
-<table id="criteriaTables">
-    <tbody>
-        {{#criteria}}
-        <tr data-criteria-group="{{id}}" class="criterion-header">
-            <th class="fr-header crit-desc">
-                <textarea rows="4" cols="110" class="criterion-description preview"
-                    disabled="true">{{description}}</textarea>
-            </th>
-        </tr>
-     
-        {{#levels}}
-        <tr data-criteria-group="{{id}}">
-            <td>
-                <div class="mark-desc-container">
-                    <textarea rows="4" cols="6" value="" class="mark_txtarea preview"
-                        disabled="true">{{score}}</textarea>
-                    <textarea rows="4" cols="110" value="" class="level_descriptor_txtarea preview"
-                        disabled="true">{{definition}}</textarea>
-                </div>
-            </td>
-        </tr>
-        {{/levels}}
-        {{/criteria}}
-    </tbody>
-</table>
+<div class="preview-frubric-form">
+
+    {{#criteria}}
+    <table class ="preview-table table-responsive">
+        <thead>
+            <tr>
+                <th>
+                    <p>{{description}}</p>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    {{#levels}}
+                    <table class="inner-level-table preview">
+                        {{#level}}
+                        <tr>
+                            <td class ="score-preview">
+                                <p>{{score}}</p>
+                            </td>
+                            <td>
+                                {{#descriptors}}
+                                <input disabled type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
+                                {{/descriptors}}
+                            </td>
+                        </tr>
+                        {{/level}}
+                        <tr>
+                            <td>
+                                <p><strong>Total</strong> </p>
+                            </td>
+                            <td>
+                                <strong><span> {{levelscore}}/{{totaloutof}}</span></strong>
+                            </td>
+                        </tr>
+                       
+                    </table>
+                    {{/levels}}
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    {{/criteria}}
+
+</div>
 

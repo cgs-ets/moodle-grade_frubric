@@ -20,11 +20,10 @@ along with Moodle. If not, see
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 
-<div class="form-group" name = 'frubricdefinition'>
-
+<div class="form-group">
     <!-- the container to add the TABLE -->
-    <div id = "cont" data-definition-id = "{{definitionid}}">
-
+    <div id = "cont" data-definition-id = "{{definitionid}}" data-rerendered = "{{fromrr}}"
+    name = " {{#str}} frubriceditor, gradingform_frubric{{/str}}">
         {{^edit}}
             {{#criteria}} 
                 <table id="criteriaTable" data-type="level" >
@@ -32,24 +31,25 @@ along with Moodle. If not, see
                 </table>
                 <br>
             {{/criteria}}
-
         {{/edit}}
-        
+
         {{#edit}} 
             {{> gradingform_frubric/editor_editable}}
         {{/edit}}
         <br>
+        {{#regradealert}}
+         <div class="gradingform_rubric-regrade" role="alert"> {{#str}} confirm_regrade, gradingform_frubric{{/str}}</div>
+        {{/regradealert}}
         <p>
             <input type="button" id="addCriterion" value="Add Criterion" class = "btn btn-secondary"/>
         </p>
     </div>
-
 </div>
 
 
 {{#js}}
-require(['gradingform_frubric/feditor'],
-    function(Feditor) {
-        Feditor.init();
-    });
+    require(['gradingform_frubric/feditor'],
+        function(Feditor) {
+            Feditor.init();
+        });
 {{/js}}

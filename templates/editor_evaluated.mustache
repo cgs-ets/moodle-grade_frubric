@@ -14,16 +14,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Moodle. If not, see
 <http: //www.gnu.org/licenses />.
-
-
- DISPLAY_PREVIEW_GRADED : Preview the rubric (for people being graded) 
+This template displays the rubric filled with the result given to a particular student in the assing/view page
 }}
-
 
 <div class="graded-form">
 
     {{#criteria}}
-    <table>
+    <table class="criteria-table table-light">
         <thead>
             <tr>
                 <th>
@@ -35,7 +32,7 @@ along with Moodle. If not, see
             <tr>
                 <td>
                     {{#levels}}
-                    <table class="inner-level-table graded">
+                    <table class="inner-level-table">
                         {{#level}}
                         <tr>
                             <td>
@@ -56,7 +53,14 @@ along with Moodle. If not, see
                                 <strong><span> {{levelscore}}/{{totaloutof}}</span></strong>
                             </td>
                         </tr>
-                       
+                        <tr>
+                            <td>
+                                <p><strong>{{description}} FEEDBACK:</strong></p>
+                            </td>
+                            <td>
+                                <p disabled>{{feedback}}</p>
+                            </td>
+                        </tr>
                     </table>
                     {{/levels}}
                 </td>

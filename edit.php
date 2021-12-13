@@ -49,13 +49,14 @@ $definitionid = ($definitionid) ? $definitionid->id : 0;
 $mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid,  'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
 
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
-$data = $controller->get_definition_for_editing();
+$data = $controller->get_definition_for_editing(true);
 $data->returnurl = $returnurl;
+$data->regrade = 0;
 $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated() ) { //&& !$mform->need_confirm_regrading($controller)
+} else if ($mform->is_submitted() && $mform->is_validated() && (!$mform->need_confirm_regrading($controller) || $mform->continue_change())) { //
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
     $controller->update_definition($data);

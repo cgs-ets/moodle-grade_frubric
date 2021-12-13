@@ -56,35 +56,21 @@
 }}
 
 
-<tr data-criterion-group="{{criteriongroupid}}" data-mode="{{^edit}}create{{/edit}}{{#edit}}edit{{/edit}}" class="criterion-header" id="{{id}}" data-criterion-levels="{{levelids}}">
+<tr data-criterion-group="{{criteriongroupid}}" data-mode="{{mode}}" class="criterion-header" 
+    id="{{^rerender}}{{id}}{{/rerender}}{{#rerender}}{{cid}}{{/rerender}}" data-criterion-levels="{{levelids}}">
+
     {{^preview}}
         <th class="fr-header act">
-            {{! <div id="movecriterionup" class="flex-actions" hidden="">
-                <span class="move-up-criterion" title="Move criterion"><i class="fa fa-arrow-up"></i></span>
-            </div> }}
             <div id="delCriterion" class="flex-actions">
                 <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
             </div>
-            <div id="addRow" class="flex-actions"><span class="add-criterion" title="Add level"><i
-                        class="fa fa-plus"></i></span>
+            <div id="addRow" class="flex-actions">
+            <span class="add-criterion" title="Add level"><i class="fa fa-plus"></i></span>
             </div>
-            {{! <div id="copyRow" class="flex-actions"><span class="copy-criterion" title="Copy criterion"><i
-                        class="fa fa-copy"></i></span>
-            </div> }}
-            {{! <div id="movecriteriondown" class="flex-actions" hidden="">
-                <span class="move-down-criterion" title="Move criterion"><i class="fa fa-arrow-down"></i></span>
-            </div> }}
         </th>
         <th class="fr-header crit-desc">
-        {{#description}}
-            <textarea rows="4"  cols="131" disabled="true" class="criterion-description">{{description}}</textarea>
-        {{/description}}
-        {{^description}}
-            <textarea rows="4"  cols="131" disabled="true" class="criterion-description">{{^description}}Click to edit description {{/description}}
-        </textarea>
-        {{/description}}
-    </th>
-
+            <textarea rows="4"  cols="131" disabled="true" class="criterion-description" placeholder= "Click to edit description">{{description}}</textarea>
+        </th>
     {{/preview}}
 
     {{#preview}}
@@ -96,14 +82,18 @@
 </tr>
 
 {{#new}} 
-    {{> gradingform_frubric/criterion_total_row}}
+    {{^rerender}}
+        {{> gradingform_frubric/criterion_total_row}}
+    {{/rerender}}
 {{/new}}
 
 {{^preview}}
+
     {{#js}}
         require(['gradingform_frubric/criterion_control'],
         function(CriterionControl) {
             CriterionControl.init("{{id}}");
         });
     {{/js}}
+
 {{/preview}}

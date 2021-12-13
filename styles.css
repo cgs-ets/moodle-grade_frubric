@@ -11,6 +11,22 @@ table#criteriaTable td {
     width: auto;
 }
 
+table.inner-level-table {
+    table-layout: fixed;
+    width: 100%;
+    background-color: honeydew;
+}
+
+table.inner-level-table.preview {
+    table-layout: fixed;
+    width: 50%;
+    background-color: white;
+}
+
+table.inner-level-table.graded {
+    background: inherit;
+}
+
 .criterion-tr {
     background-color: #f2f2f2;
 }
@@ -45,7 +61,7 @@ table.level-mark-desc-table td.level-mark {
     width: 10% !important;
 }
 
-#fitem_id_criteria,
+/* #fitem_id_criteria,
 #fitem_id_status {
     display: none;
 }
@@ -56,7 +72,7 @@ table.level-mark-desc-table td.level-mark {
 
 #fitem_id_criteria > div {
     display: none;
-}
+} */
 
 .error_no_descriptors_selected {
     border: 2px solid red !important;
@@ -204,6 +220,12 @@ div.checkbox-container .action-el {
 #criteria-preview {
     width: max-content;
 }
+
+td.score-preview {
+    width: 10%;
+    text-align: center;
+}
+
 
 p.preview-def {
     overflow-wrap: break-word;

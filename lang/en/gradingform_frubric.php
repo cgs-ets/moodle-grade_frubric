@@ -25,19 +25,24 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Flexrubric';
+$string['pluginname'] = 'Frubric';
 $string['name'] = 'Name';
-$string['definefrubric'] = 'Define Flexrubric';
+$string['definefrubric'] = 'Define Frubric';
+$string['gradingof'] = '{$a} grading';
 $string['description'] = 'Description';
 $string['frubricstatus'] = 'Status';
-$string['savefrubric'] = 'Save Flexrubric and make it ready';
+$string['criteriajson'] = 'Criteria JSON';
+$string['savefrubric'] = 'Save Frubric and make it ready';
 $string['savefrubricdraft'] = 'Save as draft';
 $string['save'] = 'Save';
+$string['backtoediting'] = 'Back to editing';
 $string['addcriterion'] = 'Add criterion';
 $string['addlevel'] = 'Add Level';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
 $string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
 $string['confirmdeletedescriptor'] = 'Are you sure you want to delete this descriptor?';
+$string['frubriceditor'] = 'frubriceditor';
+$string['confirm_regrade'] = 'You are about to save significant changes to a rubric that has already been used for grading. The gradebook value will be unchanged, but the rubric will be hidden from students until their item is regraded.';
 $string['confirm'] = 'Confirmation';
 $string['editcriterion'] = 'Click to edit criterion';
 $string['criterioncantbeempty'] = 'Criterion cannot be empty';

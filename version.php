@@ -28,4 +28,4 @@ $plugin->component = 'gradingform_frubric';
 $plugin->release = '0.1.0';
 $plugin->version = 2021111100;
 //$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+//$plugin->maturity = MATURITY_ALPHA;

@@ -14,85 +14,43 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-{{!
-    @template gradingform_frubric/templates/standatd_description_input
 
-    Classes required for JS:
-    TODO
-
-    Data attributes required for JS:
-    TODO
-
-    TODO
-    Context variables required for this template:
-    * instanceid: Instance of the module this grading form belongs too
-    * criteria: A gradeable item in the Marking Guide
-    * id: The ID of the criteria
-    * description: Description of the criteria
-    * levels: The level that a criteria can be graded at
-    * criterionid: The ID of the criteria
-    * checked: Flag for if this is the currently selected level
-    * definition: Definition of the level
-    * remark: Text input for the teacher to relay to the student
-
-    Example context (json):
-    {
-        "instanceid": "42",
-        "criteria": [
-            {
-                "id": 13,
-                "description": "Show your motivation to rock climbing",
-                "levels": [
-                    {
-                        "criterionid": 13,
-                        "checked": true,
-                        "definition": "Great work!"
-                    }
-                ],
-                "remark": "That's great!"
-            }
-        ]
-    }
-    
-}}
 {{^edit}}
-<tr>
-    <td  class="level-mark">
-        <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"></textarea>
-    </td>
-    <td>
-        <div class="standard-desc-container"></div>
-        
-        <div class="add-descriptor">
-            <button class="btn btn-primary add-desc-btn">{{#str}}adddescriptorlabel, gradingform_frubric{{/str}}</button>
-        </div>
-    </td>
-</tr>
-{{/edit}}
-
-{{#edit}}
-
-{{#levels}}
-<tr>
-    <td  class="level-mark">
-        <textarea  class="fmark" data-level-id = "{{id}}">{{score}}</textarea>
-    </td>
-    <td>
-        <div class="standard-desc-container">
-        {{#descriptors}}
-            <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{definitionid}}">
-                <input  type="checkbox" {{#edit}} disabled {{/edit}}  class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>
-                <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}-{{definitionid}}">{{descText}}</textarea>
-                <span class="action-el"><i class="fa fa-close" title="Delete descriptor"></i></span>
-                <br>
-            </div>
+    <tr>
+        <td  class="level-mark">
+            <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"></textarea>
+        </td>
+        <td>
+            <div class="standard-desc-container"></div>
             
-            {{/descriptors}}
-            </div>
             <div class="add-descriptor">
                 <button class="btn btn-primary add-desc-btn">{{#str}}adddescriptorlabel, gradingform_frubric{{/str}}</button>
             </div>
         </td>
-</tr>
-{{/levels}}
+    </tr>
+{{/edit}}
+
+{{#edit}}
+    {{#levels}}
+        <tr>
+            <td  class="level-mark">
+                <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"  data-level-id ="{{id}}">{{score}}</textarea>
+            </td>
+            <td>
+                <div class="standard-desc-container">
+                {{#descriptors}}
+                    <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{definitionid}}">
+                        <input  type="checkbox" {{#edit}} disabled {{/edit}}  class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>
+                        <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}-{{definitionid}}" placeholder="{{#str}}editleveldesc, gradingform_frubric{{/str}}" >{{descText}}</textarea>
+                        <span class="action-el"><i class="fa fa-close" title="Delete descriptor"></i></span>
+                        <br>
+                    </div>
+                {{/descriptors}}
+                </div>
+                    <div class="add-descriptor">
+                        <button class="btn btn-primary add-desc-btn">{{#str}}adddescriptorlabel, gradingform_frubric{{/str}}</button>
+                    </div>
+            </td>
+        </tr>
+    {{/levels}}
 {{/edit}}

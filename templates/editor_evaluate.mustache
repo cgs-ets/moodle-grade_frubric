@@ -15,20 +15,22 @@ You should have received a copy of the GNU General Public License
 along with Moodle. If not, see
 <http: //www.gnu.org/licenses />.
 
+This template is called in the grading step.
 }}
 
 
-        {{#incomplete}}
-            <div class = 'gradingform_frubric-error'>
-                {{#str}} frubricnotcompleted, gradingform_frubric {{/str}}
-            </div>
-        {{/incomplete}}
+{{#incomplete}}
+    <div class = 'gradingform_frubric-error'>
+        {{#str}} frubricnotcompleted, gradingform_frubric {{/str}}
+    </div>
+{{/incomplete}}
 
-        {{#needupdate}} 
-            <div class = 'gradingform_frubric-regrade'>
-                {{#str}} needregrademessage, gradingform_frubric {{/str}}
-            </div>
-        {{/needupdate}}
+{{#needupdate}} 
+    <div class = 'gradingform_frubric-regrade'>
+        {{#str}} needregrademessage, gradingform_frubric {{/str}}
+    </div>
+{{/needupdate}}
+
 <div class="form-group">
         
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">

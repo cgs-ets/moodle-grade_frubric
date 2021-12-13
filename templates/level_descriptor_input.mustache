@@ -14,52 +14,11 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-{{!
-    @template gradingform_frubric/templates/standatd_description_input
-
-    Classes required for JS:
-    TODO
-
-    Data attributes required for JS:
-    TODO
-
-    TODO
-    Context variables required for this template:
-    * instanceid: Instance of the module this grading form belongs too
-    * criteria: A gradeable item in the Marking Guide
-    * id: The ID of the criteria
-    * description: Description of the criteria
-    * levels: The level that a criteria can be graded at
-    * criterionid: The ID of the criteria
-    * checked: Flag for if this is the currently selected level
-    * definition: Definition of the level
-    * remark: Text input for the teacher to relay to the student
-
-    Example context (json): TODO
-    {
-        "instanceid": "42",
-        "criteria": [
-            {
-                "id": 13,
-                "description": "Show your motivation to rock climbing",
-                "levels": [
-                    {
-                        "criterionid": 13,
-                        "checked": true,
-                        "definition": "Great work!"
-                    }
-                ],
-                "remark": "That's great!"
-            }
-        ]
-    }
-}}
-
 
 
 <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{parentid}}" {{^editaddnewlevel}} {{#edit}} descriptor-index = "{{index}}" {{/edit}} {{/editaddnewlevel}}>
     <input type="checkbox" disabled class="standard-check" data-container-id="{{id}}">
-    <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}">{{#str}}editleveldesc, gradingform_frubric{{/str}}</textarea>
+    <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}" placeholder = "{{#str}}editleveldesc, gradingform_frubric{{/str}}"></textarea>
     <span class="action-el"><i class="fa fa-close" title="{{#str}}deletedescriptor, gradingform_frubric{{/str}}"></i></span>
     <br>
 </div>
