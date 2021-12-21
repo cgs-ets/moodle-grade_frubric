@@ -45,7 +45,7 @@ $PAGE->set_heading(get_string('definefrubric', 'gradingform_frubric'));
 
 $definitionid = $DB->get_record('grading_definitions', array('areaid' => $areaid, 'method'=>'frubric'), 'id');
 $definitionid = ($definitionid) ? $definitionid->id : 0;
-
+// var_dump($controller); exit;
 $mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid,  'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
 
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
@@ -56,9 +56,10 @@ $mform->set_data($data);
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated() && (!$mform->need_confirm_regrading($controller) || $mform->continue_change())) { //
+} else if ($mform->is_submitted() && $mform->is_validated() && !$mform->need_confirm_regrading($controller)) { //
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
+    
     $controller->update_definition($data);
    
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.

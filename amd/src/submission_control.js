@@ -90,9 +90,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                 }
             });
 
-
-
-
         }
 
         SubmissionControl.prototype.checkScore = function () {
@@ -107,11 +104,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                 scoregiven.classList.add('total-input-error');
             }
 
-
         }
-
-
-
 
         return {
             init: init

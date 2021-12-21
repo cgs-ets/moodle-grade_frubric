@@ -141,37 +141,55 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             'preview' => 1, // doesnt display criterion controls.
             'totalscore' => $maxscore,
             'sumscores' => 0.0,
-
         ];
 
-        foreach ($criteria as $i => &$criterion) {
-            $value = $values['criteria'][$i];
-            $sumscores += $value['levelscore'];
-            $descriptorids = '';
-            foreach ($criterion as $j => &$cri) {
-                if ($j == 'levels') {
-                    $criterionlevelids = $this->get_level_ids_per_criterion($i);
-                    $leveljson = (array)json_decode($value['leveljson']);
-                    foreach ($criterionlevelids as $lid) {
-                        $level = (array)$leveljson[$lid->id];
-                        foreach ($level['descriptors'] as $desc) { // get the score for the descript
-                            if ($desc->checked) {
-                                $descriptorids .= "$desc->descriptorid,";
+        $counter = 0;
+
+        if (isset($values)) {
+
+            foreach ($criteria as $i => &$criterion) {
+                if (isset($values['criteria'][$i])) {
+
+                    $value = $values['criteria'][$i];
+                }
+                $sumscores += $value['levelscore'];
+                $counter++;
+                $descriptorids = '';
+                foreach ($criterion as $j => &$cri) {
+                   
+                    if (!isset($criterion['descriptiontotal'])) {
+                        $criterion['descriptiontotal'] = "Criterion $counter";
+                    }
+                    if ($j == 'levels') {
+                        $criterionlevelids = $this->get_level_ids_per_criterion($i);
+                        $leveljson = (array)json_decode($value['leveljson']);
+                        foreach ($criterionlevelids as $lid) {
+
+                            if (isset($leveljson[$lid->id])) {
+                                $level = (array)$leveljson[$lid->id];
+                                foreach ($level['descriptors'] as $desc) { // get the score for the descript
+
+                                    if ($desc->checked) {
+                                        $descriptorids .= "$desc->descriptorid,";
+                                    }
+                                }
+                               
+                                $cri[$lid->id] = $level;
                             }
                         }
-                        $descriptorids = rtrim($descriptorids, ',');
                         $levelscores = $this->get_desc_sum_scores($descriptorids);
-                        $cri[$lid->id] = $level;
                     }
                 }
+
+                $criterion['levelscore'] = $levelscores;
+                $criterion['feedback'] = $value['remark'];
             }
-            $criterion['levelscore'] = $levelscores;
-            $criterion['feedback'] = $value['remark'];
         }
 
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
+
         return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
@@ -191,9 +209,13 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
     private function get_desc_sum_scores($descriptorids) {
         global $DB;
-        $sql = "SELECT sum(score) as score FROM mdl_gradingform_frubric_descript WHERE id IN ($descriptorids)";
-        $results = $DB->get_record_sql($sql);
-        return $results->score;
+       
+        if ($descriptorids != '') {
+            $descriptorids = rtrim($descriptorids, ',');
+            $sql = "SELECT sum(score) as score FROM mdl_gradingform_frubric_descript WHERE id IN ($descriptorids)";
+            $results = $DB->get_record_sql($sql);
+            return $results->score;
+        }
     }
 
     private function get_level_ids_per_criterion($criterionid) {

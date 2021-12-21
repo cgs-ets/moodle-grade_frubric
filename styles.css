@@ -64,12 +64,13 @@ table.level-mark-desc-table td.level-mark {
 /* #fitem_id_criteria,
 #fitem_id_status {
     display: none;
-}
+}*/
 
-#fitem_id_criteria {
+#fitem_id_criteria,
+#fitem_id_criteriahelper {
     display: none;
 }
-
+/*
 #fitem_id_criteria > div {
     display: none;
 } */
@@ -234,9 +235,9 @@ p.preview-def {
 
 /* Evaluation view*/
 
-div.criteria-eval {
+/* div.criteria-eval {
     width: 60%;
-}
+} */
 
 .gradingform_frubric-error {
     color: red;

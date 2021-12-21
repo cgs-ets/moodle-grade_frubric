@@ -4,37 +4,6 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
 
         function init(mode) {
             Y.log("Rerender control...");
-            // const context = FeditorHelper.getCriteriaJSON();
-            // const definitionid = document.getElementById("cont").getAttribute("data-definition-id")
-            // const FEDITOR = 'gradingform_frubric/frubriceditor';
-
-            // const data = {
-            //     edit: 1,
-            //     rerender: 1,
-            //     definitionid: definitionid,
-            //     regradealert: 1,
-            //     "criteria": []
-            // }
-
-            // context.forEach(function (element) {
-            //     data.criteria.push(element);
-            // });
-
-
-            // Templates.render(FEDITOR, data)
-            //     .done(function (html, js) {
-            //         Y.log(html);
-            //         // Replace with editor with previous values
-            //         const editor = document.getElementById('cont');
-            //         Templates.replaceNode(editor, html, js);
-
-            //     }).fail(function (ex) {
-            //         Log.debug("error...");
-            //         Log.debug(ex);
-            //     });
-
-            //     document.querySelector('input[name="regrade"]').value = '-1'; // Change the value to allow submiting
-
             let control = new RerenderControl(mode);
             control.main();
 
@@ -100,10 +69,9 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
                     Y.debug("error...");
                     Y.debug(ex);
                 });
-
             document.querySelector('input[name="regrade"]').value = '-1'; // Change the value to allow submiting
-
         }
+
 
         RerenderControl.prototype.rerenderCreate = function () {
             Y.log('rerenderCreate ....');

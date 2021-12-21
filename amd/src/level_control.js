@@ -20,8 +20,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frubric/feditor_helper', 'core/templates', 'gradingform_frubric/domjson'],
-    function ($, Log, Str, Notification, FeditorHelper, Templates, DOMJSON) {
+define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frubric/feditor_helper', 'core/templates'],
+    function ($, Log, Str, Notification, FeditorHelper, Templates) {
         'use strict';
 
         function init(id, parentid) {

@@ -18,9 +18,8 @@ This template displays the rubric filled with the result given to a particular s
 }}
 
 <div class="graded-form">
-
     {{#criteria}}
-    <table class="criteria-table table-light">
+    <table class="criteria-table table-light ">
         <thead>
             <tr>
                 <th>
@@ -47,7 +46,7 @@ This template displays the rubric filled with the result given to a particular s
                         {{/level}}
                         <tr>
                             <td>
-                                <p><strong>{{description}}</strong> </p>
+                                <p><strong>{{descriptiontotal}}</strong> </p>
                             </td>
                             <td>
                                 <strong><span> {{levelscore}}/{{totaloutof}}</span></strong>
@@ -55,7 +54,7 @@ This template displays the rubric filled with the result given to a particular s
                         </tr>
                         <tr>
                             <td>
-                                <p><strong>{{description}} FEEDBACK:</strong></p>
+                                <p><strong>{{descriptiontotal}} FEEDBACK:</strong></p>
                             </td>
                             <td>
                                 <p disabled>{{feedback}}</p>
@@ -65,14 +64,7 @@ This template displays the rubric filled with the result given to a particular s
                     {{/levels}}
                 </td>
             </tr>
-
         </tbody>
     </table>
-
     {{/criteria}}
-
-
-
-
-
 </div>

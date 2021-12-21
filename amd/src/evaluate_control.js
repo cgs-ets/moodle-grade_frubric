@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradingform_frubric/feditor_helper'],
-    function ($, Log, Templates, Ajax, Str, FeditorHelper) {
+define(['core/log', 'gradingform_frubric/feditor_helper'],
+    function (Log, FeditorHelper) {
         'use strict';
 
         function init(data) {
@@ -47,7 +47,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
 
         EvaluateControl.prototype.setupEvents = function (criteria) {
             const self = this;
-
 
             criteria.forEach(function (element) {
                 const self = this;
@@ -80,34 +79,49 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
         }
 
         EvaluateControl.prototype.clickDescriptorHandler = function (e) {
-            const self = this;
-
             Log.debug("CHECKED...");
-            Log.debug(e);
+
             const id = (e.target.id).split('-');
             const criteriaID = id[3];
             const levelID = id[5];
             const descriptorID = id[id.length - 1];
             let levelsInput = JSON.parse(FeditorHelper.getLevelsJSON(criteriaID));
-            // Log.debug(criteriaID);
-            // Log.debug(levelID);
-            // Log.debug(descriptorID);
             levelsInput[levelID].definition.replace(/\\/g, ''); // Remove the //  from the string. 
             let definition = JSON.parse(levelsInput[levelID].definition);
             const levelDescriptors = levelsInput[levelID].descriptors;
+            // check if the descriptor exists, (maybe the rubric was updated and a new descriptor is available and its checked.
+            // it has to be added here)
+            let descriptorids = [];
+            levelDescriptors.forEach(element => {
+                descriptorids.push(element.descriptorid);
+            }, descriptorids);
 
+         
+            if (descriptorids.indexOf(parseInt(descriptorID)) == -1) {
+                const descText = document.getElementById(`advancedgrading-frubric-criteria-${criteriaID}-level-${levelID}-descriptor-${descriptorID}`).nextSibling.textContent;
+                const newdesc = {
+                    checked: false,
+                    descText: descText,
+                    delete: 0,
+                    descriptorid: descriptorID
+                }
+
+                levelDescriptors.push(newdesc);
+
+            }
+            
             levelDescriptors.filter(descriptor => {
                 if (descriptor.descriptorid == descriptorID) {
                     descriptor.checked = !descriptor.checked;
                 }
             }, descriptorID);
 
+
             definition.descriptors = levelDescriptors;
             definition = JSON.stringify(definition);
 
             levelsInput[levelID].definition = definition;
 
-            // Log.debug(levelsInput)
             // Replace the json value with the updated one
             document.getElementById(`advancedgrading-frubric-${criteriaID}-leveljson`).value = JSON.stringify(levelsInput);
         }
@@ -115,10 +129,8 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
 
         EvaluateControl.prototype.focusEvaluationHandler = function (s, e) {
             Log.debug("focusEvaluationHandler");
-            Log.debug(e);
+
             document.getElementById(e.target.id).addEventListener('change', s.onChangeEvaluationHandler.bind(this, s));
-
-
         }
 
         EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
@@ -138,12 +150,11 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
         }
 
         EvaluateControl.prototype.focusEvaluationTotalHandler = function (s, e) {
-            Log.debug("focusEvaluationHandler");
             document.getElementById(e.target.id).addEventListener('change', s.onChangeTotalEvaluationHandler.bind(this, s));
         }
 
         EvaluateControl.prototype.onChangeTotalEvaluationHandler = function (s, e) {
-            Log.debug("onChangeTotalEvaluationHandler");
+
             e.target.classList.remove('total-input-error');
             let total = parseFloat(document.getElementById(e.target.id).value);
             let maxtotal = document.getElementById(e.target.id + '-given').innerText.split('/');

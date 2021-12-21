@@ -26,12 +26,12 @@ This template is called in the grading step.
 {{/incomplete}}
 
 {{#needupdate}} 
-    <div class = 'gradingform_frubric-regrade'>
+    <div class = 'gradingform_frubric-regrade alert alert-danger'>
         {{#str}} needregrademessage, gradingform_frubric {{/str}}
     </div>
 {{/needupdate}}
 
-<div class="form-group">
+<div class="form-frubric-evaluate">
         
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}
