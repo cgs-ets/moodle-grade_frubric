@@ -38,7 +38,7 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
          * where graded and the rubric is going to be updated.
          */
         RerenderControl.prototype.rerendercreatedRegrade = function () {
-            Y.log("render regrade...");
+            //Y.log("render regrade...");
             var self = this;
 
             const context = FeditorHelper.getCriteriaJSON();
@@ -66,8 +66,8 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
                     Templates.replaceNode(editor, html, js);
 
                 }).fail(function (ex) {
-                    Y.debug("error...");
-                    Y.debug(ex);
+                    Y.log("error...");
+                    Y.log(ex);
                 });
             document.querySelector('input[name="regrade"]').value = '-1'; // Change the value to allow submiting
         }
@@ -101,8 +101,8 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
                     Templates.replaceNode(editor, html, js);
 
                 }).fail(function (ex) {
-                    Y.debug("error...");
-                    Y.debug(ex);
+                    Y.log("error...");
+                    Y.log(ex);
                 });
         }
 
@@ -136,8 +136,8 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
                     Templates.replaceNode(editor, html, js);
 
                 }).fail(function (ex) {
-                    Y.debug("error...");
-                    Y.debug(ex);
+                    Y.log("error...");
+                    Y.log(ex);
                 });
         }
 

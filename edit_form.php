@@ -248,12 +248,14 @@ class gradingform_frubric_editrubric extends moodleform {
     public function validation($data, $files) {
         $err = parent::validation($data, $files);
         $err = array();
-
+        
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
-
+//print_object($frubricel); exit;
             foreach ($frubricel as $criterion) {
-
+                if ($criterion->status == 'DELETE') {
+                    continue;
+                }
                 if ($criterion->description == '') {
                     $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                 }
@@ -264,6 +266,9 @@ class gradingform_frubric_editrubric extends moodleform {
 
                 foreach ($criterion->levels as $level) {
 
+                    if ($level->status == 'DELETE') {
+                        continue;
+                    }
                     if ($level->score === '') {
                         $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
                     }
@@ -279,7 +284,7 @@ class gradingform_frubric_editrubric extends moodleform {
                 }
             }
         }
-
+       // print_object($err); exit;
         return $err;
     }
 

@@ -27,7 +27,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
         'use strict';
 
         function init() {
-            Y.log("Feditor control...");
+            Log.debug("Feditor control...");
             const mode = FeditorHelper.getMode();
             let criterioncollection;
             // let rerender = 0;

@@ -16,10 +16,10 @@
 }}
 
 
-<div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{parentid}}" {{^editaddnewlevel}} {{#edit}} descriptor-index = "{{index}}" {{/edit}} {{/editaddnewlevel}}>
+<div class="checkbox-container" data-type="level" data-pos-level={{poslevel}}  id="{{id}}" data-parent-id="{{parentid}}" {{^editaddnewlevel}} {{#edit}} descriptor-index = "{{index}}" {{/edit}} {{/editaddnewlevel}}>
     <input type="checkbox" disabled class="standard-check" data-container-id="{{id}}">
     <textarea class="standard-desc" rows="3" cols="85" data-container-id="{{id}}" placeholder = "{{#str}}editleveldesc, gradingform_frubric{{/str}}"></textarea>
-    <span class="action-el"><i class="fa fa-close" title="{{#str}}deletedescriptor, gradingform_frubric{{/str}}"></i></span>
+    <span class="action-el" ><i class="fa fa-close" title="{{#str}}deletedescriptor, gradingform_frubric{{/str}}"></i></span>
     <br>
 </div>
 

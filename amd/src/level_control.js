@@ -27,6 +27,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         function init(id, parentid) {
             Log.debug('Level control...');
             Y.log(id);
+            Y.log(parentid);
             const mode = FeditorHelper.getMode();
             const level = document.getElementById(id);
 
@@ -47,6 +48,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             self.mode = mode;
             self.id = id;
             self.parentid = parentid;
+            self.parentidaux = parentid;
             self.LEVEL_DESCRIPTOR_INPUT = 'gradingform_frubric/level_descriptor_input';
         }
 
@@ -71,16 +73,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             Log.debug("editModeSetupEvents");
             const self = this;
-            Log.debug("QUE LEVEL TRAE:");
-            Log.debug(level);
-            // TODO: ADD LEVEL y ADD CRITERION
             if (level.getAttribute('data-row-type') == 'result') { // get the current level. Its the new level added.
-                //level = self.level.previousElementSibling;
                 level = level.previousElementSibling;
             }
 
-            Log.debug("DESPUES DEL SETEO:");
-            Log.debug(level);
 
             self.setupEvents(level);
 
@@ -117,8 +113,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
         LevelControl.prototype.editModeSetupEventsHelper = function (desciptorContainer) {
-            var self = this;
             Log.debug("editModeSetupEventsHelper");
+           
+            var self = this;
             let counter = 0;
             counter = desciptorContainer.children.length;
 
@@ -153,9 +150,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
         LevelControl.prototype.setupEvents = function (level) {
-            let self = this;
             Log.debug("Level control: setupEvents");
-            // Log.debug(level);
+           
+            let self = this;
             const [del, markandesc] = level.children;
             const markdesctable = markandesc.querySelector('.level-mark-desc-table');
             Log.debug(markdesctable);
@@ -314,6 +311,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             e.preventDefault();
             // Get the standard-desc-container  that contains the descritors.
             const descriptorContainer = FeditorHelper.getPreviousElement(e.target.parentNode, '.standard-desc-container');
+            const positionLevel = descriptorContainer.children.length;
 
             let id;
             if ((self.mode != 'edit') || descriptorContainer.children.length == 0) {
@@ -322,12 +320,14 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 id = `${self.id}-${descriptorContainer.children[0].getAttribute('id')}`;
             }
 
+
             const context = {
                 id: id,
                 parentid: self.parentid,
                 edit: self.mode == 'edit',
                 editaddnewlevel: self.parentid.includes('frubric-criteria-NEWID'),
                 index: descriptorContainer.children.length,
+                poslevel: positionLevel
             };
 
 
@@ -491,15 +491,34 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         const d = levelsdesc[0].descriptors[descriptorIndex];
                         d.delete = 1;
 
-                        // if (descriptorIndex == levelsdesc[0].descriptors.length - 1) {
-                        //     levelsdesc[0].status = 'DELETE';
-                        // } else {
-
-                        // }
                         levelsdesc[0].status = 'UPDATE';
+
+                        let countdeleted = 0;
+                        levelsdesc[0].descriptors.forEach(function (desc, index) {
+                            if (desc.delete == 1) {
+                                countdeleted++;
+                            }
+                        }, countdeleted);
+
+                        // Check if it the only descritor in the level. If it is, then remove the level completely
+                        if (levelsdesc[0].descriptors.length == countdeleted) {
+                                const checkboxaux = checkboxcontainer;
+                                const tbody = checkboxaux.parentElement.parentElement.parentElement.parentElement;
+                                const levelcontainer = tbody.parentElement.parentElement.parentElement.parentElement;
+                              
+                                levelcontainer.remove();
+                                levelsdesc[0].status = 'DELETE';
+
+                                // Check if the definition only has one criterion. If it does, and the level is removed. then the criterion has to be deleted too
+                                if (criteria.length == 1) {
+                                    criteria[0].status = 'DELETE';
+                                }
+                        }
+
                         // Update the input.
                         FeditorHelper.setCriteriaJSON(criteria);
                         checkboxcontainer.remove();
+
 
                     }, function () {
                         // For the cancel btn.
@@ -508,8 +527,23 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 });
 
             } else {
+
+                const descriptorindex = checkboxcontainer.getAttribute('data-pos-level');
+                const parentid = self.id;
+                const criteria = FeditorHelper.getCriteriaJSON();
+                const row = document.getElementById(parentid);
+                const criterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criteria);
+                const level = criterion[0].levels.filter(function (l) {
+                    if (l.id == parentid) {
+                        return l.descriptors;
+                    }
+                }, parentid);
+
+                const descriptors = (level[0]).descriptors;
+                descriptors.splice(descriptorindex, 1)
                 descriptorContainer.removeChild(checkboxcontainer);
-                // TODO: UPDATE JSON
+                // UPDATE JSON
+                FeditorHelper.setCriteriaJSON(criteria);
             }
         }
 
@@ -680,30 +714,53 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
         LevelControl.prototype.getLevelDescriptors = function (parentid, criteria, levelid) {
             Log.debug("getLevelDescriptors...");
-            Log.debug('parentid', parentid);
-            Log.debug(criteria);
-            Log.debug('levelid', levelid);
+
             var self = this;
             const row = document.getElementById(parentid);
             const criterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criteria);
+            let ids;
             // Get the level to add the descriptor
             if (levelid != undefined) {
                 parentid = levelid; // compare to the id the DB gave to the level.
             }
 
-            Log.debug('parentid', parentid);
+
 
             if (self.mode == 'edit' && levelid != undefined) { // if its come from the add descriptor we have the id of the level in the second part of the id given le
-                parentid = levelid.slice(levelid.indexOf('-') + 1, levelid.length);
+                if (levelid.toString().indexOf('-') > -1) {
+                    parentid = levelid.slice(levelid.indexOf('-') + 1, levelid.length);
+                    ids = levelid.split('-');
+                    ids.forEach(function (id, index) {
+                        ids[index] = id.toString();
+                    }, ids);
+                }
+            }
+
+            Log.debug('parentid', parentid);
+
+            const obj = {
+                mode: self.mode,
+                parentid: parentid,
+                parentidaux: self.parentidaux,
+                ids: ids
+
             }
 
             const levelsdesc = criterion[0].levels.filter(function (level, index) {
-                if (parentid == level.id) {
+                
+                Log.debug(obj);
+                if (obj.ids != undefined) {
+                    if ((obj.ids).includes((level.id).toString())) {
+                        Log.debug(level);
+                        return level.descriptors;
+                    }
+                } else if (obj.parentid == level.id) {
+                    Log.debug(level);
                     return level.descriptors;
                 }
 
 
-            }, parentid);
+            }, obj);
 
             return levelsdesc;
         }

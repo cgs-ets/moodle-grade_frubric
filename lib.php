@@ -352,7 +352,6 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         // reload the definition from the database
         $currentdefinition = $this->get_definition(true);
-        //print_object($currentdefinition);
 
         $haschanges = array();
 
@@ -417,11 +416,13 @@ class gradingform_frubric_controller extends gradingform_controller {
             } else  if ($criterion->status == "DELETE") { // DELETE CRITERION
                 if ($doupdate) {
                     foreach ($criterion->levels as $level) {
-                        $DB->delete_records('gradingform_frubric_levels', array('id' => $level->dbid));
+                        $DB->delete_records('gradingform_frubric_levels', array('id' => $level->id)); //dbid
                     }
                     $DB->delete_records('gradingform_frubric_criteria', array('id' => $criterion->id));
                 }
                 $haschanges[4] = true;
+            } else if ($criterion->status == "CREATED") { 
+                $id = $criterion->id;
             }
 
             if (count($levels) == 0) {
@@ -433,8 +434,8 @@ class gradingform_frubric_controller extends gradingform_controller {
                 if ($level->status == 'NEW') {
                     // insert level into DB.
                     if (isset($id)) {
-                        $leveldata = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE); // TODO MDL-31235 format is not supported yet
-                    }
+                        $leveldata = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE); 
+                    } 
                     $leveldata['score'] =  0;
 
                     if ($doupdate) {
@@ -449,7 +450,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                             $sc = $level->score;
 
                             $descriptordata = new \stdClass();
-                            $descriptordata->criterionid = $id;
+                            $descriptordata->criterionid = isset($id) ? $id : $level->id; 
                             $descriptordata->levelid = $levelid;
                             $descriptordata->score = $maxscore / count($level->descriptors);
                             $descriptordata->maxscore = $maxscore;
@@ -830,7 +831,10 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
             }
             if ($criteriajson != null) {
-                $this->definition->frubric_criteria[$record->rcid]['totaloutof'] = $criteriajson->totaloutof;
+                if (isset($criteriajson->totaloutof)) {
+
+                    $this->definition->frubric_criteria[$record->rcid]['totaloutof'] = $criteriajson->totaloutof;
+                }
             }
         }
         $rs->close();
