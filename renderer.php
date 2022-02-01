@@ -163,7 +163,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                     if ($j == 'levels') {
                         $criterionlevelids = $this->get_level_ids_per_criterion($i);
                         $leveljson = (array)json_decode($value['leveljson']);
-                        foreach ($criterionlevelids as $lid) {
+                        foreach ($criterionlevelids as $index => $lid) {
 
                             if (isset($leveljson[$lid->id])) {
                                 $level = (array)$leveljson[$lid->id];
@@ -171,6 +171,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                                     if ($desc->checked) {
                                         $descriptorids .= "$desc->descriptorid,";
+                                        $auxindex = random_int(0, PHP_INT_MAX);
+                                        $desc->idinput = $auxindex ;
+                                        $desc->nameinput = $auxindex;
+                                        
                                     }
                                 }
                                
@@ -189,6 +193,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
+       // print_object($data); exit;
 
         return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
@@ -207,7 +212,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         }
     }
 
-    private function get_desc_sum_scores($descriptorids) {
+    public function get_desc_sum_scores($descriptorids) {
         global $DB;
        
         if ($descriptorids != '') {
@@ -218,7 +223,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         }
     }
 
-    private function get_level_ids_per_criterion($criterionid) {
+    public function get_level_ids_per_criterion($criterionid) {
         global $DB;
         $sql = "SELECT id  FROM mdl_gradingform_frubric_levels WHERE criterionid = $criterionid";
         $results = $DB->get_records_sql($sql);

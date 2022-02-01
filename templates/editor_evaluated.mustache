@@ -39,7 +39,7 @@ This template displays the rubric filled with the result given to a particular s
                             </td>
                             <td>
                                 {{#descriptors}}
-                                <input disabled type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
+                                <input disabled type="checkbox" id ="{{idinput}}" name = "{{nameinput}}" {{#checked}} value = "1" checked = "checked"{{/checked}} {{^checked}} value = "1" {{/checked}} > {{descText}} <br>
                                 {{/descriptors}}
                             </td>
                         </tr>
