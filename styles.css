@@ -1,5 +1,9 @@
 table#criteriaTable {
-    width: 70%;
+    /* width: 70%; */
+}
+
+div#cont {
+    margin-left: 1rem;
 }
 
 table#criteriaTable th,
@@ -27,6 +31,9 @@ table.inner-level-table.graded {
     background: inherit;
 }
 
+.frubric-add-criterion {
+    width: fit-content;
+}
 .criterion-tr {
     background-color: #f2f2f2;
 }
@@ -71,7 +78,7 @@ table.level-mark-desc-table td.level-mark {
     display: none;
 }
 
-#fitem_id_criteria > div {
+#fitem_id_criteria>div {
     display: none;
 }
 
@@ -238,6 +245,7 @@ p.preview-def {
 /* div.criteria-eval {
     width: 60%;
 } */
+
 
 .gradingform_frubric-error {
     color: red;

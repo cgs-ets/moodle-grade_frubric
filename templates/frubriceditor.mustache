@@ -20,7 +20,16 @@ along with Moodle. If not, see
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 
-<div class="form-group">
+
+<div class="form-group row  fitem">
+<div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+        
+                <label class="d-inline word-break " for="id_description_editor" >
+                    Frubric
+                </label>
+        
+       </div>
+    
     <!-- the container to add the TABLE -->
     <div id = "cont" data-definition-id = "{{definitionid}}" data-rerendered = "{{fromrr}}"
     name = " {{#str}} frubriceditor, gradingform_frubric{{/str}}">
@@ -40,7 +49,7 @@ along with Moodle. If not, see
         {{#regradealert}}
          <div class="gradingform_rubric-regrade" role="alert"> {{#str}} confirm_regrade, gradingform_frubric{{/str}}</div>
         {{/regradealert}}
-        <p>
+        <p class = "frubric-add-criterion">
             <input type="button" id="addCriterion" value="Add Criterion" class = "btn btn-secondary"/>
         </p>
     </div>

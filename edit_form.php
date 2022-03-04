@@ -32,7 +32,7 @@ class gradingform_frubric_editrubric extends moodleform {
      * Defines forms elements
      */
     public  function definition() {
-        global $OUTPUT, $PAGE;
+        global  $PAGE;
         $form = $this->_form;
         //print
         $form->addElement('hidden', 'areaid');
@@ -53,7 +53,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $options = gradingform_frubric_controller::description_form_field_options($this->_customdata['context']);
         $form->addElement('editor', 'description_editor', get_string('description', 'gradingform_frubric'), null, $options);
         $form->setType('description_editor', PARAM_RAW);
-
+        
         // frubric completion status
         $choices = array();
         $choices[gradingform_controller::DEFINITION_STATUS_DRAFT]    = html_writer::tag('span', get_string('statusdraft', 'core_grading'), array('class' => 'status draft'));
@@ -75,6 +75,8 @@ class gradingform_frubric_editrubric extends moodleform {
         }
 
         // Frubric editor.
+      
+        $form->setType('frubric', PARAM_RAW);
         $renderer = $PAGE->get_renderer('gradingform_frubric');
         $flexrubireditorhtml = $renderer->render_template(gradingform_frubric_controller::DISPLAY_EDIT_FULL, $d);
         $form->addElement('html',  $flexrubireditorhtml);
@@ -248,10 +250,10 @@ class gradingform_frubric_editrubric extends moodleform {
     public function validation($data, $files) {
         $err = parent::validation($data, $files);
         $err = array();
-        
+
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
-//print_object($frubricel); exit;
+            //print_object($frubricel); exit;
             foreach ($frubricel as $criterion) {
                 if ($criterion->status == 'DELETE') {
                     continue;
@@ -284,7 +286,7 @@ class gradingform_frubric_editrubric extends moodleform {
                 }
             }
         }
-       // print_object($err); exit;
+        // print_object($err); exit;
         return $err;
     }
 

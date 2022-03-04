@@ -133,7 +133,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
         $criteria = $instance->get_controller()->get_definition()->frubric_criteria;
         $values = $instance->get_frubric_filling(true);
-        $levelscores = 0;
         $sumscores = 0;
 
         $data = [
@@ -181,11 +180,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                                 $cri[$lid->id] = $level;
                             }
                         }
-                        $levelscores = $this->get_desc_sum_scores($descriptorids);
                     }
                 }
 
-                $criterion['levelscore'] = $levelscores;
+                $criterion['levelscore'] = (int)$value['levelscore'];
                 $criterion['feedback'] = $value['remark'];
             }
         }
@@ -193,7 +191,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
-       // print_object($data); exit;
 
         return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
@@ -209,17 +206,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                     $criterion['levels'] = $level;
                 }
             }
-        }
-    }
-
-    public function get_desc_sum_scores($descriptorids) {
-        global $DB;
-       
-        if ($descriptorids != '') {
-            $descriptorids = rtrim($descriptorids, ',');
-            $sql = "SELECT sum(score) as score FROM mdl_gradingform_frubric_descript WHERE id IN ($descriptorids)";
-            $results = $DB->get_record_sql($sql);
-            return $results->score;
         }
     }
 
