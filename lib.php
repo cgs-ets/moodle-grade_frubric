@@ -345,9 +345,17 @@ class gradingform_frubric_controller extends gradingform_controller {
         if ((bool)$newlockzeropoints != (bool)$currentoptions['lockzeropoints']) {
             $haschanges[3] = true;
         }
-
-        $newcriteria = json_decode($newdefinition->criteria);
+        
+        if (!isset($newdefinition->frubric['criteria'])) {
+            $newcriteria = json_decode($newdefinition->criteria);
+        } else {
+            // Comes from the create from template.
+            $newcriteria = array_values($newdefinition->frubric['criteria']);
+            $newcriteria = $this->format_definition($newdefinition->frubric['criteria']);
+        } 
+        
         $changes = $this->compare_existing_definition($currentdefinition, $newcriteria);
+        
         if ($changes) {
             $haschanges[1] = true;
         }
@@ -575,7 +583,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     }
 
     private function compare_existing_definition($currentdefinition, $newcriteria) {
-
+       
         $frubric_criteria = $currentdefinition->frubric_criteria;
         $countcurrentcriteria =  count($frubric_criteria);
         $countnewcriteria = count($newcriteria);
@@ -602,6 +610,30 @@ class gradingform_frubric_controller extends gradingform_controller {
         }
 
         return false;
+    }
+
+    /**
+     * When creating a new definition, the criteria array is an array of objects
+     * When creating templates the criteria is an array of arrays. --> Modify it 
+     */
+    private function format_definition($criteria) {
+        $criteriaaux = [];
+        if (is_array($criteria)) {
+
+            foreach($criteria as $criterion) {
+                $criterion = (object)$criterion;
+               
+                $criterion->levels = array_values($criterion->levels);
+                foreach($criterion->levels as $level) {
+                    (object)$level;
+                }
+                $criteriaaux[] = $criterion;
+        
+       
+            }
+        }
+
+        return $criteriaaux;
     }
 
     private function get_level_score($scorefield) {
@@ -771,7 +803,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $this->definition = false;
         foreach ($rs as $record) {
 
-            // pick the common definition data
+            // pick the common definition data.
             if ($this->definition === false) {
                 $this->definition = new stdClass();
                 foreach (array(
@@ -785,7 +817,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 
             }
 
-            // pick the criterion data
+            // pick the criterion data.
             if (!empty($record->rcid) and empty($this->definition->frubric_criteria[$record->rcid])) {
                 foreach (array('id', 'sortorder', 'description', 'descriptionformat') as $fieldname) {
 
@@ -793,7 +825,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
                 $this->definition->frubric_criteria[$record->rcid]['levels'] = array();
             }
-            // pick the level data
+            // pick the level data.
             if (!empty($record->rlid)) {
                 foreach (array('id', 'score', 'definition', 'definitionformat') as $fieldname) {
                     $value = $record->{'rl' . $fieldname};
@@ -821,15 +853,71 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
             }
         }
-        $rs->close();
-        $options = $this->get_options();
 
-        if (!$options['sortlevelsasc']) {
-            foreach (array_keys($this->definition->frubric_criteria) as $rcid) {
-                $this->definition->frubric_criteria[$rcid]['levels'] = array_reverse($this->definition->frubric_criteria[$rcid]['levels'], true);
+        $rs->close();
+    }
+
+    /**
+     * Returns the form definition suitable for cloning into another area
+     *
+     * @see parent::get_definition_copy()
+     * @param gradingform_controller $target the controller of the new copy
+     * @return stdClass definition structure to pass to the target's {@link update_definition()}
+     */
+    public function get_definition_copy(gradingform_controller $target) {
+
+        $new = parent::get_definition_copy($target);
+        $old = $this->get_definition_for_editing();
+        $new->description_editor = $old->description_editor;
+        $listcriterion = [];
+        foreach ($old->frubric as $criteria) {
+            foreach($criteria as $cr) {
+                $cr = (object)($cr);
+             
+                $criterion = new stdClass();
+                $criterion->id = 1;
+                $criterion->cid = "frubric-criteria-NEWID1"; // Criterion ID for the DB
+                $criterion->status = "NEW";
+                $criterion->description  = $cr->description; // Criterion descrption
+                $criterion->rowindex = 1; // Keep track of the header row.
+                $criterion->definitionid = 0; // Id from mdl_grading_definitions/
+                $levels = [];
+                foreach($cr->levels as $level) {
+                    $level = (object) $level;
+                    $l = new stdClass();
+                    $l->score = $level->score;
+                    $l->status = "NEW";
+                    $l->id = rand();
+    
+                    foreach ($level->descriptors as $descriptor) {
+                        $descr = new stdClass();
+                        $descr->checked = $descriptor->checked;
+                        $descr->descText = $descriptor->descText;
+                        $descr->descriptorid = 0;
+                        $l->descriptors[] = $descr;
+                    }
+                    $levels[] = $l;
+                }
+                $criterion->levels = $levels;
+                $criterion->idsumscore = "";
+                $criterion->totaloutof = $cr->totaloutof;
+                
+
+                $listcriterion [] = $criterion;
             }
+
+            $data = [
+                'criteria' => $listcriterion,
+                'definitionid' => 0,
+                
+            ];
+            
         }
 
+        
+        $new->frubric = $data;
+        error_log(print_r($new, true));
+        return $new;
     }
 
 
