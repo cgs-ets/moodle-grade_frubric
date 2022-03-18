@@ -33,6 +33,7 @@ class gradingform_frubric_editrubric extends moodleform {
      */
     public  function definition() {
         global  $PAGE;
+
         $form = $this->_form;
         //print
         $form->addElement('hidden', 'areaid');
@@ -44,7 +45,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('hidden', 'regrade');
         $form->setType('regrade', PARAM_INT);
 
-        // name
+          // name
         $form->addElement('text', 'name', get_string('name', 'gradingform_frubric'), array('size' => 52, 'aria-required' => 'true'));
         $form->addRule('name', get_string('required'), 'required', null, 'client');
         $form->setType('name', PARAM_TEXT);
@@ -68,6 +69,9 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->setType('criteriahelper', PARAM_RAW);
 
         list($d, $criteriajson) = $this->getCriterionData();
+
+        $form->addElement('hidden', 'forrerender');
+        $form->setType('forrerender', PARAM_RAW);
 
         if (!empty($criteriajson)) {
             $form->setDefault('criteria', $criteriajson);
@@ -210,6 +214,10 @@ class gradingform_frubric_editrubric extends moodleform {
 
                     foreach ($criterion->levels as $l => $level) {
                         $level->dcg = $criterion->id;
+                      
+                        if ($level->score == "0") {
+                            $level->score = '';
+                        }
                         $d->levels[] = $level;
                         $leveldbids[] = strval($level->id);
                     }
@@ -217,7 +225,7 @@ class gradingform_frubric_editrubric extends moodleform {
                     if (isset($criterion->sumscore)) {
                         $d->sumscore = $criterion->sumscore;
                     }
-                    $d->totaloutof = $criterion->totaloutof;
+                    $d->totaloutof = isset($criterion->totaloutof) ? $criterion->totaloutof : '';
                     $d->titlefortotal = "Criterion $criterioncounter";
                     $criterioncounter++;
                     $data['criteria'][] =  $d;
@@ -232,7 +240,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $data['edit'] = $edit;
         $data['mode'] = $mode;
         $data['fromrr'] = $fromrr;
-
+       
         return [$data, $criteriajson];
     }
 
@@ -252,40 +260,41 @@ class gradingform_frubric_editrubric extends moodleform {
 
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
-            //print_object($frubricel); exit;
             foreach ($frubricel as $criterion) {
-                if ($criterion->status == 'DELETE') {
+                if ($criterion->status == 'DELETE' || $criterion->status == "NEW" ) { // TODO: Check how to rerender with error
                     continue;
-                }
-                if ($criterion->description == '') {
-                    $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
-                }
+                } else {
 
-                if (count($criterion->levels) == 0) {
-                    $err['criteria'] = get_string('err_levels', 'gradingform_frubric');
-                }
-
-                foreach ($criterion->levels as $level) {
-
-                    if ($level->status == 'DELETE') {
-                        continue;
-                    }
-                    if ($level->score === '') {
-                        $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
-                    }
-                    if (count($level->descriptors) == 0) {
+                    if ($criterion->description == '') {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
-                    } else {
-                        foreach ($level->descriptors as $descriptor) {
-                            if ($descriptor->descText == '') {
-                                $err['criteria'] = get_string('err_nodescriptiondef', 'gradingform_frubric');
+                    }
+    
+                    if (count($criterion->levels) == 0) {
+                        $err['criteria'] = get_string('err_levels', 'gradingform_frubric');
+                    }
+    
+                    foreach ($criterion->levels as $level) {
+    
+                        if ($level->status == 'DELETE') {
+                            continue;
+                        } 
+                        if ($level->score === '') {
+                            $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
+                        }
+                        if (count($level->descriptors) == 0) {
+                            $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
+                        } else {
+                            foreach ($level->descriptors as $descriptor) {
+                                if ($descriptor->descText == '') {
+                                    $err['criteria'] = get_string('err_nodescriptiondef', 'gradingform_frubric');
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        // print_object($err); exit;
+        
         return $err;
     }
 

@@ -143,12 +143,10 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
 
                     if (FeditorHelper.getCriteriaJSON() != '') {
                         self.criterioncollection = JSON.parse(document.getElementById('id_criteria').value);
-                        // document.getElementById('id_criteriajsonshadow').value = JSON.parse(document.getElementById('id_criteria').value);
                     }
 
                     self.criterioncollection.push(criterion);
                     FeditorHelper.setCriteriaJSON(self.criterioncollection);
-                    //document.getElementById('id_criteria').value = JSON.stringify(self.criterioncollection);
 
                 })
                 .fail(function (ex) {

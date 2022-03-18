@@ -79,6 +79,7 @@ if ($mform->is_cancelled()) {
 \core\session\manager::keepalive();
 
 
+
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();

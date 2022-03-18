@@ -21,122 +21,122 @@
  */
 
 define(["core/log"], function (Log) {
-  "use strict";
+    "use strict";
 
-  return {
-    // Helper function to get the closest parent with a matching selector
-    getClosest: function (elem, selector) {
-      for (; elem && elem !== document; elem = elem.parentNode) {
-        if (elem.matches(selector)) {
-          return elem;
-        }
-      }
-      return null;
-    },
+    return {
+        // Helper function to get the closest parent with a matching selector
+        getClosest: function (elem, selector) {
+            for (; elem && elem !== document; elem = elem.parentNode) {
+                if (elem.matches(selector)) {
+                    return elem;
+                }
+            }
+            return null;
+        },
 
-    getPreviousElement: function (elem, selector) {
-    
-        // Get the previous sibling element
-      var sibling = elem.previousElementSibling;
-     
-      // If there's no selector return.
-      if (!selector) {
-        return;
-      }
+        getPreviousElement: function (elem, selector) {
 
-      // If the sibling matches our selector, use it
-      // If not, jump to the next sibling and continue the loop
-      while (sibling) {
-          
-        if (sibling.matches(selector)) {
-          return sibling;
-        }
-        sibling = sibling.previousElementSibling;
-      }
-    },
+            // Get the previous sibling element
+            var sibling = elem.previousElementSibling;
 
-    getDistanceFromCriterionHeader: function (elem, selector) {
-      var sibling = elem.previousElementSibling;
-      var distance = -1;
-      // If there's no selector return.
-      if (!selector) {
-        return;
-      }
+            // If there's no selector return.
+            if (!selector) {
+                return;
+            }
 
-      while (sibling) {
-        distance++;
-        if (sibling.matches(selector)) {
-          return distance;
-        }
-        sibling = sibling.previousElementSibling;
-      }
+            // If the sibling matches our selector, use it
+            // If not, jump to the next sibling and continue the loop
+            while (sibling) {
 
-    },
+                if (sibling.matches(selector)) {
+                    return sibling;
+                }
+                sibling = sibling.previousElementSibling;
+            }
+        },
 
-    getNextElement: function (elem, selector) {
-      // Get the next sibling element
-      var sibling = elem.nextElementSibling;
-      // If there's no selector, return
-      if (!selector) {
-        return;
-      }
-      // If the sibling matches our selector, use it
-      // If not, jump to the next sibling and continue the loop
-      while (sibling) {
-        if (sibling.matches(selector)) {
-          return sibling;
-        }
-        sibling = sibling.nextElementSibling;
-      }
-    },
+        getDistanceFromCriterionHeader: function (elem, selector) {
+            var sibling = elem.previousElementSibling;
+            var distance = -1;
+            // If there's no selector return.
+            if (!selector) {
+                return;
+            }
 
-    getCriteriaJSON: function () {
-      return JSON.parse(document.getElementById("id_criteria").value) ;
-    },
+            while (sibling) {
+                distance++;
+                if (sibling.matches(selector)) {
+                    return distance;
+                }
+                sibling = sibling.previousElementSibling;
+            }
 
-    getCriteriaJSONShados: function() {
-        return JSON.parse(document.getElementById("id_criteriajsonshadow").value) ;
-    },
+        },
 
-    getLevelsJSON: function(criteriaid) {
-        return document.getElementById(`advancedgrading-frubric-${criteriaid}-leveljson`).value;
-    },
+        getNextElement: function (elem, selector) {
+            // Get the next sibling element
+            var sibling = elem.nextElementSibling;
+            // If there's no selector, return
+            if (!selector) {
+                return;
+            }
+            // If the sibling matches our selector, use it
+            // If not, jump to the next sibling and continue the loop
+            while (sibling) {
+                if (sibling.matches(selector)) {
+                    return sibling;
+                }
+                sibling = sibling.nextElementSibling;
+            }
+        },
 
-    setCriteriaJSON: function (criterioncollection) {
-      return document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
-    },
+        getCriteriaJSON: function () {
+            return JSON.parse(document.getElementById("id_criteria").value);
+        },
 
-    getCriterionFromCriteriaCollection: function (row, criterioncollection) {
+        getCriteriaJSONShados: function () {
+            return JSON.parse(document.getElementById("id_criteriajsonshadow").value);
+        },
 
-      const filteredCriterion = criterioncollection.filter(function (criterion, index) {
-        const id = row.getAttribute('data-criterion-group');
+        getLevelsJSON: function (criteriaid) {
+            return document.getElementById(`advancedgrading-frubric-${criteriaid}-leveljson`).value;
+        },
 
-        criterion.rowindex = index;
-        if (id == criterion.id) {
-          return criterion;
-        }
-      }, row);
+        setCriteriaJSON: function (criterioncollection) {
+            return document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+        },
 
-      return filteredCriterion;
-    },
+        getCriterionFromCriteriaCollection: function (row, criterioncollection) {
 
-    getRandomID: function () {
-      return (Math.floor(Math.random() * 9999));
-    },
+            const filteredCriterion = criterioncollection.filter(function (criterion, index) {
+                const id = row.getAttribute('data-criterion-group');
 
-    getMode: function () {
-      return document
-        .querySelector(".criterion-header")
-        .getAttribute("data-mode");
-    },
+                criterion.rowindex = index;
+                if (id == criterion.id) {
+                    return criterion;
+                }
+            }, row);
 
-    getMinMax: function (score) {
-        if (score.indexOf('-') != -1) {
-            return score.split('-');
-        } else {
-            return score.split('/');
-        }
-    }
+            return filteredCriterion;
+        },
 
-  };
+        getRandomID: function () {
+            return (Math.floor(Math.random() * 9999));
+        },
+
+        getMode: function () {
+            return document
+                .querySelector(".criterion-header")
+                .getAttribute("data-mode");
+        },
+
+        getMinMax: function (score) {
+            if (score.indexOf('-') != -1) {
+                return score.split('-');
+            } else {
+                return score.split('/');
+            }
+        },
+
+    };
 });

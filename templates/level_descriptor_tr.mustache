@@ -37,7 +37,10 @@
                 <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"  data-level-id ="{{id}}">{{score}}</textarea>
             </td>
             <td>
+             {{> gradingform_frubric/level_decriptors_delete_set}}
+           
                 <div class="standard-desc-container">
+               
                 {{#descriptors}}
                     <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{definitionid}}">
                         <input  type="checkbox" {{#edit}} disabled {{/edit}}  class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>

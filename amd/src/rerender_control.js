@@ -19,17 +19,38 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
         RerenderControl.prototype.main = function () {
             var self = this;
 
-            if (self.mode == 'regrade') {
-                self.rerendercreatedRegrade();
-            }
+            // if (self.mode == 'regrade') {
+            //     self.rerendercreatedRegrade();
+            // }
 
-            if (self.mode == 'rerendercreate') {
-                self.rerenderCreate();
-            }
+            // if (self.mode == 'rerendercreate') {
+            //     self.rerenderCreate();
+            // }
 
-            if (self.mode == 'rerenderupdate') {
-                self.rerenderUpdate();
-            }
+            // if (self.mode == 'rerenderupdate') {
+            //     self.rerenderUpdate();
+            // }
+
+            // if (self.mode == 'edit') {
+            //    // self.rerenderUpdate();
+            // }
+
+            
+            // if (document.querySelector('input[name="forrerender"]').value != '') {
+            //     const data = JSON.parse(document.querySelector('input[name="forrerender"]').value);
+            //     Templates.render(self.FEDITOR, data)
+            //     .done(function (html, js) {
+            //         Y.log(html);
+            //         // Replace with editor with previous values
+            //         const editor = document.getElementById('cont');
+            //         Templates.replaceNode(editor, html, js);
+    
+            //     }).fail(function (ex) {
+            //         Y.log("error...");
+            //         Y.log(ex);
+            //     });
+            // }
+
 
         }
 
@@ -92,7 +113,7 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
             context.forEach(function (element) {
                 data.criteria.push(element);
             });
-            Y.log(data)
+            // Y.log(data)
             Templates.render(self.FEDITOR, data)
                 .done(function (html, js) {
                     Y.log(html);
@@ -112,7 +133,7 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
             const context = FeditorHelper.getCriteriaJSON();
             const definitionid = document.getElementById("cont").getAttribute("data-definition-id");
 
-            Y.log(context);
+            // Y.log(context);
 
             const data = {
                 // edit: 1,
@@ -127,10 +148,10 @@ define(['jquery', 'gradingform_frubric/feditor_helper', 'core/templates'],
             context.forEach(function (element) {
                 data.criteria.push(element);
             });
-
+            Y.log(data);
             Templates.render(self.FEDITOR, data)
                 .done(function (html, js) {
-                    Y.log(html);
+                    // Y.log(html);
                     // Replace with editor with previous values
                     const editor = document.getElementById('cont');
                     Templates.replaceNode(editor, html, js);

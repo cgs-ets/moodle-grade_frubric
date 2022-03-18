@@ -28,7 +28,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
         function init(id) {
             Log.debug('Criterion control...');
-            Log.debug(id);
             const mode = FeditorHelper.getMode();
             let control = new CriterionControl(mode, id);
             control.main();
@@ -51,7 +50,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
          */
         CriterionControl.prototype.main = function () {
             let self = this;
-            Log.debug(self);
             const currentRow = document.getElementById(self.id);
 
             if (self.mode == 'edit') { // Add the listeners to all the criterion rows.
@@ -75,9 +73,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
         CriterionControl.prototype.setupEvents = function (currentRow) {
             let self = this;
-            Log.debug('setupEvents');
-            Log.debug(currentRow);
-
             const actions = currentRow.querySelector('.act'); // Get actions cell
 
             if (!actions) {
@@ -100,9 +95,9 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             if (resultRow != undefined) {
                 const [criterionTitletd, criterionTotaltd] = resultRow.children;
-                Log.debug(criterionTitletd);
-                Log.debug(criterionTotaltd);
-                Log.debug(criterionTotaltd.querySelector('.total-input'));
+                // Log.debug(criterionTitletd);
+                // Log.debug(criterionTotaltd);
+                // Log.debug(criterionTotaltd.querySelector('.total-input'));
                 criterionTotaltd.querySelector('.total-input').addEventListener('blur', self.validateTotal);
             }
 
@@ -110,7 +105,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
         };
 
         CriterionControl.prototype.addLevel = function (row) {
-            Log.debug('addLevel');
             let self = this;
             const randomid = FeditorHelper.getRandomID();
             const context = {
@@ -173,7 +167,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
 
         CriterionControl.prototype.removeCriterion = function (row) {
-            Log.debug("remove...");
 
             Str.get_strings([{
                     key: 'confirm',
@@ -209,10 +202,10 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                         }
                     }, row.target.parentNode.parentNode.parentNode.parentNode);
 
-                    Log.debug("TO DELETE");
+                //    Log.debug("TO DELETE");
                     frctodel[0].status = "DELETE";
                     const levels = frctodel[0].levels;
-                    Log.debug(levels);
+               //     Log.debug(levels);
                     // Change the status for the levels in this criterion
 
                     for (let j = 0; j < levels.length; j++) {
@@ -264,15 +257,10 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
 
         CriterionControl.prototype.focusoutHandlerDisabled = function (e) {
-            Log.debug("focusoutHandlerDisabled");
-            Log.debug(this);
-           
             e.target.setAttribute('disabled', true);
         };
 
         CriterionControl.prototype.changeCriterionHandlerDisabled = function (e) {
-            Log.debug('changeCriterionHandlerDisabled');
-            Log.debug(e);
 
             const criterioncollection = (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
 
@@ -284,8 +272,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     return criterion;
                 }
             }, e);
-
-            Log.debug(filterCriterion);
 
             if (filterCriterion[0].description != e.target.value && (FeditorHelper.getMode() == 'edit' &&
                     !filterCriterion[0].cid.includes('frubric-criteria-NEWID'))) { // A new criterion is added to an existing definition
@@ -300,8 +286,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
         CriterionControl.prototype.getCriteriaJSON = function () {
             return (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
-        }; // TODO: borrar y usar el que cree en el helper
-
+        }; // TODO:DElete and use the one in the helper.
         CriterionControl.prototype.validateTotal = function (e) {
 
             // In case the user put the wrong value before, clean the style
@@ -324,7 +309,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                 const criteria = FeditorHelper.getCriteriaJSON();
                 const criterion = FeditorHelper.getCriterionFromCriteriaCollection(e.target.parentNode.parentNode.parentNode, criteria);
 
-                Log.debug(criterion);
                 criterion[0].sumscore = inputvalue;
                 FeditorHelper.setCriteriaJSON(criteria);
             }

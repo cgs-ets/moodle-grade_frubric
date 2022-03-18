@@ -34,6 +34,7 @@ table.inner-level-table.graded {
 .frubric-add-criterion {
     width: fit-content;
 }
+
 .criterion-tr {
     background-color: #f2f2f2;
 }
@@ -221,9 +222,17 @@ input.total-input {
     border: solid red;
 }
 
+div.standard-desc-container .action-el,
 div.checkbox-container .action-el {
     color: red;
 }
+
+.action-delete-set-desc {
+    margin: 97%;
+    color: red;
+    cursor: pointer;
+}
+
 
 #criteria-preview {
     width: max-content;

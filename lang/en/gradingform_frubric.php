@@ -41,6 +41,7 @@ $string['addlevel'] = 'Add Level';
 $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criterion?';
 $string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
 $string['confirmdeletedescriptor'] = 'Are you sure you want to delete this descriptor?';
+$string['confirmdeletesetcriterion'] = 'Are you sure you want to delete the set of descriptors?';
 $string['frubriceditor'] = 'frubriceditor';
 $string['confirm_regrade'] = 'You are about to save significant changes to a rubric that has already been used for grading. The gradebook value will be unchanged, but the rubric will be hidden from students until their item is regraded.';
 $string['confirm'] = 'Confirmation';

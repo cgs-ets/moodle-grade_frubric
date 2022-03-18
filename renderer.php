@@ -50,6 +50,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 return  $OUTPUT->render_from_template('gradingform_frubric/editor_evaluate', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EDIT_FULL:
+                
                 return $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $data);
                 break;
         }
@@ -82,10 +83,11 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $criteria = array_values($criteria);
 
         foreach ($criteria as $i => &$criterion) {
+        
             foreach ($criterion as $j => &$crit) {
                 if ($j == 'levels') {
-
                     foreach ($crit as $q => $c) {
+                        $c = $this->preview_score_check($c);
                         $criterion[$j]['level'][] = $c;
                         unset($crit[$q]);
                     }
@@ -98,6 +100,27 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         ];
 
         return $data;
+    }
+
+    /**
+     * When saving draft and no score is given to the level. Zero is saved
+     * Hide when previewing it.
+     */
+    private function preview_score_check($levels) {
+
+        foreach($levels as $i=>&$level) {
+            //foreach($lvls as $level) {
+               if ($i == 'score') {
+                   if ($level == "0"){
+                       $level = "";
+                   }
+               }
+            //}
+
+        }
+
+        return $levels;
+
     }
 
     /**
