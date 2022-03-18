@@ -37,6 +37,29 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
                 Rerender.init('rerendercreate')
             }
 
+            // In case the all the rubric is deleted and saved in the DB. We need to put an empty one again.
+            //Otherwise the add button submits the form.
+            const empty = JSON.parse(document.getElementById('id_criteria').value).length == 0; 
+            if (mode === 'create' && empty) {
+                // Initialise the first criterion
+                var criterion = {
+                    id: 1,
+                    cid: `frubric-criteria-NEWID${document.querySelectorAll(".criterion-header").length}`, // Criterion ID for the DB
+                    status: "NEW",
+                    description: "", // Criterion descrption
+                    rowindex: 1, // Keep track of the header row.
+                    definitionid: document
+                        .getElementById("cont")
+                        .getAttribute("data-definition-id"), // Id from mdl_grading_definitions/
+                    levels: [],
+                    sumscore: "",
+                    totaloutof: ""
+                };
+
+                criterioncollection = [criterion]; // Collects all the criterions
+                document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+
+            }
             if (mode === 'edit' || (mode === 'create' && document.getElementById('id_criteria').classList.contains('is-invalid') != undefined)) { // Validation error, keep the values inserted
                 criterioncollection = document.getElementById('id_criteria').value;
 
@@ -61,14 +84,14 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
 
             }
 
-            if (document.getElementById('cont').getAttribute('data-rerendered') == 0 ) {
+            if (document.getElementById('cont').getAttribute('data-rerendered') == 0) {
 
                 if (mode == 'edit' && document.getElementById('id_criteria').classList.contains('is-invalid') == true) {
                     Rerender.init('rerenderupdate');
                 }
             }
 
-          
+
             let control = new Feditor(criterioncollection);
             control.main();
 

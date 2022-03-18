@@ -240,7 +240,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $data['edit'] = $edit;
         $data['mode'] = $mode;
         $data['fromrr'] = $fromrr;
-       
+        
         return [$data, $criteriajson];
     }
 
