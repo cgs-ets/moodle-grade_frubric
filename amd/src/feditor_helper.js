@@ -138,5 +138,14 @@ define(["core/log"], function (Log) {
             }
         },
 
+        /**
+         * keep track of the JSON so in case it the validation fails.
+         * We send this value that has the data set to be rerended.
+         * @param {JSON} criteria 
+         */
+        setHiddenCriteriaJSON: function(criteria) {
+            document.querySelector('input[name="criteriajsonhelper"]').value =  JSON.stringify(criteria);
+        }
+
     };
 });

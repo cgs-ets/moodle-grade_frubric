@@ -68,7 +68,11 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('text', 'criteriahelper', get_string('criteriajson', 'gradingform_frubric'), ['regrade' => '']);
         $form->setType('criteriahelper', PARAM_RAW);
 
-        list($d, $criteriajson) = $this->getCriterionData();
+        if ($this->_customdata['criteriajsonhelper'] != '') {
+            list($d, $criteriajson) = $this->getCriterionData($this->_customdata['criteriajsonhelper']);
+        } else {
+            list($d, $criteriajson) = $this->getCriterionData();
+        }
 
         $form->addElement('hidden', 'forrerender');
         $form->setType('forrerender', PARAM_RAW);
@@ -77,6 +81,10 @@ class gradingform_frubric_editrubric extends moodleform {
             $form->setDefault('criteria', $criteriajson);
             $form->setDefault('criteriahelper', $criteriajson); // 
         }
+
+        $form->addElement('hidden', 'criteriajsonhelper');
+        $form->setType('criteriajsonhelper', PARAM_RAW);
+  
 
         // Frubric editor.
       
@@ -165,7 +173,7 @@ class gradingform_frubric_editrubric extends moodleform {
 
 
     // Generate the context for the feditor template.
-    private function getCriterionData() {
+    private function getCriterionData($criteriacollection = null) {
         global $DB;
 
         $definitionid = $this->_customdata['defid'];
@@ -183,38 +191,44 @@ class gradingform_frubric_editrubric extends moodleform {
             'criteria' => [$d],
             'definitionid' => $definitionid,
             'counter' => 0,
-            'first' => 1
+            'first' => 1,
         ];
         // To avoid multiple events attachment.
         $edit =  0;
         $mode = 'create';
         $fromrr = 0;
-
-
-        if ($definitionid != 0) {
-            $criteariacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
-            foreach ($criteariacollection as  $criterion) {
+        
+        if ($definitionid != 0 && $criteriacollection == null) {
+            $criteriacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
+           
+            foreach ($criteriacollection as  $criterion) {
                 $criteria[] = json_decode($criterion->criteriajson);
             }
-
             $criteriajson = json_encode($criteria); // I need it in the criteria json input to work on the JS.
-            $criterioncounter = 1;
-            foreach ($criteria as $i => $criterion) {
+        } else {
+            $criteria = json_decode($criteriacollection);
+           
+            $criteriajson = str_replace("\\","", $criteriacollection);
+        }
 
+        $criterioncounter = 1;
+        if ($criteria  != null && !is_string($criteria)) { // TODO: CHECK
+
+            foreach ($criteria as $i => $criterion) {
                 $d = new \stdClass();
                 if (!empty($criterion)) {
                     $edit = 1;
                     $mode = 'edit';
-
+    
                     $d->id = $criterion->id;
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
                     $leveldbids = [];
-
+    
                     foreach ($criterion->levels as $l => $level) {
                         $level->dcg = $criterion->id;
-                      
+    
                         if ($level->score == "0") {
                             $level->score = '';
                         }
@@ -231,9 +245,9 @@ class gradingform_frubric_editrubric extends moodleform {
                     $data['criteria'][] =  $d;
                 }
             }
-            if (count($data['criteria']) > 1) {
-                array_shift($data['criteria']);
-            }
+        }
+        if (count($data['criteria']) > 1) {
+            array_shift($data['criteria']);
         }
 
 
@@ -241,6 +255,8 @@ class gradingform_frubric_editrubric extends moodleform {
         $data['mode'] = $mode;
         $data['fromrr'] = $fromrr;
         
+         //print_object($data); exit;
+
         return [$data, $criteriajson];
     }
 
@@ -257,11 +273,12 @@ class gradingform_frubric_editrubric extends moodleform {
     public function validation($data, $files) {
         $err = parent::validation($data, $files);
         $err = array();
-
+       
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
+            
             foreach ($frubricel as $criterion) {
-                if ($criterion->status == 'DELETE' || $criterion->status == "NEW" ) { // TODO: Check how to rerender with error
+                if ($criterion->status == 'DELETE') {
                     continue;
                 } else {
 
@@ -273,15 +290,14 @@ class gradingform_frubric_editrubric extends moodleform {
                         $err['criteria'] = get_string('err_levels', 'gradingform_frubric');
                     }
     
-                    foreach ($criterion->levels as $level) {
-    
+                    foreach ($criterion->levels as $i =>$level) {
                         if ($level->status == 'DELETE') {
                             continue;
                         } 
-                        if ($level->score === '') {
+                        if ($level->score === 0 && count($criterion->levels) == $i-1) { // The last level can have a zero val
                             $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
                         }
-                        if (count($level->descriptors) == 0) {
+                        if (count($level->descriptors) == 0 ) {
                             $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                         } else {
                             foreach ($level->descriptors as $descriptor) {

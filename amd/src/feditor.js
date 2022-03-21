@@ -22,20 +22,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_helper', 'gradingform_frubric/rerender_control'],
-    function ($, Log, Templates, FeditorHelper, Rerender) {
+define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
+    function ($, Log, Templates, FeditorHelper) {
         'use strict';
 
         function init() {
             Log.debug("Feditor control...");
             const mode = FeditorHelper.getMode();
             let criterioncollection;
-            // let rerender = 0;
-
-            if (mode === 'create' && document.getElementById('id_criteria').classList.contains('is-invalid')) { // Re render the template with the previous values
-                //  rerender = 1;
-                Rerender.init('rerendercreate')
-            }
+          
 
             // In case the all the rubric is deleted and saved in the DB. We need to put an empty one again.
             //Otherwise the add button submits the form.
@@ -43,7 +38,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
             if (mode === 'create' && empty) {
                 // Initialise the first criterion
                 var criterion = {
-                    id: 1,
+                    id: '1',
                     cid: `frubric-criteria-NEWID${document.querySelectorAll(".criterion-header").length}`, // Criterion ID for the DB
                     status: "NEW",
                     description: "", // Criterion descrption
@@ -57,7 +52,9 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-                document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+               // document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+                FeditorHelper.setCriteriaJSON(criterioncollection);
+                FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
             }
             if (mode === 'edit' || (mode === 'create' && document.getElementById('id_criteria').classList.contains('is-invalid') != undefined)) { // Validation error, keep the values inserted
@@ -66,7 +63,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
             } else {
                 // Initialise the first criterion
                 var criterion = {
-                    id: 1,
+                    id: "1",
                     cid: `frubric-criteria-NEWID${document.querySelectorAll(".criterion-header").length}`, // Criterion ID for the DB
                     status: "NEW",
                     description: "", // Criterion descrption
@@ -80,17 +77,11 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-                document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+                // document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+                FeditorHelper.setCriteriaJSON(criterioncollection);
+                FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
             }
-
-            if (document.getElementById('cont').getAttribute('data-rerendered') == 0) {
-
-                if (mode == 'edit' && document.getElementById('id_criteria').classList.contains('is-invalid') == true) {
-                    Rerender.init('rerenderupdate');
-                }
-            }
-
 
             let control = new Feditor(criterioncollection);
             control.main();
@@ -107,7 +98,6 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
             self.CRITERION_ROW = 'gradingform_frubric/editor_criterion_row';
             self.FEDITOR = 'gradingform_frubric/frubriceditor';
             self.criterioncollection = criterioncollection;
-            //self.rerender = rerender;
         }
 
         /**
@@ -116,12 +106,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
          */
         Feditor.prototype.main = function () {
             let self = this;
-            // Log.debug(this);
-            // if (self.rerender == 1) {
-            //     self.rerenderEditor();
-            // } else {
             self.setupEvents();
-            // }
 
         };
 
@@ -183,65 +168,6 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
             }
 
         };
-
-
-        // Feditor.prototype.rerenderEditor = function () {
-        //     var self = this;
-
-        //     const context = JSON.parse(self.criterioncollection);
-        //     const definitionid = document.getElementById("cont").getAttribute("data-definition-id")
-
-        //     const data = {
-        //         edit: 1,
-        //         rerender: 1,
-        //         definitionid: definitionid,
-        //         "criteria": []
-        //     }
-
-        //     context.forEach(function (element) {
-        //         let auxid = element.id;
-        //         //element.id = element.cid;
-        //         element.criteriongroupid = auxid;
-        //         if (element.levels.length == 0) {
-        //             element.levels.push({
-        //                 score: '',
-        //                 status: "NEW",
-        //                 id: FeditorHelper.getRandomID(),
-        //                 descriptors: [{
-        //                     checked: false,
-        //                     descText: '',
-        //                     delete: 0
-        //                 }]
-        //             });
-        //         } else {
-        //             element.levels.forEach(level => {
-        //                 if (level.descriptors.length == 0) {
-        //                     level.descriptors.push({
-        //                         checked: false,
-        //                         descText: '',
-        //                         delete: 0
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //         data.criteria.push(element);
-
-        //     });
-
-        //     Templates.render(self.FEDITOR, data)
-        //         .done(function (html, js) {
-        //             Y.log(html);
-        //             // Replace with editor with previous values
-        //             const editor = document.getElementById('cont');
-        //             Templates.replaceNode(editor, html, js);
-
-        //         }).fail(function (ex) {
-        //             Log.debug("error...");
-        //             Log.debug(ex);
-        //         });
-
-        // }
-
 
         return {
             init: init

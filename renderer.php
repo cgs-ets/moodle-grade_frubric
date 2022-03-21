@@ -80,6 +80,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     }
 
     private function preview_prepare_data($criteria) {
+        //sort($criteria);
         $criteria = array_values($criteria);
 
         foreach ($criteria as $i => &$criterion) {
@@ -98,7 +99,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data = [
             'criteria' => $criteria,
         ];
-
+        
         return $data;
     }
 

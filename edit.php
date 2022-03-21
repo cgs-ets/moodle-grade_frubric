@@ -29,7 +29,7 @@ require_once(__DIR__ . '/edit_form.php');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
 
 $areaid = required_param('areaid', PARAM_INT);
-
+$criteriajson = optional_param('criteriajsonhelper', '', PARAM_RAW);
 $manager = get_grading_manager($areaid);
 
 list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
@@ -45,8 +45,8 @@ $PAGE->set_heading(get_string('definefrubric', 'gradingform_frubric'));
 
 $definitionid = $DB->get_record('grading_definitions', array('areaid' => $areaid, 'method'=>'frubric'), 'id');
 $definitionid = ($definitionid) ? $definitionid->id : 0;
-// var_dump($controller); exit;
-$mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid,  'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
+ 
+$mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid, 'criteriajsonhelper' => $criteriajson, 'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
 
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data = $controller->get_definition_for_editing(true);

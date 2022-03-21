@@ -57,8 +57,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     self.setupEvents(currentRow);
                     // Attach level listeners.
                     const cgid = currentRow.getAttribute('data-criterion-group');
-                    // const level = document.querySelector(`.level-${cgid}`);
-
                     LevelControl.init(self.id);
 
                 } catch (error) {
@@ -95,9 +93,6 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             if (resultRow != undefined) {
                 const [criterionTitletd, criterionTotaltd] = resultRow.children;
-                // Log.debug(criterionTitletd);
-                // Log.debug(criterionTotaltd);
-                // Log.debug(criterionTotaltd.querySelector('.total-input'));
                 criterionTotaltd.querySelector('.total-input').addEventListener('blur', self.validateTotal);
             }
 
@@ -155,6 +150,8 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                     filterCriterion[0].levels.push(levelObject);
                     // Refresh the JSON input
                     FeditorHelper.setCriteriaJSON(criterioncollection);
+                    FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
+
                     LevelControl.init(randomid, self.id);
                 })
                 .fail(function (ex) {
@@ -212,8 +209,10 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
                         levels[j].status = "DELETE";
                     }
 
-                    document.getElementById('id_criteria').value = JSON.stringify(frc);
-
+                   // document.getElementById('id_criteria').value = JSON.stringify(frc);
+                    FeditorHelper.setCriteriaJSON(frc);
+                    FeditorHelper.setHiddenCriteriaJSON(frc);
+                  
                     // Delete all the levels in that criterion.
                     for (let i = (criterionToDelete + 1); i < criTable.rows.length; i++) {
                         if (criTable.rows[i].getAttribute('data-criterion-group') == criteariaID) {
@@ -280,8 +279,9 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
             filterCriterion[0].description = e.target.value;
             // Refresh the Criteria JSON input
-            document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
-
+            //document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+            FeditorHelper.setCriteriaJSON(criterioncollection);
+            FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
         };
 
         CriterionControl.prototype.getCriteriaJSON = function () {
@@ -311,6 +311,7 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/n
 
                 criterion[0].sumscore = inputvalue;
                 FeditorHelper.setCriteriaJSON(criteria);
+                FeditorHelper.setHiddenCriteriaJSON(criteria);
             }
 
         }

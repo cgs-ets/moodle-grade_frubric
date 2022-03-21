@@ -56,7 +56,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
          */
         LevelControl.prototype.main = function () {
             let self = this;
-
+          
             if (self.mode == 'edit') {
                 self.editModeSetupEvents(self.level.nextElementSibling);
             } else {
@@ -75,14 +75,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (level.getAttribute('data-row-type') == 'result') { // get the current level. Its the new level added.
                 level = level.previousElementSibling;
             }
-
-            self.setupEvents(level);
-
+           // self.setupEvents(level);
+           
             const [del, markandesc] = level.children;
             const markdesctable = markandesc.querySelector('.level-mark-desc-table');
 
             if (markdesctable) {
-
                 let rows = markdesctable.rows;
                 $(rows).each(function (index, row) {
 
@@ -95,14 +93,14 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         $(td).children().each(function (i) {
 
                             const container = this;
-
+                          
                             if (container.classList.contains('standard-desc-container')) {
 
                                 self.editModeSetupEventsHelper(container);
                             }
 
                             if (container.classList.contains('add-descriptor')) {
-                                container.querySelector('.add-desc-btn').addEventListener('click', self.addDescriptor.bind(self));
+                                container.querySelector('.add-desc-btn').addEventListener('click', self.addDescriptor.bind(self)); //.bind(self)
                             }
 
                             if (container.classList.contains('action-delete-set-desc')) {
@@ -165,7 +163,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             Log.debug("Level control: setupEvents");
 
             let self = this;
-
             const [del, markandesc] = level.children;
             const markdesctable = markandesc.querySelector('.level-mark-desc-table');
 
@@ -313,14 +310,18 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             criterion[0].totaloutof = total;
 
             FeditorHelper.setCriteriaJSON(criteria);
+            FeditorHelper.setHiddenCriteriaJSON(criteria);
 
 
         }
 
         LevelControl.prototype.addDescriptor = function (e) {
-
+            Y.log("...addDescriptor...");
+            Y.log(e);
             const self = this;
+            e.stopImmediatePropagation();
             e.preventDefault();
+            
             // Get the standard-desc-container  that contains the descritors.
             const descriptorContainer = FeditorHelper.getPreviousElement(e.target.parentNode, '.standard-desc-container');
             const positionLevel = descriptorContainer.children.length;
@@ -364,6 +365,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     const descriptor = container.querySelector('.standard-desc');
 
                     descriptor.addEventListener('click', self.clickDescriptorHandler.bind(this, self));
+                    descriptor.addEventListener('focus', self.clickDescriptorHandler.bind(this, self));
                     action.addEventListener('click', self.deleteDescriptor.bind(self, descriptorContainer, container));
                     checkbox.addEventListener('click', self.selectdescriptor.bind(this, self));
 
@@ -374,16 +376,23 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
 
             let criteria = FeditorHelper.getCriteriaJSON();
-            const levelsdesc = self.getLevelDescriptors(self.parentid, criteria, self.id);
+            var levelsdesc = '';//self.getLevelDescriptors(self.parentid, criteria, self.id);
+            if (self.lid != undefined ) {
+                levelsdesc = self.getLevelDescriptors(self.parentid, criteria, self.lid);
+            } else {
+                levelsdesc = self.getLevelDescriptors(self.parentid, criteria, self.id);
+            }
+           
             const desc = levelsdesc[0].descriptors;
 
-            // desc.push({
-            //     checked: false,
-            //     descText: '',
-            //     delete: 0
-            // });
+            desc.push({
+                checked: false,
+                descText: '',
+                delete: 0
+            });
 
             criteria = FeditorHelper.setCriteriaJSON(criteria);
+            FeditorHelper.setHiddenCriteriaJSON(criteria);
         }
 
 
@@ -394,6 +403,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             descriptor.focus();
             // Attach change event
             descriptor.addEventListener('change', s.changeDescriptorHandler.bind(this, s));
+            // If you copy and paste content without clicking it doesnt pick up the change. Add paste event
+            descriptor.addEventListener('paste', s.changeDescriptorHandler.bind(this, s)); 
 
         }
 
@@ -410,7 +421,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (descriptorIndex != null) {
                 levelid = e.target.parentNode.getAttribute('id');
             } else {
-                descriptorIndex = Array.from(document.getElementById(containerid).parentNode.children).indexOf(e.target.parentNode)
+                descriptorIndex = Array.from(document.getElementById(containerid).parentNode.children).indexOf(e.target.parentNode) -1;
             }
             // We are adding a descriptor to a level that is already in the DB. Make sure is not a rerender for failing
             if (levelid != undefined && levelid.includes("-") && !document.getElementById('id_criteria').classList.contains('is-invalid')) {
@@ -419,26 +430,20 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             }
 
-            Y.log(flag);
-
             const levelsdesc = s.getLevelDescriptors(s.id, criteria, levelid);
             const desc = levelsdesc[0].descriptors[descriptorIndex];
-            Y.log(levelsdesc);
-            Y.log(desc);
 
             if (desc == undefined) { // New entry
-
+                
                 levelsdesc[0].descriptors.push({
                     checked: false,
                     descText: e.target.value,
                     delete: 0
                 });
 
-                // if (flag) { // A descriptor has been added to a level that is already in the DB.
-                //     levelsdesc[0].status = 'UPDATE';
-                // }
 
             } else { // Existing entry, update text.
+                
                 desc.descText = e.target.value;
 
 
@@ -449,13 +454,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
 
             FeditorHelper.setCriteriaJSON(criteria);
+            FeditorHelper.setHiddenCriteriaJSON(criteria);
 
         }
 
         LevelControl.prototype.selectdescriptor = function (e, s) {
-
             Log.debug("selectdescriptor");
-
+           
             const containerid = s.target.getAttribute('data-container-id');
             const criteria = FeditorHelper.getCriteriaJSON();
             let levelsdesc;
@@ -478,13 +483,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             }
             // Update the input.
             FeditorHelper.setCriteriaJSON(criteria);
+            FeditorHelper.setHiddenCriteriaJSON(criteria);
         }
 
         LevelControl.prototype.deleteDescriptor = function (descriptorContainer, checkboxcontainer) {
             Log.debug('deleteDescriptor');
             var self = this;
-
-
             if (checkboxcontainer.getAttribute('descriptor-index')) { // This means the descriptor is already saved in the BD. ask if theya re sure to remove
 
                 Str.get_strings([{
@@ -554,6 +558,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                      
                         // Update the input.
                         FeditorHelper.setCriteriaJSON(criteria);
+                        FeditorHelper.setHiddenCriteriaJSON(criteria);
                         checkboxcontainer.remove();
 
 
@@ -581,6 +586,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 descriptorContainer.removeChild(checkboxcontainer);
                 // UPDATE JSON
                 FeditorHelper.setCriteriaJSON(criteria);
+                FeditorHelper.setHiddenCriteriaJSON(criteria)
             }
         }
 
@@ -673,7 +679,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         // Controlar que el max value  refleje el maximo si hay cambios
                     }
 
-                    document.getElementById('id_criteria').value = JSON.stringify(criteria);
+                    // document.getElementById('id_criteria').value = JSON.stringify(criteria);
+                    FeditorHelper.setCriteriaJSON(criteria);
+                    FeditorHelper.setHiddenCriteriaJSON(criteria);
 
                 }, function () {
                     // For the cancel btn.
@@ -732,7 +740,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                     }
 
-                    document.getElementById('id_criteria').value = JSON.stringify(criteria);
+                    //document.getElementById('id_criteria').value = JSON.stringify(criteria);
+                    FeditorHelper.setCriteriaJSON(criteria);
+                    FeditorHelper.setHiddenCriteriaJSON(criteria);
                     criTable.deleteRow(tr.rowIndex); // span -> td -> tr.
 
 
@@ -834,7 +844,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             }
 
-            document.getElementById('id_criteria').value = JSON.stringify(criteriaJSON); // Criterionjson;
+           // document.getElementById('id_criteria').value = JSON.stringify(criteriaJSON); // Criterionjson;
+            FeditorHelper.setCriteriaJSON(criteriaJSON);
+            FeditorHelper.setHiddenCriteriaJSON(criteriaJSON);
+          //  const cr = JSON.stringify(criterioncollection);
 
 
             e.target.setAttribute('disabled', true);
@@ -860,7 +873,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (levelid != undefined) {
                 parentid = levelid; // compare to the id the DB gave to the level.
             }
-
 
             if (self.mode == 'edit' && levelid != undefined) { // if its come from the add descriptor we have the id of the level in the second part of the id given le
                 if (levelid.toString().indexOf('-') > -1) {
