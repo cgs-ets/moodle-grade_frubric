@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
-    function ($, Log, Templates, FeditorHelper) {
+define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
+    function (Log, Templates, FeditorHelper) {
         'use strict';
 
         function init() {
@@ -52,7 +52,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-               // document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+               
                 FeditorHelper.setCriteriaJSON(criterioncollection);
                 FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
@@ -84,6 +84,8 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
             }
 
             let control = new Feditor(criterioncollection);
+           
+           // FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
             control.main();
 
         }
@@ -155,6 +157,7 @@ define(['jquery', 'core/log', 'core/templates', 'gradingform_frubric/feditor_hel
 
                     self.criterioncollection.push(criterion);
                     FeditorHelper.setCriteriaJSON(self.criterioncollection);
+                    FeditorHelper.setHiddenCriteriaJSON(self.criterioncollection);
 
                 })
                 .fail(function (ex) {

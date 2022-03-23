@@ -433,8 +433,10 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $id = $criterion->id;
             }
 
+            error_log(print_r($levels, true));
+
             foreach ($levels as $l => $level) {
-           
+               
                 if ($level->status == 'UPDATED' ) continue; // This level was updated before. Not this time.
                 if ($level->status == 'NEW' ) {
                     if($this->is_descriptor_empty($level)) {
@@ -837,10 +839,10 @@ class gradingform_frubric_controller extends gradingform_controller {
         $params = array('areaid' => $this->areaid, 'method' => $this->get_method_name());
 
         $rs = $DB->get_recordset_sql($sql, $params);
-
+       
         $this->definition = false;
         foreach ($rs as $record) {
-
+           //print_object($record); 
             // pick the common definition data.
             if ($this->definition === false) {
                 $this->definition = new stdClass();
@@ -879,7 +881,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             }
 
             $criteriajson = json_decode($record->criteriajson);
-
+           
             if (!isset($this->definition->frubric_criteria[$record->rcid]['sumscore'])) {
 
                 if (isset($criteriajson->sumscore)) {
@@ -893,8 +895,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
             }
         }
-
-        $rs->close();
+        $rs->close();//exit;
     }
 
     /**

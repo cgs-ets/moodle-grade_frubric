@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'core/notification', 'gradingform_frubric/level_control', 'gradingform_frubric/feditor_helper'],
-    function ($, Log, Templates, Ajax, Str, Notification, LevelControl, FeditorHelper) {
+define(['core/log', 'core/templates',  'core/str', 'core/notification', 'gradingform_frubric/level_control', 'gradingform_frubric/feditor_helper'],
+    function (Log, Templates, Str, Notification, LevelControl, FeditorHelper) {
         'use strict';
 
         function init(id) {

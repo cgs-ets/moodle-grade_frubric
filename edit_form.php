@@ -196,7 +196,8 @@ class gradingform_frubric_editrubric extends moodleform {
         // To avoid multiple events attachment.
         $edit =  0;
         $mode = 'create';
-        $fromrr = 0;
+        $fromrr = 0;  
+        //var_dump($criteriacollection); exit;
         
         if ($definitionid != 0 && $criteriacollection == null) {
             $criteriacollection =  $DB->get_records('gradingform_frubric_criteria', ['definitionid' => $definitionid], 'id', 'criteriajson'); //'id',
@@ -212,8 +213,10 @@ class gradingform_frubric_editrubric extends moodleform {
         }
 
         $criterioncounter = 1;
-        if ($criteria  != null && !is_string($criteria)) { // TODO: CHECK
 
+     
+       
+        if ($criteria  != null && !is_string($criteria)) {
             foreach ($criteria as $i => $criterion) {
                 $d = new \stdClass();
                 if (!empty($criterion)) {
@@ -227,8 +230,9 @@ class gradingform_frubric_editrubric extends moodleform {
                     $leveldbids = [];
     
                     foreach ($criterion->levels as $l => $level) {
+                       
                         $level->dcg = $criterion->id;
-    
+                     
                         if ($level->score == "0") {
                             $level->score = '';
                         }
@@ -255,8 +259,6 @@ class gradingform_frubric_editrubric extends moodleform {
         $data['mode'] = $mode;
         $data['fromrr'] = $fromrr;
         
-         //print_object($data); exit;
-
         return [$data, $criteriajson];
     }
 

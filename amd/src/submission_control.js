@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradingform_frubric/feditor_helper'],
-    function ($, Log, Templates, Ajax, Str, FeditorHelper) {
+define(['core/log'],
+    function (Log) {
         'use strict';
 
         function init(submiteddata, definitionID) {
@@ -71,12 +71,9 @@ define(['jquery', 'core/log', 'core/templates', 'core/ajax', 'core/str', 'gradin
                 var totalnotchecked = 0;
                 
                 Object.values(JSON.parse(value.leveljson)).forEach(val => {
-                    Y.log(val.descriptors);
                     totaldescriptor += val.descriptors.length;
                     
                     val.descriptors.forEach(d => {
-                        ;
-                        Y.log(d);
                         if (d.checked == false) {
                             totalnotchecked++;
                         }

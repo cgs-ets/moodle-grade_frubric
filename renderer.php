@@ -80,9 +80,9 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     }
 
     private function preview_prepare_data($criteria) {
-        //sort($criteria);
+        ksort($criteria); // When deleting all descriptors from  a level that is already in the DB. When adding new descriptors to this level. the order changes. to latest to earliest.
+       
         $criteria = array_values($criteria);
-
         foreach ($criteria as $i => &$criterion) {
         
             foreach ($criterion as $j => &$crit) {
@@ -99,7 +99,9 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data = [
             'criteria' => $criteria,
         ];
+       
         
+      
         return $data;
     }
 
