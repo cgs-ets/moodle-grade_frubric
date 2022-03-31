@@ -23,8 +23,16 @@ table.inner-level-table {
 
 table.inner-level-table.preview {
     table-layout: fixed;
-    width: 50%;
+    width: 60%;
     background-color: white;
+    margin-bottom: 1rem;
+}
+}
+
+table.inner-level-table.preview th,
+table.inner-level-table.preview td {
+    border: 1px solid black;
+    padding: 0.5rem;
 }
 
 table.inner-level-table.graded {

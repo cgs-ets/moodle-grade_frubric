@@ -523,15 +523,18 @@ class gradingform_frubric_controller extends gradingform_controller {
                                 $descupdate->id = $ld->descriptorid;
                                 $descupdate->description = $ld->descText;
                                 $descupdate->selected = $ld->checked;
-                                $descupdate->deleted = $ld->delete;
+                                if (isset( $ld->delete)) {
+                                    $descupdate->deleted = $ld->delete;
 
-                                if ($ld->delete == 1) {
-                                    $destodelete  = new \stdClass();
-                                    $destodelete->id = ($levelaux[$j])->descriptorid;
-                                    $descriptorstodelete[] = $j;
-                                    $DB->delete_records('gradingform_frubric_descript', ['id' => ($levelaux[$j])->descriptorid]);
-                                    $haschanges[3] = true;
+                                    if ($ld->delete == 1) {
+                                        $destodelete  = new \stdClass();
+                                        $destodelete->id = ($levelaux[$j])->descriptorid;
+                                        $descriptorstodelete[] = $j;
+                                        $DB->delete_records('gradingform_frubric_descript', ['id' => ($levelaux[$j])->descriptorid]);
+                                        $haschanges[3] = true;
+                                    }
                                 }
+
 
                                 if ($j == (count($level->descriptors) - 1)) {
                                     foreach ($descriptorstodelete as $i => $index) {
@@ -1361,10 +1364,6 @@ class gradingform_frubric_instance extends gradingform_instance {
         }
 
         $data['sumscores'] = $totalscore;
-
-        // if ($this->get_data('isrestored') && $haschanges) {
-        //     $html .= html_writer::tag('div', get_string('restoredfromdraft', 'gradingform_rubric'), array('class' => 'gradingform_rubric-restored'));
-        // }
 
         if (!empty($options['showdescriptionteacher'])) {
             $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(), array('class' => 'gradingform_rubric-description'));
