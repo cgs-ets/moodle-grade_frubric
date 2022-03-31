@@ -35,8 +35,9 @@ This template is called in the grading step.
         
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}
-        <table>
-            {{> gradingform_frubric/editor_criterion_row}}
+        <table class ="frubric-table-evaluate">
+        <tr><strong>{{description}}</strong></tr><br><br>
+           
             <table class="table table-bordered" id = "{{name}}-frubric-criteria-{{criteriaid}}">
                 {{#definitions}}
                 <tr id= "{{name}}-frubric-criteria-{{criteriaid}}-level">
