@@ -264,6 +264,14 @@ p.preview-def {
 } */
 
 
+td.frubric-score-column {
+    width: 8%;
+}
+
+p.frubric-descriptor-preview {
+width: 60%;
+}
+
 .gradingform_frubric-error {
     color: red;
     font-weight: 700;

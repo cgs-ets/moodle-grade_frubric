@@ -1,5 +1,3 @@
-/* eslint-disable capitalized-comments */
-/* eslint-disable max-len */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify

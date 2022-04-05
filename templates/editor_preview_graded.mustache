@@ -20,7 +20,7 @@ along with Moodle. If not, see
 }}
 
 
-<div class="graded-form">
+<div class="graded-form-h">
 
     {{#criteria}}
     <table>
@@ -38,7 +38,7 @@ along with Moodle. If not, see
                     <table class="inner-level-table graded">
                         {{#level}}
                         <tr>
-                            <td>
+                            <td class ='frubric-score-column'>
                                 <p>{{score}}</p>
                             </td>
                             <td>
@@ -50,10 +50,10 @@ along with Moodle. If not, see
                         {{/level}}
                         <tr>
                             <td>
-                                <p><strong>{{description}}</strong> </p>
+                                <p><strong>{{criterionlabel}}</strong> </p>
                             </td>
                             <td>
-                                <strong><span> {{levelscore}}/{{totaloutof}}</span></strong>
+                                <strong><span class='frubric-total-level'> {{levelscore}}/{{totaloutof}}</span></strong>
                             </td>
                         </tr>
                        
