@@ -30,6 +30,7 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
             Log.debug("gradingform_frubric: Evaluate Control...");
             data = JSON.parse(data);
+          
             const control = new EvaluateControl(data.criteria);
             control.main(data.criteria);
         }
@@ -54,6 +55,7 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
                 const level = criterion.children[0].children;
                 const score = document.getElementById(`advancedgrading-frubric-criteria-${element.criteriaid}-level-grade`);
                 score.addEventListener('focus', self.focusEvaluationHandler.bind(this, self));
+                //score.addEventListener('change', self.sumTotal.bind(this, self));;
 
                 Array.from(level).forEach(function (leveldetails) {
                     const descriptorsCollection = leveldetails.children[1];
@@ -72,15 +74,9 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
             }, self);
 
-
-            const totalgrade = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`);
-            totalgrade.addEventListener('focus', self.focusEvaluationTotalHandler.bind(this, self));
-
         }
 
         EvaluateControl.prototype.clickDescriptorHandler = function (e) {
-            Log.debug("CHECKED...");
-
             const id = (e.target.id).split('-');
             const criteriaID = id[3];
             const levelID = id[5];
@@ -88,15 +84,14 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
             let levelsInput = JSON.parse(FeditorHelper.getLevelsJSON(criteriaID));
             levelsInput[levelID].definition.replace(/\\/g, ''); // Remove the //  from the string. 
             let definition = JSON.parse(levelsInput[levelID].definition);
-            const levelDescriptors = levelsInput[levelID].descriptors;
-            // check if the descriptor exists, (maybe the rubric was updated and a new descriptor is available and its checked.
-            // it has to be added here)
+            let levelDescriptors = levelsInput[levelID].descriptors;
+        
             let descriptorids = [];
             levelDescriptors.forEach(element => {
                 descriptorids.push(element.descriptorid);
             }, descriptorids);
 
-         
+
             if (descriptorids.indexOf(parseInt(descriptorID)) == -1) {
                 const descText = document.getElementById(`advancedgrading-frubric-criteria-${criteriaID}-level-${levelID}-descriptor-${descriptorID}`).nextSibling.textContent;
                 const newdesc = {
@@ -109,7 +104,7 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
                 levelDescriptors.push(newdesc);
 
             }
-            
+
             levelDescriptors.filter(descriptor => {
                 if (descriptor.descriptorid == descriptorID) {
                     descriptor.checked = !descriptor.checked;
@@ -121,9 +116,9 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
             definition = JSON.stringify(definition);
 
             levelsInput[levelID].definition = definition;
-
             // Replace the json value with the updated one
             document.getElementById(`advancedgrading-frubric-${criteriaID}-leveljson`).value = JSON.stringify(levelsInput);
+            document.getElementById(`advancedgrading-frubric-${criteriaID}-leveljsonaux`).value = JSON.stringify(levelsInput);
         }
 
 
@@ -131,6 +126,7 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
             Log.debug("focusEvaluationHandler");
 
             document.getElementById(e.target.id).addEventListener('change', s.onChangeEvaluationHandler.bind(this, s));
+            document.getElementById(e.target.id).addEventListener('change', s.sumTotal.bind(this, s));
         }
 
         EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
@@ -145,26 +141,41 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
             if (enteredscore > maxscore || enteredscore < 0) {
                 e.target.classList.add('total-input-error');
+            } else {
+                document.getElementById(e.target.id).value = enteredscore;
             }
 
         }
 
-        EvaluateControl.prototype.focusEvaluationTotalHandler = function (s, e) {
-            document.getElementById(e.target.id).addEventListener('change', s.onChangeTotalEvaluationHandler.bind(this, s));
-        }
+        EvaluateControl.prototype.sumTotal = function (s, e) {
+            Y.log("sumTotal...");
+            var tables = document.getElementById('advancedgrading-criteria').querySelectorAll('.total-input');
+            var sum = 0;
+            var haserror = false;
+            var i = 0;
+            
+            tables.forEach((t, index) => {
+                
+                if (!t.classList.contains('result') && !t.classList.contains('total-input-error')) {
+                    sum += parseFloat(t.value);
+                }
+                
+                if (t.classList.contains('result'))  {
+                    i = index;
+                }
 
-        EvaluateControl.prototype.onChangeTotalEvaluationHandler = function (s, e) {
+                if (t.classList.contains('total-input-error')) {
+                    haserror = true;
+                }
 
-            e.target.classList.remove('total-input-error');
-            let total = parseFloat(document.getElementById(e.target.id).value);
-            let maxtotal = document.getElementById(e.target.id + '-given').innerText.split('/');
-            maxtotal = parseFloat(maxtotal[maxtotal.length - 1]);
-            if (total > maxtotal) {
-                e.target.classList.add('total-input-error');
+            });
+
+            var maxtotal = parseFloat(tables[i].getAttribute('max'));
+
+            if (!haserror && sum <= maxtotal) {
+                tables[i].value = sum;
             }
-
         }
-
 
         return {
             init: init

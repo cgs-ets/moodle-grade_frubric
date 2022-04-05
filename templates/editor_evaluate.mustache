@@ -21,7 +21,10 @@ This template is called in the grading step.
 
 {{#incomplete}}
     <div class = 'gradingform_frubric-error'>
-        {{#str}} frubricnotcompleted, gradingform_frubric {{/str}}
+        <span>{{#str}} frubricnotcompleted, gradingform_frubric {{/str}}</span> <br>
+        <span hidden class = 'frubric-no-descriptor-error'>{{#str}} nodescriptor, gradingform_frubric {{/str}}</span> <br>
+        <span hidden class = 'frubric-no-score-error'>{{#str}} nodscore, gradingform_frubric {{/str}}</span> <br>
+       
     </div>
 {{/incomplete}}
 
@@ -62,8 +65,8 @@ This template is called in the grading step.
                         <p><strong>{{description}}</strong> </p>
                     </td>
                     <td>
-                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
-                        <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}</span></strong>
+                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input"  min = "0" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
+                        <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}  </span></strong>
                        
                     </td>
                 </tr>
@@ -76,11 +79,12 @@ This template is called in the grading step.
                     </td>
                 </tr>
                 <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" hidden value = "{{leveljson}}">
+                <input name = "{{name}}[criteria][{{criteriaid}}][leveljsonaux]" id = "{{name}}-frubric-{{criteriaid}}-leveljsonaux" hidden value ="{{leveljson}}">
             </table>
         </table>
         {{/criteria}}
 
-     <span><strong> Total:</strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input" max = "{{totalscore}}" value ="{{sumscores}}"> 
+     <span><strong> Total: </strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input result" min = "0" max = "{{totalscore}}" value ="{{sumscores}}" disabled> 
      <strong><span id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade-given"> /{{totalscore}}</span></strong>
     </div>
 

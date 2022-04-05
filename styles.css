@@ -269,6 +269,15 @@ p.preview-def {
     font-weight: 700;
 }
 
+input:out-of-range {
+    background-color: rgba(255, 0, 0, 0.25);
+    border: 2px solid red;
+}
+
+input:out-of-range ~ strong::after {
+    content: 'Value out of range';
+    color: red;
+}
 
 @media screen (max-width: 950px) {
 

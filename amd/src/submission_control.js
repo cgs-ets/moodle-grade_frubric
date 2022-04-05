@@ -47,9 +47,9 @@ define(['core/log'],
             const self = this;
             self.checkCriteria(self.submiteddata);
             self.checkScore(self.criteria);
-
-
         }
+
+
 
         SubmissionControl.prototype.checkCriteria = function () {
             Log.debug('checkCriteria...')
@@ -58,7 +58,16 @@ define(['core/log'],
 
                 // Check score given to the criterion
                 const scoregiven = document.getElementById(`advancedgrading-frubric-criteria-${key}-level-grade`);
-                scoregiven.classList.remove('total-input-error');
+                if (scoregiven.value != '') {
+                    scoregiven.classList.remove('total-input-error');
+                    if (!document.querySelector('span.frubric-no-descriptor-error').hasAttribute('hidden')) {
+                        document.querySelector('span.frubric-no-descriptor-error').hidden = true;
+                    }
+                } else {
+                    scoregiven.classList.add('total-input-error');
+                    document.querySelector('span.frubric-no-descriptor-error').removeAttribute('hidden');
+                }
+
                 let maxallowed = document.getElementById(`advancedgrading-frubric-criteria-${key}-level-grade-out-of-value`).innerText.split('/');
                 maxallowed = maxallowed[maxallowed.length - 1];
 
@@ -84,6 +93,11 @@ define(['core/log'],
 
                 if (totaldescriptor == totalnotchecked) {
                     document.getElementById(`advancedgrading-frubric-criteria-${key}`).classList.add('error_no_descriptors_selected'); 
+                    document.querySelector('span.frubric-no-score-error').removeAttribute('hidden');
+                } else {
+                    if (!document.querySelector('span.frubric-no-score-error').hasAttribute('hidden')) {
+                        document.querySelector('span.frubric-no-score-error').hidden = true;
+                    }
                 }
             });
 
@@ -102,6 +116,12 @@ define(['core/log'],
             }
 
         }
+
+      
+
+        
+
+
 
         return {
             init: init
