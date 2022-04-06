@@ -71,8 +71,9 @@ $string['adddescriptorlabel'] = 'Add descriptor';
 $string['deletedescriptor'] = 'Delete descriptor';
 $string['mark'] = 'Min - Max';
 
-$string['frubricnotcompleted'] = 'Please verify the errors';
-$string['nodescriptor'] = 'Each level has to have at least one descriptor checked';
-$string['nodscore'] = 'Level score cannot be empty';
+$string['frubricnotcompleted'] = 'Not saved.
+Please fix the following error(s) and save changes.';
+$string['nodescriptor'] = '* Each level has to have at least one descriptor checked.';
+$string['nodscore'] = '* Level score cannot be empty.';
 
 $string['needregrademessage'] = 'The frubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';

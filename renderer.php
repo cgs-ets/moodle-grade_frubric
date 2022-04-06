@@ -199,10 +199,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                                     if ($desc->checked) {
                                         $descriptorids .= "$desc->descriptorid,";
-                                        $auxindex = random_int(0, PHP_INT_MAX);
-                                        $desc->idinput = $auxindex ;
-                                        $desc->nameinput = $auxindex;
-                                        
                                     }
                                 }
                                
