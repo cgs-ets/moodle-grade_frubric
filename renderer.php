@@ -50,7 +50,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 return  $OUTPUT->render_from_template('gradingform_frubric/editor_evaluate', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EDIT_FULL:
-                
                 return $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $data);
                 break;
         }

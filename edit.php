@@ -30,6 +30,8 @@ require_once($CFG->dirroot . '/grade/grading/lib.php');
 
 $areaid = required_param('areaid', PARAM_INT);
 $criteriajson = optional_param('criteriajsonhelper', '', PARAM_RAW);
+$regradecheck  = optional_param('regrade', '0', PARAM_RAW);
+
 $manager = get_grading_manager($areaid);
 
 list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
@@ -45,18 +47,21 @@ $PAGE->set_heading(get_string('definefrubric', 'gradingform_frubric'));
 
 $definitionid = $DB->get_record('grading_definitions', array('areaid' => $areaid, 'method'=>'frubric'), 'id');
 $definitionid = ($definitionid) ? $definitionid->id : 0;
- 
+
+
 $mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid, 'criteriajsonhelper' => $criteriajson, 'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
 
+$mform->need_confirm_regrading($controller);
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data = $controller->get_definition_for_editing(true);
 $data->returnurl = $returnurl;
 $data->regrade = 0;
 $mform->set_data($data);
 
+
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated() && !$mform->need_confirm_regrading($controller)) { //
+} else if ($mform->is_submitted() && $mform->is_validated() && (!$mform->need_confirm_regrading($controller) || $regradecheck == 1) ) { //$mform->need_confirm_regrading($controller)
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
     

@@ -1,7 +1,3 @@
-table#criteriaTable {
-    /* width: 70%; */
-}
-
 div#cont {
     margin-left: 1rem;
 }
@@ -27,7 +23,7 @@ table.inner-level-table.preview {
     background-color: white;
     margin-bottom: 1rem;
 }
-}
+
 
 table.inner-level-table.preview th,
 table.inner-level-table.preview td {
@@ -41,6 +37,7 @@ table.inner-level-table.graded {
 
 .frubric-add-criterion {
     width: fit-content;
+    margin-top: 1rem;
 }
 
 .criterion-tr {
@@ -87,7 +84,7 @@ table.level-mark-desc-table td.level-mark {
     display: none;
 }
 
-#fitem_id_criteria>div {
+#fitem_id_criteria > div {
     display: none;
 }
 
@@ -103,13 +100,16 @@ table.level-mark-desc-table td.level-mark {
 
 #fitem_id_criteria.has-danger:before {
 
-    content: "Flexibe rubric must contain at least one criterion and Level(s) definition(s) can not be empty";
+    content: "Flexibe rubric must contain at least one criterion with two or more levels, marks for each level have to be different  and the level\'s definitions can not be empty";
     color: red;
     width: 100%;
     height: 22px;
     margin-left: 15px;
 }
 
+.border-danger-fr {
+    border: solid 2px red;
+}
 textarea.fmark {
     resize: none;
     margin-top: 0;
@@ -282,8 +282,16 @@ input:out-of-range {
     border: 2px solid red;
 }
 
+
 input:out-of-range ~ strong::after {
     content: 'Value out of range';
+    color: red;
+}
+
+span.regrade_confirm {
+    display: inline-block;
+    width: 50%;
+    margin-left: 10%;
     color: red;
 }
 

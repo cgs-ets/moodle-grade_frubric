@@ -30,11 +30,11 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
             Log.debug("Feditor control...");
             const mode = FeditorHelper.getMode();
             let criterioncollection;
-          
-
+         
             // In case the all the rubric is deleted and saved in the DB. We need to put an empty one again.
             //Otherwise the add button submits the form.
-            const empty = JSON.parse(document.getElementById('id_criteria').value).length == 0; 
+            const empty = JSON.parse(document.getElementById('id_criteria').value).length == 0;
+            
             if (mode === 'create' && empty) {
                 // Initialise the first criterion
                 var criterion = {
@@ -52,7 +52,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-               
+
                 FeditorHelper.setCriteriaJSON(criterioncollection);
                 FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
@@ -73,19 +73,17 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                         .getAttribute("data-definition-id"), // Id from mdl_grading_definitions/
                     levels: [],
                     sumscore: "",
-                    totaloutof: ""
+                    totaloutof: "",
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-                // document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
+               
                 FeditorHelper.setCriteriaJSON(criterioncollection);
                 FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
             }
 
             let control = new Feditor(criterioncollection);
-           
-           // FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
             control.main();
 
         }
@@ -127,7 +125,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
             const context = {
                 id: `frubric-criteria-NEWID${countcriteria + 1}`,
                 criteriongroupid: countcriteria + 1,
-                // description: 'Click to edit criterion',
                 new: 1, // Adds the result row
             };
 
@@ -165,10 +162,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                     Log.debug(ex);
                 });
 
-            const isreadytouse = document.getElementById('id_status').value == '20'; // 20 ==> STATUS READY
-            if (isreadytouse) {
-                document.querySelector('.gradingform_rubric-regrade').setAttribute('hidden', true)
-            }
 
         };
 

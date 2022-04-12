@@ -54,7 +54,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                 try {
                     self.setupEvents(currentRow);
                     // Attach level listeners.
-                    const cgid = currentRow.getAttribute('data-criterion-group');
+                    currentRow.getAttribute('data-criterion-group');
                     LevelControl.init(self.id);
 
                 } catch (error) {
@@ -106,7 +106,9 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                 'criteriongroupid': row.getAttribute('data-criterion-group'),
                 'id': randomid,
             };
+         
 
+          
             Templates.render(self.LEVEL_ROW, context)
                 .done(function (html, js) {
 
@@ -128,9 +130,15 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                         const resultrow = FeditorHelper.getNextElement(row, '.result-r'); // Get the result row for this criterion
 
                         prevlevel = FeditorHelper.getPreviousElement(resultrow, classname);
-
+                        
+                       
                         if (prevlevel == undefined) { // This criterion doesnt have levels yet.
                             prevlevel = row;
+                        }
+
+                          //Check if the row has a red border around when it failed validation
+                        if (prevlevel.classList.contains('border-danger-fr')) {
+                            prevlevel.classList.remove('border-danger-fr');
                         }
                     }
 
@@ -197,17 +205,16 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                         }
                     }, row.target.parentNode.parentNode.parentNode.parentNode);
 
-                //    Log.debug("TO DELETE");
+                
                     frctodel[0].status = "DELETE";
                     const levels = frctodel[0].levels;
-               //     Log.debug(levels);
+               
                     // Change the status for the levels in this criterion
 
                     for (let j = 0; j < levels.length; j++) {
                         levels[j].status = "DELETE";
                     }
-
-                   // document.getElementById('id_criteria').value = JSON.stringify(frc);
+                 
                     FeditorHelper.setCriteriaJSON(frc);
                     FeditorHelper.setHiddenCriteriaJSON(frc);
                   
@@ -237,11 +244,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             });
         };
 
-        CriterionControl.prototype.copyCriterion = function (e) {
-
-            Log.debug('copyCriterion');
-        };
-
+   
         CriterionControl.prototype.editCriterionDescription = function (e) {
             e.stopPropagation();
             Log.debug('edit criterion description');
@@ -249,6 +252,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
            
             textarea.removeAttribute('disabled');
             textarea.focus();
+
             textarea.addEventListener('change', this.changeCriterionHandlerDisabled.bind(this));
         };
 
@@ -280,6 +284,12 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             //document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
             FeditorHelper.setCriteriaJSON(criterioncollection);
             FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
+            
+            // Check if the criterion has a red border because it comes from a failed attempt to save and make ready.
+
+            if (e.target.classList.contains('border-danger-fr')) {
+                e.target.classList.remove('border-danger-fr');
+            }
         };
 
         CriterionControl.prototype.getCriteriaJSON = function () {

@@ -62,7 +62,7 @@ This template is called in the grading step.
                 {{/definitions}}
                 <tr>
                     <td>
-                        <p><strong>{{description}}</strong> </p>
+                        <p><strong>{{labelcrit}}</strong> </p>
                     </td>
                     <td>
                         <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input"  min = "0" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
@@ -72,7 +72,7 @@ This template is called in the grading step.
                 </tr>
                  <tr>
                     <td>
-                        <p><strong>{{description}} FEEDBACK:</strong> </p>
+                        <p><strong>{{labelcrit}} FEEDBACK:</strong> </p>
                     </td>
                     <td >
                         <textarea  name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
