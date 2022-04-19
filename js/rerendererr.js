@@ -1,6 +1,6 @@
 /**
  * When trying to save and make ready, check if there are errors. If they are
- * display a red border to the elements that are missing.
+ * display a red border to the elements that are missing and a ! icon
  */
 if (document.getElementById('fitem_id_criteria').classList.contains('has-danger')) {
 
@@ -13,17 +13,13 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
                     if (th.children[0].value == '') {
                         th.children[0].classList.add('form-control', 'is-invalid');
                         th.children[0].setAttribute('title', 'Description cannot be empty');
-                        
+
                     }
                 } else if (!(th.classList.contains('fr-header') && th.classList.contains('act'))) {
                     Array.from(th.children).forEach(function (ch, index) {
                         if (!ch.classList.contains('action-el')) {
                             Array.from(ch.children).forEach(function (t) {
 
-                                if (t.rows.length == 1) { // Criterion has to have more than one level to be ready to use.
-                                    // tr.classList.add('border-danger-fr');
-                                }
-                                // var zerocounter = 0;
                                 Array.from(t.querySelectorAll('tr')).forEach(function (itd, index) {
 
                                     Array.from(itd.children).forEach(function (tdch, index) {
@@ -34,9 +30,7 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
 
                                                 if (mark.value == '') {
                                                     mark.classList.add('form-control', 'is-invalid');
-                                                    // mark.setAttribute('data-toggle', 'tooltip');
-                                                    // mark.setAttribute('data-placement', 'top');
-                                                     mark.setAttribute('title', 'Score cannot be empty');
+                                                    mark.setAttribute('title', 'Score cannot be empty');
 
                                                 }
                                             });
@@ -51,10 +45,9 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
                                                         if (desc.classList.contains('checkbox-container')) {
 
                                                             if (desc.querySelector('.standard-desc').value == '') {
-                                                                //desc.querySelector('.standard-desc').classList.add('border-danger-fr');
+
                                                                 desc.querySelector('.standard-desc').classList.add('form-control', 'is-invalid');
-                                                                desc.setAttribute('title', 'Level descriptor cannot be empty');
-                                                            
+                                                                desc.querySelector('.standard-desc').setAttribute('title', 'Level descriptor cannot be empty');
                                                             }
                                                         }
                                                     })
@@ -62,11 +55,6 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
                                             });
                                         }
 
-                                        // Finally check that levels have different marks.
-
-                                        // if (zerocounter > 1) {
-                                        //     tr.classList.add('border-danger-fr');
-                                        // }
                                     })
                                 })
                             })

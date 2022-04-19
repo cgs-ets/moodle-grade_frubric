@@ -201,6 +201,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (e.target.classList.contains('is-invalid')) {
                 e.target.classList.remove('is-invalid');
                 e.target.classList.remove('form-control');
+                //remove the title
+                e.target.removeAttribute('title');
             }
 
             score.focus();
@@ -450,6 +452,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             let descriptor = e.target;
             descriptor.focus();
+
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.classList.remove('form-control');
+                e.target.removeAttribute('title')
+            }
             // Attach change event
             descriptor.addEventListener('change', s.changeDescriptorHandler.bind(this, s));
             // If you copy and paste content without clicking it doesnt pick up the change. Add paste event
@@ -465,10 +473,11 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             let levelid;
             let flag = false;
 
-            if (e.target.classList.contains('is-invalid')) {
-                e.target.classList.remove('is-invalid');
-                e.target.classList.remove('form-control');
-            }
+            // if (e.target.classList.contains('is-invalid')) {
+            //     e.target.classList.remove('is-invalid');
+            //     e.target.classList.remove('form-control');
+            //     e.target.removeAttribute('title')
+            // }
 
             let descriptorIndex = e.target.parentNode.getAttribute('descriptor-index');
 
@@ -1016,11 +1025,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 ids: ids
 
             }
-
-
-            let lvs = '';
-           
-           // lvs = criterion[0].levels;
 
             if (criterion[0].levels.length == 0) {
                 criterion[0].levels.push({

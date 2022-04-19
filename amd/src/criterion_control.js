@@ -142,6 +142,8 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                         if (prevlevel.classList.contains('is-invalid')) {
                             prevlevel.classList.remove('is-invalid');
                             prevlevel.classList.remove('form-control');
+                            
+
                         }
                     }
 
@@ -293,6 +295,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             if (e.target.classList.contains('is-invalid')) {
                 e.target.classList.remove('is-invalid');
                 e.target.classList.remove('form-control');
+                e.target.removeAttribute('title');
             }
         };
 
