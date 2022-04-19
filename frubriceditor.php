@@ -102,10 +102,10 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
      * @return string
      */
     public function toHtml() {
-        global $PAGE, $OUTPUT;
+        global $OUTPUT;
         $html = $this->_getTabs();
         $data = $this->getCriterionData();
-        print_object($data);
+       
         $data  = $this->prepare_data(null, $this->wasvalidated);
        
         if ($this->validationerrors) {
@@ -117,11 +117,9 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
     }
 
     private function getCriterionData() {
-        global $DB;
+      
 
         $definitionid = $this->_attributes['definitionid'];;
-        $criteriajson = '';
-        $criteria = [];
 
         $d = new \stdClass();
         $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL

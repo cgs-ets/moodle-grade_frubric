@@ -24,35 +24,7 @@
     TODO
 
     TODO
-    Context variables required for this template:
-    * instanceid: Instance of the module this grading form belongs too
-    * criteria: A gradeable item in the Marking Guide
-    * id: The ID of the criteria
-    * description: Description of the criteria
-    * levels: The level that a criteria can be graded at
-    * criterionid: The ID of the criteria
-    * checked: Flag for if this is the currently selected level
-    * definition: Definition of the level
-    * remark: Text input for the teacher to relay to the student
-
-    Example context (json): TODO
-    {
-        "instanceid": "42",
-        "criteria": [
-            {
-                "id": 13,
-                "description": "Show your motivation to rock climbing",
-                "levels": [
-                    {
-                        "criterionid": 13,
-                        "checked": true,
-                        "definition": "Great work!"
-                    }
-                ],
-                "remark": "That's great!"
-            }
-        ]
-    }
+    
 }}
 
 
@@ -63,10 +35,7 @@
         <th class="fr-header act">
             <div id="delCriterion" class="flex-actions">
                 <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
-            </div>
-            <div id="addRow" class="flex-actions">
-            <span class="add-criterion" title="Add level"><i class="fa fa-plus"></i></span>
-            </div>
+            </div>           
         </th>
         <th class="fr-header crit-desc">
             <textarea rows="4"  cols="131" disabled="true" class="criterion-description" placeholder= "Click to edit description">{{description}}</textarea>

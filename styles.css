@@ -34,11 +34,11 @@ table.inner-level-table.preview td {
 table.inner-level-table.graded {
     background: inherit;
 }
-
+/*
 .frubric-add-criterion {
     width: fit-content;
     margin-top: 1rem;
-}
+}*/
 
 .criterion-tr {
     background-color: #f2f2f2;
@@ -68,6 +68,12 @@ span.move-down-criterion {
 
 th.fr-header.act {
     width: 10%;
+}
+
+
+button.btn.btn-primary.btn-block.btn-add-level {
+    border: none;
+    outline: none;
 }
 
 table.level-mark-desc-table td.level-mark {
@@ -100,7 +106,7 @@ table.level-mark-desc-table td.level-mark {
 
 #fitem_id_criteria.has-danger:before {
 
-    content: "Flexibe rubric must contain at least one criterion with two or more levels, marks for each level have to be different  and the level\'s definitions can not be empty";
+    content: "Please fix the errors in the definition";
     color: red;
     width: 100%;
     height: 22px;
@@ -152,6 +158,7 @@ textarea.mark_txtarea {
 
 textarea.standard-desc {
     width: 89%;
+    display: inline;
 }
 
 select#frubric-options-sortlevelsasc {

@@ -15,6 +15,13 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 
+<tr data-criterion-group="{{criteriongroupid}}" data-row-type="criterion-add-level" class="level-{{criteriongroupid}} add-level-r">
+    <td>
+        <button type="button" class="btn btn-primary btn-block btn-add-level">Add level</button> 
+    </td>
+    <td></td>
+</tr>
+
 <tr data-criterion-group="{{criteriongroupid}}" data-row-type="result" class="level-{{criteriongroupid}} result-r">
     <td>
         {{^edit}}
@@ -25,6 +32,7 @@
           <strong> {{titlefortotal}} </strong> 
          {{/edit}}
     </td>
+    
     <td>
         <div class="criterion-total-result">
             <input type="number" class="total-input" disabled  value="{{sumscore}}"><strong><span id="out-of-value-{{criteriongroupid}}"> /{{totaloutof}}</span></strong>

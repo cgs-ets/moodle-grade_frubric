@@ -69,8 +69,10 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
 
         CriterionControl.prototype.setupEvents = function (currentRow) {
             let self = this;
-            const actions = currentRow.querySelector('.act'); // Get actions cell
-
+            const actions = currentRow.querySelector('.act'); // Get actions cell data-row-type="criterion-add-level"
+            const addLevelRow = FeditorHelper.getNextElement(currentRow, '.add-level-r');
+            Y.log("addLevelRow");
+            Y.log(addLevelRow.children);
             if (!actions) {
                 return;
             }
@@ -79,8 +81,8 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
 
             // Criterion actions.
             actionChildren[0].addEventListener('click', self.removeCriterion.bind(currentRow));
-            actionChildren[1].addEventListener('click', self.addLevel.bind(self, currentRow));
-
+         //   actionChildren[1].addEventListener('click', self.addLevel.bind(self, currentRow));
+           addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
 
             const description = currentRow.querySelector('.crit-desc'); // Get description
             description.addEventListener('click', self.editCriterionDescription.bind(this));
@@ -137,12 +139,13 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                         }
 
                           //Check if the row has a red border around when it failed validation
-                        if (prevlevel.classList.contains('border-danger-fr')) {
-                            prevlevel.classList.remove('border-danger-fr');
+                        if (prevlevel.classList.contains('is-invalid')) {
+                            prevlevel.classList.remove('is-invalid');
+                            prevlevel.classList.remove('form-control');
                         }
                     }
 
-                    prevlevel.insertAdjacentHTML('afterend', html);
+                    prevlevel.insertAdjacentHTML('beforebegin', html); 
 
                     const levelObject = {
                         score: 0,
@@ -287,8 +290,9 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             
             // Check if the criterion has a red border because it comes from a failed attempt to save and make ready.
 
-            if (e.target.classList.contains('border-danger-fr')) {
-                e.target.classList.remove('border-danger-fr');
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.classList.remove('form-control');
             }
         };
 

@@ -23,15 +23,11 @@ along with Moodle. If not, see
 
 <div class="form-group row  fitem">
 <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
-        
-                <label class="d-inline word-break " for="id_description_editor" >
-                    Frubric
-                </label>
-        
-       </div>
+    <label class="d-inline word-break " for="id_description_editor" >Frubric</label>
+</div>
     
-    <!-- the container to add the TABLE -->
-    <div id = "cont" data-definition-id = "{{definitionid}}" data-rerendered = "{{fromrr}}"
+<!-- the container to add the TABLE -->
+<div id = "cont" data-definition-id = "{{definitionid}}" data-rerendered = "{{fromrr}}"
     name = " {{#str}} frubriceditor, gradingform_frubric{{/str}}">
         {{^edit}}
             {{#criteria}} 
@@ -46,6 +42,7 @@ along with Moodle. If not, see
             {{> gradingform_frubric/editor_editable}}
         {{/edit}}
        
+       <br>
         <p class = "frubric-add-criterion">
             <input type="button" id="addCriterion" value="Add Criterion" class = "btn btn-secondary"/>
         </p>

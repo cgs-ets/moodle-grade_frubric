@@ -332,7 +332,7 @@ class gradingform_frubric_editrubric extends moodleform {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                     }
     
-                    if (count($criterion->levels) == 0 || count($criterion->levels)  == 1) {
+                    if (count($criterion->levels) == 0 ) {
                         $err['criteria'] = get_string('err_levels', 'gradingform_frubric');
                     }
     
@@ -348,6 +348,7 @@ class gradingform_frubric_editrubric extends moodleform {
                         if ($level->score == "0-0" && count($criterion->levels) == 1) { // The last level can have a zero val
                             $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
                         }
+
                         if (count($level->descriptors) == 0 ) {
                             $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                         } else {
@@ -362,7 +363,7 @@ class gradingform_frubric_editrubric extends moodleform {
             }
         }
 
-        
+       
         return $err;
     }
 

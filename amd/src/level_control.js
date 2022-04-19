@@ -25,7 +25,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         'use strict';
 
         function init(id, parentid) {
-            Log.debug('Level control...');
           
             const mode = FeditorHelper.getMode();
             const level = document.getElementById(id);
@@ -57,9 +56,16 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
          */
         LevelControl.prototype.main = function () {
             let self = this;
+            Y.log("LEVEL CONTROL..., main");
+            Y.log(self.level);
+            Y.log(self);
 
             if (self.mode == 'edit') {
-                self.editModeSetupEvents(self.level.nextElementSibling);
+                if (self.level.classList.contains('criterion-header')) {
+                    self.editModeSetupEvents(self.level.nextElementSibling); //self.level.nextElementSibling
+                } else {
+                    self.editModeSetupEvents(self.level);
+                }
             } else {
                 if (self.level != null) {
                     self.validatePreviousMarkValue() // CASE: last level  has 0 mark. A new level is added, previous level can't be zero. As 0 is only allowed for the last level,
@@ -73,7 +79,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
          
             const self = this;
-            if (level.getAttribute('data-row-type') == 'result') { // get the current level. Its the new level added.
+
+            if (level.getAttribute('data-row-type') == 'result' || level.getAttribute('data-row-type') == 'add-level-r') { // get the current level. Its the new level added.  
                 level = level.previousElementSibling;
             }
            
@@ -191,8 +198,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 score.innerHTML = '';
             }
 
-            if (e.target.classList.contains('border-danger-fr')) {
-                e.target.classList.remove('border-danger-fr');
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.classList.remove('form-control');
             }
 
             score.focus();
@@ -457,8 +465,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             let levelid;
             let flag = false;
 
-            if (e.target.classList.contains('border-danger-fr')) {
-                e.target.classList.remove('border-danger-fr');
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.classList.remove('form-control');
             }
 
             let descriptorIndex = e.target.parentNode.getAttribute('descriptor-index');
@@ -798,20 +807,23 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             ]).done(function (strs) {
                 Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
+                   
                     let criTable = document.getElementById('criteriaTable');
                     const tr = e.target.parentNode.parentNode.parentNode;
                     const criterion = FeditorHelper.getPreviousElement(tr, '.criterion-header');
                     let criteria = FeditorHelper.getCriteriaJSON();
+                    const crid = tr.getAttribute('data-criterion-group')
 
+                  
                     if (criterion.getAttribute('data-criterion-levels').length > 0) {
                        
                         const dbids = JSON.parse(criterion.getAttribute('data-criterion-levels')); // These are the ids of the levels given by the DB.
                         const index = FeditorHelper.getDistanceFromCriterionHeader(tr, '.criterion-header');
                         const dblevelid = dbids[index];
                       
-                        const crid = tr.getAttribute('data-criterion-group')
 
                         var levels;
+
                         for (let i = 0; i < criteria.length; i++) {
                             if (criteria[i].id == crid) {
                                 criteria[i].status = 'UPDATE';
@@ -827,12 +839,30 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                             }
                         }
 
+                    } else {
+
+                        // The Criteria has not been saved. No need to send it to the DB.
+                       
+                        const tr = e.target.closest('tr');
+                        const lid = tr.getAttribute('id');
+                        const cid = criterion.getAttribute('id');
+
+                        
+                        const d = {levelid: lid, criterionid: cid}
+                        criteria.forEach(function (criterion) {
+                            if (criterion.cid == d.criterionid) {
+                                criterion.levels = criterion.levels.filter(function (level, index) {
+                                    level.id != d.lid;
+                                }, d)
+                            }
+                        }, d);
+                      
                     }
 
 
                     FeditorHelper.setCriteriaJSON(criteria);
                     FeditorHelper.setHiddenCriteriaJSON(criteria);
-                    criTable.deleteRow(tr.rowIndex); // span -> td -> tr.
+                    criTable.deleteRow(tr.rowIndex);
 
 
                 }, function () {
