@@ -25,7 +25,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
         'use strict';
 
         function init(id) {
-            Log.debug('Criterion control...');
+            
             const mode = FeditorHelper.getMode();
             let control = new CriterionControl(mode, id);
             control.main();
@@ -71,8 +71,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             let self = this;
             const actions = currentRow.querySelector('.act'); // Get actions cell data-row-type="criterion-add-level"
             const addLevelRow = FeditorHelper.getNextElement(currentRow, '.add-level-r');
-            Y.log("addLevelRow");
-            Y.log(addLevelRow.children);
+       
             if (!actions) {
                 return;
             }
@@ -252,7 +251,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
    
         CriterionControl.prototype.editCriterionDescription = function (e) {
             e.stopPropagation();
-            Log.debug('edit criterion description');
+            
             let textarea = e.target;
            
             textarea.removeAttribute('disabled');

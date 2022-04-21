@@ -106,7 +106,8 @@ table.level-mark-desc-table td.level-mark {
 
 #fitem_id_criteria.has-danger:before {
 
-    content: "Please fix the errors in the definition";
+    content: "Please fix the error marked with \f06a";
+    font-family: FontAwesome;
     color: red;
     width: 100%;
     height: 22px;

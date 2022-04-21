@@ -443,7 +443,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 array_push($levels, $dummylevel);
             }
 
-            if ($criterion->status == "NEW") {
+            if ($criterion->status == "NEW" || ($criterion->status == "DELETE" &&  strpos($criterion->cid, 'NEWID') != false)) { // the criteria is marked as delete but is the only one it has. 
                 // Insert criterion into DB.
                 $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO MDL-31235 format is not supported yet
 
@@ -567,7 +567,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                         foreach ($levelaux as $j => $ld) {
                             $descupdate = new \stdClass();
 
-                            if (!isset($ld->descriptorid)) { // a new descriptor has been added
+                            if (!isset($ld->descriptorid) || $ld->descriptorid == 0) { // a new descriptor has been added
                                 $descupdate->criterionid = $criterion->id;
                                 $descupdate->score = 1;
                                 $descupdate->maxscore = 1; 
@@ -629,8 +629,8 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
             }
 
-            $criterion->levels = $levels;
-
+            $criterion->levels = array_values($levels);
+        
             $updatecriteriajson = new \stdClass();
             $updatecriteriajson->id = $criterion->id;
             $updatecriteriajson->criteriajson = json_encode($criterion);

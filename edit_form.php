@@ -236,7 +236,7 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->definitionid = $definitionid;
                     $leveldbids = [];
 
-                    if (count($criterion->levels) == 0) {
+                    if (count((array)$criterion->levels) == 0) {
                         $dummyval = true;
                         $dummylevel = new \stdClass();
                         $dummylevel->status = 'NEW';
@@ -325,7 +325,7 @@ class gradingform_frubric_editrubric extends moodleform {
                 } else {
 
                     if ($criterion->status == 'DELETE' && count($frubricel) == 1) {
-                        $err['criteria'] = 'You are trying to save an empty definition.';
+                      //  $err['criteria'] = 'You are trying to save an empty definition.';
                     }
 
                     if ($criterion->description == '') {
@@ -363,7 +363,7 @@ class gradingform_frubric_editrubric extends moodleform {
             }
         }
 
-       
+       //print_object($err); exit;
         return $err;
     }
 

@@ -28,7 +28,6 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
         function init(data) {
 
-            Log.debug("gradingform_frubric: Evaluate Control...");
             data = JSON.parse(data);
           
             const control = new EvaluateControl(data.criteria);
@@ -123,14 +122,12 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
 
         EvaluateControl.prototype.focusEvaluationHandler = function (s, e) {
-            Log.debug("focusEvaluationHandler");
 
             document.getElementById(e.target.id).addEventListener('change', s.onChangeEvaluationHandler.bind(this, s));
             document.getElementById(e.target.id).addEventListener('change', s.sumTotal.bind(this, s));
         }
 
         EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
-            Log.debug("onChangeEvaluationHandler");
 
             e.target.classList.remove('total-input-error');
 
@@ -148,7 +145,6 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
         }
 
         EvaluateControl.prototype.sumTotal = function (s, e) {
-            Y.log("sumTotal...");
             var tables = document.getElementById('advancedgrading-criteria').querySelectorAll('.total-input');
             var sum = 0;
             var haserror = false;

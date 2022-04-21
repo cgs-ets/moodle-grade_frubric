@@ -27,8 +27,7 @@ define(['core/log'],
         'use strict';
 
         function init(submiteddata, definitionID) {
-
-            Log.debug("gradingform_frubric: Submission Control...");
+           
             submiteddata = JSON.parse(submiteddata);
             const control = new SubmissionControl(submiteddata, definitionID);
             control.main(submiteddata, definitionID);
@@ -52,7 +51,6 @@ define(['core/log'],
 
 
         SubmissionControl.prototype.checkCriteria = function () {
-            Log.debug('checkCriteria...')
             var self = this;
             Object.entries(self.submiteddata.criteria).forEach(([key, value]) => {
 

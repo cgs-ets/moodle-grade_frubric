@@ -27,7 +27,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
         'use strict';
 
         function init() {
-            Log.debug("Feditor control...");
             const mode = FeditorHelper.getMode();
             let criterioncollection;
          
@@ -93,7 +92,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
          * @param {*} criterioncollection
          */
         function Feditor(criterioncollection) {
-            Log.debug('Feditor: initialising...');
             let self = this;
             self.CRITERION_ROW = 'gradingform_frubric/editor_criterion_row';
             self.FEDITOR = 'gradingform_frubric/frubriceditor';
@@ -117,7 +115,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
         };
 
         Feditor.prototype.addCriterion = function () {
-            Log.debug("Add criterion...");
             let self = this;
 
             const countcriteria = document.querySelectorAll('.criterion-header').length;
@@ -158,7 +155,6 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
 
                 })
                 .fail(function (ex) {
-                    Log.debug("error...");
                     Log.debug(ex);
                 });
 
