@@ -110,12 +110,11 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
         $data = (object)$data;
         $oldid = $data->id;
         $data->criterionid = $this->get_new_parentid('gradingform_frubric_criterion');
-
         $newid = $DB->insert_record('gradingform_frubric_levels', $data);
         $this->set_mapping('gradingform_frubric_level', $oldid, $newid);
     }
 
-     /**
+    /**
      * Processes descriptor element data
      *
      * Sets the mapping 'gradingform_frubric_descript
@@ -131,6 +130,53 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
         $data->levelid = $this->get_new_parentid('gradingform_frubric_level');
 
         $newid = $DB->insert_record('gradingform_frubric_descript', $data);
+
+        // The definition JSON has to update.
+        if ($level = $DB->get_record('gradingform_frubric_levels', ['id' => $data->levelid], 'definition')) {
+            $levelaux = json_decode($level->definition);
+
+            foreach ($levelaux as $prop => &$definition) {
+
+                if ($prop == 'id') {
+                    $definition = $data->levelid;
+                }
+
+                if ($prop == 'descriptors') {
+
+                    foreach ($definition as &$descriptor) {
+                        if ($descriptor->descriptorid == $oldid) {
+                            $descriptor->descriptorid = $newid;
+                        }
+                    }
+                }
+            }
+
+            $level->definition = json_encode($levelaux);
+
+            // We need to  update the definition json.
+            $sql = "UPDATE mdl_gradingform_frubric_levels SET definition = :definition WHERE id = :id";
+            $DB->execute($sql, ['definition' => $level->definition, 'id' => $data->levelid]);
+            // Update the criteriajson.
+            if ($criterion = $DB->get_record('gradingform_frubric_criteria', ['id' => $data->criterionid], 'criteriajson')) {
+                $criterionaux = json_decode($criterion->criteriajson);
+
+                foreach ($criterionaux as $prop => &$val) {
+                    if ($prop == 'id') {
+                        $val = $data->criterionid;
+                    }
+
+                    if ($prop == 'levels') {
+                        $val = [$levelaux];
+                    }
+                }
+
+                $criterionaux = json_encode($criterionaux);
+                // We need to  update the definition json.
+                $sql = "UPDATE mdl_gradingform_frubric_criteria SET criteriajson = :criteriajson WHERE id = :id";
+                $DB->execute($sql, ['criteriajson' => $criterionaux, 'id' => $data->criterionid]);
+            }
+        }
+
         $this->set_mapping('gradingform_frubric_descriptor', $oldid, $newid);
     }
 
@@ -139,15 +185,33 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
      *
      * @param stdClass|array $data
      */
-    public function process_gradinform_frubric_filling($data) {
+    public function process_gradinform_frubric_filling(&$data) {
         global $DB;
 
         $data = (object)$data;
         $data->instanceid = $this->get_new_parentid('grading_instance');
         $data->criterionid = $this->get_mappingid('gradingform_frubric_criterion', $data->criterionid);
         $data->levelid = $this->get_mappingid('gradingform_frubric_level', $data->levelid);
+        $leveljsonupdated = [];
+        $data->leveljson = json_decode($data->leveljson);
 
         if (!empty($data->criterionid)) {
+            // We need to update the leveljson for the fillings table.
+            foreach ($data->leveljson as $i => &$level) {
+
+                $level->id = $this->get_mappingid('gradingform_frubric_level',  $level->id);
+                $definitionaux = json_decode($level->definition);
+                $definitionaux->id = $level->id;
+                $level->definition = json_encode($definitionaux);
+
+                foreach ($level->descriptors as $d => &$desc) {
+                    $desc->descriptorid = $this->get_mappingid('gradingform_frubric_descriptor', $desc->descriptorid);;
+                }
+
+                $leveljsonupdated[$level->id] = $level;
+            }
+
+            $data->leveljson = json_encode($leveljsonupdated);
             $DB->insert_record('gradingform_frubric_fillings', $data);
         }
     }

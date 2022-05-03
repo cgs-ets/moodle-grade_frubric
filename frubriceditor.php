@@ -65,7 +65,6 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
      */
     public function __construct($elementName = null, $elementLabel = null, $attributes = null) {
         parent::__construct($elementName, $elementLabel, $attributes);
-
     }
 
     /**
@@ -105,9 +104,9 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
         global $OUTPUT;
         $html = $this->_getTabs();
         $data = $this->getCriterionData();
-       
+
         $data  = $this->prepare_data(null, $this->wasvalidated);
-       
+
         if ($this->validationerrors) {
             $html .= html_writer::div($this->validationerrors, 'alert alert-danger', ['id' => 'frubric-is-invalid']);
         }
@@ -117,13 +116,13 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
     }
 
     private function getCriterionData() {
-      
+
 
         $definitionid = $this->_attributes['definitionid'];;
 
         $d = new \stdClass();
-        $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL
-        $d->definitionid = 0; // Default when its new rubric
+        $d->editfull = '1'; // Default is DISPLAY_EDIT_FULL.
+        $d->definitionid = 0; // Default when its new rubric.
         $d->id = "frubric-criteria-NEWID1";
         $d->criteriongroupid = 1;
         $d->description = get_string('editcriterion', 'gradingform_frubric');
@@ -145,7 +144,7 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
     protected function prepare_data($value = null, $withvalidation = false) {
         if (null === $value) {
             $value = $this->getValue();
-            return($value); 
+            return ($value);
         }
     }
 
@@ -156,17 +155,17 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
         $err = [];
 
         foreach ($frubricel as $criteria) {
-            foreach($criteria as $j => $criterion) {
+            foreach ($criteria as $j => $criterion) {
                 if ($criterion->description == '') {
                     $err[] = get_string('err_nocriteria', 'gradingform_frubric');
                 }
-    
+
                 if (count($criterion->levels) == 0) {
                     $err[] = get_string('err_levels', 'gradingform_frubric');
                 }
-    
+
                 foreach ($criterion->levels as $level) {
-    
+
                     if ($level->score == '') {
                         $err[] = get_string('err_noscore', 'gradingform_frubric');
                     }
@@ -181,9 +180,8 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
                     }
                 }
             }
-           
         }
-        
+
         if (count($err) > 0) {
             $err = array_unique($err);
             $this->validationerrors = implode(', ', $err);
@@ -191,7 +189,4 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
 
         return (count($err) == 0);
     }
-
-
-   
 }

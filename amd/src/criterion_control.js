@@ -80,7 +80,6 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
 
             // Criterion actions.
             actionChildren[0].addEventListener('click', self.removeCriterion.bind(currentRow));
-         //   actionChildren[1].addEventListener('click', self.addLevel.bind(self, currentRow));
            addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
 
             const description = currentRow.querySelector('.crit-desc'); // Get description
@@ -161,7 +160,6 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                     // Refresh the JSON input
                     FeditorHelper.setCriteriaJSON(criterioncollection);
                     FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
-
                     LevelControl.init(randomid, self.id);
                 })
                 .fail(function (ex) {

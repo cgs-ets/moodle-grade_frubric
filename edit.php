@@ -45,11 +45,19 @@ $PAGE->set_url(new moodle_url('/grade/grading/form/frubric/edit.php', array('are
 $PAGE->set_title(get_string('definefrubric', 'gradingform_frubric'));
 $PAGE->set_heading(get_string('definefrubric', 'gradingform_frubric'));
 
-$definitionid = $DB->get_record('grading_definitions', array('areaid' => $areaid, 'method'=>'frubric'), 'id');
+$definitionid = $DB->get_record('grading_definitions', array('areaid' => $areaid, 'method' => 'frubric'), 'id');
 $definitionid = ($definitionid) ? $definitionid->id : 0;
 
-
-$mform = new gradingform_frubric_editrubric(null, array('areaid' => $areaid, 'context' => $context,'defid' => $definitionid, 'criteriajsonhelper' => $criteriajson, 'allowdraft' => !$controller->has_active_instances()), 'post', '', array('class' => 'gradingform_rubric_editform'));
+$customdata =
+    array(
+        'areaid' => $areaid,
+        'context' => $context,
+        'defid' => $definitionid,
+        'criteriajsonhelper' => $criteriajson,
+        'allowdraft' => !$controller->has_active_instances()
+    );
+$target = array('class' => 'gradingform_rubric_editform');
+$mform = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $target);
 
 $mform->need_confirm_regrading($controller);
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
@@ -58,23 +66,18 @@ $data->returnurl = $returnurl;
 $data->regrade = 0;
 $mform->set_data($data);
 
-
+$confirmregrading = (!$mform->need_confirm_regrading($controller) || $regradecheck == 1);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
-} else if ($mform->is_submitted() && $mform->is_validated() && (!$mform->need_confirm_regrading($controller) || $regradecheck == 1) ) { //$mform->need_confirm_regrading($controller)
+} else if ($mform->is_submitted() && $mform->is_validated() && $confirmregrading) {
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
-    
+
     $controller->update_definition($data);
-   
+
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.
     $warning = null;
-    if (!empty($data->returnurl) && $data->returnurl !== $manager->get_management_url()->out(false)) {
-        // if (empty($data->rubric['options']['lockzeropoints']) && ($scores = $controller->get_min_max_score()) && $scores['minscore'] <> 0) {
-        //     $warning = get_string('zerolevelsabsent', 'gradingform_rubric').'<br>'.
-        //         html_writer::link($manager->get_management_url(), get_string('back'));
-        // }
-    }
+
     redirect($returnurl, $warning, null, \core\output\notification::NOTIFY_ERROR);
 }
 
@@ -88,5 +91,3 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 $mform->display();
 echo $OUTPUT->footer();
-
-
