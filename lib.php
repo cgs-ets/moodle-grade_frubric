@@ -120,7 +120,9 @@ class gradingform_frubric_controller extends gradingform_controller {
             }
             $showdescription = $options['showdescriptionstudent'];
         }
+
         $output = $this->get_renderer($page);
+
         if ($showdescription) {
             $frubric .= $output->box($this->get_formatted_description(), 'gradingform_frubric-description');
         }
@@ -334,7 +336,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $options = array(
             'sortlevelsasc' => 1,
             'lockzeropoints' => 1,
-            'alwaysshowdefinition' => 1,
+            'alwaysshowdefinition' => 0,
             'showdescriptionteacher' => 1,
             'showdescriptionstudent' => 1,
             'showscoreteacher' => 1,
