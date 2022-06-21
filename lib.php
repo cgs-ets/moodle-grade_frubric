@@ -345,7 +345,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     public static function get_default_options() {
         $options = array(
             'alwaysshowdefinition' => 0,
-            //'showdescriptionstudent' => 0,
+            'showdescriptionstudent' => 0,
             'disablecriteriacomments' => 0,
         );
         return $options;
@@ -396,7 +396,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             parent::update_definition(new stdClass(), $usermodified);
             parent::load_definition();
         }
-       // print_object($newdefinition); 
+       
         if (!isset($newdefinition->options)) {
             $newdefinition->options = self::get_default_options();
         }
@@ -1338,8 +1338,6 @@ class gradingform_frubric_instance extends gradingform_instance {
         $definition = $this->get_controller()->get_definition();
         $criteria = $definition->frubric_criteria;
         $commentsoption = (json_decode($definition->options));
-       
-       // $commentoption = $commentsoption['disablecriteriacomments'];
     
         $data = [
             'criteria' => [],
@@ -1348,7 +1346,6 @@ class gradingform_frubric_instance extends gradingform_instance {
             'totalscore' => ($this->get_controller()->get_min_max_score())['maxscore'],
             'sumscores' => 0,
             'criteriadefinitionid' => $definition->id,
-           // 'disablecomment' => $commentsoption->disablecriteriacomments
         ];
 
         $counter = 1;

@@ -52,6 +52,7 @@ This template displays the rubric filled with the result given to a particular s
                                 <strong><span> {{levelscore}}/{{totaloutof}}</span></strong>
                             </td>
                         </tr>
+                        {{^disablecomment}}
                         <tr>
                             <td>
                                 <p><strong>{{descriptiontotal}} FEEDBACK:</strong></p>
@@ -60,6 +61,7 @@ This template displays the rubric filled with the result given to a particular s
                                 <p disabled>{{feedback}}</p>
                             </td>
                         </tr>
+                        {{/disablecomment}}
                     </table>
                     {{/levels}}
                 </td>

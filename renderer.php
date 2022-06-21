@@ -156,7 +156,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     public function display_instance(gradingform_frubric_instance $instance, $idx, $cangrade, $maxscore) {
         global $OUTPUT;
 
-        $criteria = $instance->get_controller()->get_definition()->frubric_criteria;
+        $definition = $instance->get_controller()->get_definition();
+        $criteria = $definition->frubric_criteria;
+        $options = json_decode($definition->options);
+    
         $values = $instance->get_frubric_filling(true);
         $sumscores = 0;
 
@@ -206,6 +209,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                 $criterion['levelscore'] = (int)$value['levelscore'];
                 $criterion['feedback'] = $value['remark'];
+                $criterion['disablecomment'] = $options->disablecriteriacomments;
             }
         }
 

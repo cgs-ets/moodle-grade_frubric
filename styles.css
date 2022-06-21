@@ -139,6 +139,13 @@ div.flex-actions {
     display: inline-block;
 }
 
+/*Frubric options
+For some reason the second option takes a full width leaving an extra space between this and the last option.
+*/
+label.form-check-inline.fitem.showdescriptionstudent.checkboxgroup1 {
+    width: auto;
+}
+
 textarea.criterion-description {
     width: 100%;
 }
