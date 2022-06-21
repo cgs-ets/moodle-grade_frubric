@@ -62,6 +62,7 @@ $mform = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $targ
 $mform->need_confirm_regrading($controller);
 $returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data = $controller->get_definition_for_editing(true);
+
 $data->returnurl = $returnurl;
 $data->regrade = 0;
 $mform->set_data($data);

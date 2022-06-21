@@ -139,10 +139,6 @@ div.flex-actions {
     display: inline-block;
 }
 
-/* div#fitem_id_criterionjson {
-    visibility: hidden;
-} */
-
 textarea.criterion-description {
     width: 100%;
 }

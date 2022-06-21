@@ -70,14 +70,16 @@ This template is called in the grading step.
                        
                     </td>
                 </tr>
-                 <tr>
-                    <td>
-                        <p><strong>{{labelcrit}} FEEDBACK:</strong> </p>
-                    </td>
-                    <td >
-                        <textarea  name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
-                    </td>
-                </tr>
+               {{^disablecomment}}
+                    <tr>
+                        <td>
+                            <p><strong>{{labelcrit}} FEEDBACK:</strong> </p>
+                        </td>
+                        <td>
+                            <textarea  {{#disablecomment}}disabled {{/disablecomment}} name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
+                        </td>
+                    </tr>
+                {{/disablecomment}}
                 <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" hidden value = "{{leveljson}}">
                 <input name = "{{name}}[criteria][{{criteriaid}}][leveljsonaux]" id = "{{name}}-frubric-{{criteriaid}}-leveljsonaux" hidden value ="{{leveljson}}">
             </table>

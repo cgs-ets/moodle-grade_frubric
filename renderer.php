@@ -114,14 +114,11 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     private function preview_score_check($levels) {
 
         foreach($levels as $i=>&$level) {
-            //foreach($lvls as $level) {
                if ($i == 'score') {
                    if ($level == "0"){
                        $level = "";
                    }
                }
-            //}
-
         }
 
         return $levels;
@@ -215,7 +212,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
-
+       
         return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 

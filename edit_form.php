@@ -45,6 +45,8 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('hidden', 'regrade');
         $form->setType('regrade', PARAM_INT);
 
+
+
         // Name.
         $form->addElement(
             'text',
@@ -116,6 +118,14 @@ class gradingform_frubric_editrubric extends moodleform {
         $flexrubireditorhtml = $renderer->render_template(gradingform_frubric_controller::DISPLAY_EDIT_FULL, $d);
         $form->addElement('html',  $flexrubireditorhtml);
 
+        $options = [
+            $form->createElement('advcheckbox', 'options[alwaysshowdefinition]', '', get_string('alwaysshowdefinition', 'gradingform_frubric'), array('group' => 1) , array(0,1)),
+            $form->createElement('advcheckbox', 'options[showdescriptionstudent]', '', get_string('showdescriptionstudent', 'gradingform_frubric'), array('group' => 1), array(0,1)),
+            $form->createElement('advcheckbox', 'options[disablecriteriacomments]', '', get_string('disablecriteriacomments', 'gradingform_frubric'), array('group' => 1), array(0, 1))
+        ];
+
+        $form->addGroup($options, 'options', "Frubric options", array('<br>'), false);
+
         $buttonarray = array();
         $buttonarray[] = &$form->createElement(
             'submit',
@@ -151,20 +161,22 @@ class gradingform_frubric_editrubric extends moodleform {
      * so the users do not get confused
      */
     public function definition_after_data() {
+
         parent::definition_after_data();
         $form = &$this->_form;
 
         $el = $form->getElement('status');
-
         if (!$el->getValue()) {
             $form->removeElement('status');
         } else {
-            $vals = array_values($el->getValue());
 
+            $vals = array_values($el->getValue());
             if ($vals[0] == gradingform_controller::DEFINITION_STATUS_READY) {
                 $this->findbutton('savefrubric')->setValue(get_string('save', 'gradingform_frubric'));
             }
         }
+
+        $el = $form->getElement('options');
     }
 
 
