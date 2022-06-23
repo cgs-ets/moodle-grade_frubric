@@ -109,7 +109,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $criteria = $this->definition->frubric_criteria;
         $renderer = $page->get_renderer('gradingform_frubric');
         $options = $this->get_options();
-       
+
         $frubric = '';
 
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
@@ -123,16 +123,16 @@ class gradingform_frubric_controller extends gradingform_controller {
         }
 
         $output = $this->get_renderer($page);
-      
+
         if ($showdescription) {
             $frubric .= $output->box($this->get_formatted_description(), 'gradingform_frubric-description');
         }
 
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
 
-            $data['definitionid'] = $this->definition->id;
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW, $criteria);
         } else {
+
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW_GRADED, $criteria);
         }
 
@@ -195,7 +195,8 @@ class gradingform_frubric_controller extends gradingform_controller {
         }
 
         $properties->frubric = array('criteria' => array());
-        $properties->options = (array)json_decode($definition->options);
+
+        $properties->options = $this->get_options();
 
         if (!empty($definition->frubric_criteria)) {
             $properties->frubric['criteria'] = $definition->frubric_criteria;
@@ -324,14 +325,14 @@ class gradingform_frubric_controller extends gradingform_controller {
      * @return array
      */
     public function get_options() {
-        
+
         $options = self::get_default_options();
         if (!empty($this->definition->options)) {
-            $thisoptions = json_decode($this->definition->options, true); // Assoc. array is expected.
+            $thisoptions = (array)json_decode($this->definition->options, true); // Assoc. array is expected.
+
             foreach ($thisoptions as $option => $value) {
                 $options[$option] = $value;
             }
-           
         }
 
         return $options;
@@ -347,6 +348,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             'alwaysshowdefinition' => 0,
             'showdescriptionstudent' => 0,
             'disablecriteriacomments' => 0,
+
         );
         return $options;
     }
@@ -396,13 +398,13 @@ class gradingform_frubric_controller extends gradingform_controller {
             parent::update_definition(new stdClass(), $usermodified);
             parent::load_definition();
         }
-       
+
         if (!isset($newdefinition->options)) {
             $newdefinition->options = self::get_default_options();
         }
 
         $newdefinition->options = json_encode($newdefinition->options);
-        
+
         $editoroptions = self::description_form_field_options($this->get_context());
         $newdefinition = file_postupdate_standard_editor(
             $newdefinition,
@@ -418,7 +420,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $currentdefinition = $this->get_definition(true);
 
         $haschanges = array();
-       // $currentoptions = $this->get_options();
+        // $currentoptions = $this->get_options();
 
         if (!isset($newdefinition->frubric['criteria'])) {
             $newcriteria = json_decode($newdefinition->criteria);
@@ -819,7 +821,7 @@ class gradingform_frubric_controller extends gradingform_controller {
      */
     public function render_grade($page, $itemid, $gradinginfo, $defaultcontent, $cangrade) {
 
-        return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, $cangrade, ($this->get_min_max_score())['maxscore']);
+        return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, ($this->get_min_max_score())['maxscore'], $itemid);
     }
 
     /**
@@ -921,7 +923,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         $this->definition = false;
         foreach ($rs as $record) {
-            //print_object($record); 
+
             // pick the common definition data.
             if ($this->definition === false) {
                 $this->definition = new stdClass();
@@ -988,6 +990,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $new = parent::get_definition_copy($target);
         $old = $this->get_definition_for_editing();
         $new->description_editor = $old->description_editor;
+        $new->options  = $old->options;
         $listcriterion = [];
         foreach ($old->frubric as $criteria) {
             foreach ($criteria as $cr) {
@@ -1338,14 +1341,15 @@ class gradingform_frubric_instance extends gradingform_instance {
         $definition = $this->get_controller()->get_definition();
         $criteria = $definition->frubric_criteria;
         $commentsoption = (json_decode($definition->options));
-    
+
+
         $data = [
             'criteria' => [],
             'preview' => 1, // doesnt display criterion controls.
             'name' => $gradingformelement->getName(),
             'totalscore' => ($this->get_controller()->get_min_max_score())['maxscore'],
             'sumscores' => 0,
-            'criteriadefinitionid' => $definition->id,
+            'criteriadefinitionid' => $definition->id
         ];
 
         $counter = 1;
@@ -1460,7 +1464,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(), array('class' => 'gradingform_rubric-description'));
         }
 
-       
+
         $html .= $OUTPUT->render_from_template('gradingform_frubric/editor_evaluate', $data);
 
         return $html;
@@ -1539,7 +1543,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function set_criteria_fillings_level(&$criteria, $criteriaid, $leveljson, &$haschanges) {
         $levelfilling = json_decode($leveljson);
-        
+
         foreach ($criteria as $i => $criterion) {
             if (is_array($criterion)) {
                 foreach ($criterion as $j => $cri) {

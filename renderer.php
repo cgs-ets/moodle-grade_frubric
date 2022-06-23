@@ -35,7 +35,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
 
     public function render_template($mode, $data) {
-        global $OUTPUT;
+        global $OUTPUT, $PAGE, $CFG;
 
         switch ($mode) {
             case gradingform_frubric_controller::DISPLAY_PREVIEW:
@@ -78,14 +78,14 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         return  $OUTPUT->render_from_template('gradingform_frubric/editor_preview_graded', $data);
     }
 
-    private function preview_prepare_data($criteria) {
+    private function preview_prepare_data($criteria, $hide = null) {
         ksort($criteria); // When deleting all descriptors from  a level that is already in the DB. When adding new descriptors to this level. the order changes. to latest to earliest.
-       
+
         $criteria = array_values($criteria);
         $counter = 1;
         foreach ($criteria as $i => &$criterion) {
             foreach ($criterion as $j => &$crit) {
-              
+
                 if ($j == 'levels') {
                     foreach ($crit as $q => $c) {
                         $c = $this->preview_score_check($c);
@@ -100,10 +100,12 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
         $data = [
             'criteria' => $criteria,
+            'hide' => $hide
         ];
-       
-       
-      
+
+
+        error_log(print_r($data, true));
+
         return $data;
     }
 
@@ -113,16 +115,15 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      */
     private function preview_score_check($levels) {
 
-        foreach($levels as $i=>&$level) {
-               if ($i == 'score') {
-                   if ($level == "0"){
-                       $level = "";
-                   }
-               }
+        foreach ($levels as $i => &$level) {
+            if ($i == 'score') {
+                if ($level == "0") {
+                    $level = "";
+                }
+            }
         }
 
         return $levels;
-
     }
 
     /**
@@ -130,19 +131,33 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      *
      * @param array $instances array of objects of type gradingform_rubric_instance
      * @param string $defaultcontent default string that would be displayed without advanced grading
-     * @param boolean $cangrade whether current user has capability to grade in this context
+     * @param int $assigngradeid id from mdl_assign_grades
      * @return string
      */
-    public function display_instances($instances, $defaultcontent, $cangrade, $maxscore) {
+    public function display_instances($instances, $defaultcontent,  $maxscore, $assigngradeid) {
+        global $PAGE, $CFG, $USER, $DB;
         $return = '';
         if (sizeof($instances)) {
+
+            // hide criteria from submission status. 
+            $sql =   "SELECT workflowstate FROM mdl_assign_user_flags 
+                      WHERE userid = :userid AND assignment = (SELECT assignment  
+                                                               FROM mdl_assign_grades 
+                                                               WHERE id = :assigngradeid AND userid = :userid2)";
+            $params = ['userid' => $USER->id, 'assigngradeid' => $assigngradeid, 'userid2' => $USER->id];
+            $workflow = $DB->get_record_sql($sql, $params);
+
+            if ($workflow->workflowstate == 'released' || $workflow->workflowstate == '') {
+                $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidegradingcriteria.js'));
+            }
+
             $return .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
-            $idx = 0;
             foreach ($instances as $instance) {
-                $return .= $this->display_instance($instance, $idx++, $cangrade, $maxscore);
+                $return .= $this->display_instance($instance,  $maxscore);
             }
             $return .= html_writer::end_tag('div');
         }
+
         return $return . $defaultcontent;
     }
 
@@ -153,13 +168,13 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @param int $idx unique number of instance on page
      * @param bool $cangrade whether current user has capability to grade in this context
      */
-    public function display_instance(gradingform_frubric_instance $instance, $idx, $cangrade, $maxscore) {
+    public function display_instance(gradingform_frubric_instance $instance,  $maxscore) {
         global $OUTPUT;
 
         $definition = $instance->get_controller()->get_definition();
         $criteria = $definition->frubric_criteria;
         $options = json_decode($definition->options);
-    
+
         $values = $instance->get_frubric_filling(true);
         $sumscores = 0;
 
@@ -183,7 +198,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 $counter++;
                 $descriptorids = '';
                 foreach ($criterion as $j => &$cri) {
-                   
+
                     if (!isset($criterion['descriptiontotal'])) {
                         $criterion['descriptiontotal'] = "Criterion $counter";
                     }
@@ -200,7 +215,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                                         $descriptorids .= "$desc->descriptorid,";
                                     }
                                 }
-                               
+
                                 $cri[$lid->id] = $level;
                             }
                         }
@@ -216,7 +231,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
-       
+
         return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
@@ -240,5 +255,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $results = $DB->get_records_sql($sql);
 
         return $results;
+    }
+
+    // Check if the student has been graded on a given assignment
+    private function is_graded($itemid) {
+        global $USER;
     }
 }
