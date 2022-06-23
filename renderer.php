@@ -257,8 +257,4 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         return $results;
     }
 
-    // Check if the student has been graded on a given assignment
-    private function is_graded($itemid) {
-        global $USER;
-    }
 }
