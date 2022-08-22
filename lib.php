@@ -493,6 +493,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                     $updatecriterion = new \stdClass();
                     $updatecriterion->id = $criterion->id;
                     $criterion->status = "UPDATED";
+                    $id = $criterion->id; // Need it to update the frubri_levels table.
                     $updatecriterion->description = s($criterion->description, true);
                     $updatecriterion->criteriajson = json_encode($criterion);
                     $DB->update_record('gradingform_frubric_criteria', $updatecriterion);

@@ -104,7 +104,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         ];
 
 
-        error_log(print_r($data, true));
+        // error_log(print_r($data, true));
 
         return $data;
     }
@@ -147,11 +147,15 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             $params = ['userid' => $USER->id, 'assigngradeid' => $assigngradeid, 'userid2' => $USER->id];
             $workflow = $DB->get_record_sql($sql, $params);
 
-            if ($workflow->workflowstate == 'released' || $workflow->workflowstate == '') {
-                $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidegradingcriteria.js'));
+            if($workflow = $DB->get_record_sql($sql, $params)) {
+
+                if ($workflow->workflowstate == 'released' || $workflow->workflowstate == '') {
+                    $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidegradingcriteria.js'));
+                }
             }
 
             $return .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
+          
             foreach ($instances as $instance) {
                 $return .= $this->display_instance($instance,  $maxscore);
             }
@@ -193,38 +197,38 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 if (isset($values['criteria'][$i])) {
 
                     $value = $values['criteria'][$i];
-                }
-                $sumscores += $value['levelscore'];
-                $counter++;
-                $descriptorids = '';
-                foreach ($criterion as $j => &$cri) {
-
-                    if (!isset($criterion['descriptiontotal'])) {
-                        $criterion['descriptiontotal'] = "Criterion $counter";
-                    }
-                    if ($j == 'levels') {
-                        $criterionlevelids = $this->get_level_ids_per_criterion($i);
-                        $leveljson = (array)json_decode($value['leveljson']);
-                        foreach ($criterionlevelids as $index => $lid) {
-
-                            if (isset($leveljson[$lid->id])) {
-                                $level = (array)$leveljson[$lid->id];
-                                foreach ($level['descriptors'] as $desc) { // get the score for the descript
-
-                                    if ($desc->checked) {
-                                        $descriptorids .= "$desc->descriptorid,";
+                    $sumscores += $value['levelscore'];
+                    $counter++;
+                    $descriptorids = '';
+                    foreach ($criterion as $j => &$cri) {
+    
+                        if (!isset($criterion['descriptiontotal'])) {
+                            $criterion['descriptiontotal'] = "Criterion $counter";
+                        }
+                        if ($j == 'levels') {
+                            $criterionlevelids = $this->get_level_ids_per_criterion($i);
+                            $leveljson = (array)json_decode($value['leveljson']);
+                            foreach ($criterionlevelids as $index => $lid) {
+    
+                                if (isset($leveljson[$lid->id])) {
+                                    $level = (array)$leveljson[$lid->id];
+                                    foreach ($level['descriptors'] as $desc) { // get the score for the descript
+    
+                                        if ($desc->checked) {
+                                            $descriptorids .= "$desc->descriptorid,";
+                                        }
                                     }
+    
+                                    $cri[$lid->id] = $level;
                                 }
-
-                                $cri[$lid->id] = $level;
                             }
                         }
                     }
+    
+                    $criterion['levelscore'] = (int)$value['levelscore'];
+                    $criterion['feedback'] = $value['remark'];
+                    $criterion['disablecomment'] = isset($options->disablecriteriacomments) ? $options->disablecriteriacomments : false;
                 }
-
-                $criterion['levelscore'] = (int)$value['levelscore'];
-                $criterion['feedback'] = $value['remark'];
-                $criterion['disablecomment'] = $options->disablecriteriacomments;
             }
         }
 

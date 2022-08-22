@@ -89,7 +89,7 @@ define(["core/log"], function (Log) {
                 sibling = sibling.nextElementSibling;
             }
         },
-
+        // Returns the criteria parsed to array.
         getCriteriaJSON: function () {
             return JSON.parse(document.getElementById("id_criteria").value);
         },

@@ -196,8 +196,8 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                     const criteariaID = row.target.parentNode.parentNode.parentNode.parentNode.getAttribute('data-criterion-group');
 
                     // Change the criterion status tu DELETE, to be able to delete from the DB.
-                    let frc = JSON.parse(document.getElementById('id_criteria').value);
-
+                    let frc = FeditorHelper.getCriteriaJSON();
+                    // Check if this is a criteriont that is not saved in the DB yet. If it is, the object has a new:1 property.
                     // Change the description in the JSON
                     const frctodel = frc.filter(function (criterion, index) {
                         const criteariaID = this.getAttribute('data-criterion-group');
@@ -216,7 +216,11 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                     for (let j = 0; j < levels.length; j++) {
                         levels[j].status = "DELETE";
                     }
-                 
+                    if ('new' in frctodel[0]) {
+                        const postodel = frctodel[0].id - 1;
+                        frc.splice(postodel, 1);
+                     
+                    }
                     FeditorHelper.setCriteriaJSON(frc);
                     FeditorHelper.setHiddenCriteriaJSON(frc);
                   
@@ -237,7 +241,10 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                             elements[0].parentNode.removeChild(elements[0]);
                         }
                     }
+
                     criTable.deleteRow(criterionToDelete);
+
+                    //if this is a new criterion that is not saved in the DB. We can just delete it. We do the previous work to 
                  
 
                 }, function () {
@@ -265,7 +272,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
 
         CriterionControl.prototype.changeCriterionHandlerDisabled = function (e) {
 
-            const criterioncollection = (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
+            const criterioncollection = (document.getElementById('id_criteria').value) ? FeditorHelper.getCriteriaJSON() : [];
 
             // Change the description in the JSON.
             const filterCriterion = criterioncollection.filter(function (criterion, index) {
@@ -296,9 +303,6 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             }
         };
 
-        CriterionControl.prototype.getCriteriaJSON = function () {
-            return (document.getElementById('id_criteria').value) ? JSON.parse(document.getElementById('id_criteria').value) : [];
-        }; // TODO:DElete and use the one in the helper.
         CriterionControl.prototype.validateTotal = function (e) {
 
             // In case the user put the wrong value before, clean the style

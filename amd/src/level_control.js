@@ -146,7 +146,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         if (container.classList.contains('fmark')) {
                             return;
                         }
-
+                        
                         container.setAttribute('descriptor-index', x);
                         const action = container.querySelector('.action-el');
                         const checkbox = container.querySelector('.standard-check');
@@ -681,16 +681,22 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                     if (table.rows.length == 1) {
                         const level = table.closest("[data-criterion-group]");
-
+                     
                         if (!fromRenderer) {
                             criteria.forEach(function (criterion) {
                                 if (criterion.id == level.getAttribute('data-criterion-group')) {
                                     criterion.status = 'DELETE';
 
                                     const cl = Object.values(criterion.levels);
+
                                     cl.forEach(function (level) {
-                                        level.status = 'DELETE';
-                                    });
+
+                                        if (level.status != "NEW") { // Case: We want to add a new level and delete the current one.
+                                            level.status = 'DELETE';
+                                            criterion.status = "UPDATE";
+
+                                        }
+                                    }, criterion);
                                 }
                             });
 
