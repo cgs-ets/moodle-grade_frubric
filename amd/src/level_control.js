@@ -195,7 +195,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (e.target.classList.contains('is-invalid')) {
                 e.target.classList.remove('is-invalid');
                 e.target.classList.remove('form-control');
-                //remove the title
                 e.target.removeAttribute('title');
             }
 
@@ -210,7 +209,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
         LevelControl.prototype.changeMarkHandler = function (s, e) {
-
+            console.log("changeMarkHandler");
+           
             // If it came from validatePreviousMarkValue we need to remove the class warning
             s.cleanPreviousMarkWarning();
             // Remove error message if the user inserted wrong data before.
@@ -246,20 +246,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (nonum) {
                 error = true;
                 message = 'Please insert a number value range';
-            } else if (score == 0) {
-                // First check if its 0. This value is valid in the last row. Meaning the student didnt reach the min. standard
-                // Only the last row can score 0.
-                // Check its the last by checking the next sibling => it has to be the result row.
-                // Check prevoious sibling => It has to be a leevl row
-                const previousRow = (document.getElementById(s.id).previousElementSibling).getAttribute('data-row-type');
-                const nextRow = (document.getElementById(s.id).nextElementSibling).getAttribute('data-row-type');
-
-                if (!(previousRow == 'level' && nextRow == 'result')) {
-                    error = true;
-                    message = 'Zero mark only allowed in last level'
-                }
-
-            } else {
+            }  else {
 
                 if (score.indexOf('-') == -1 && score.indexOf('/') == -1) {
                     error = true;
@@ -294,25 +281,17 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             const resultRow = document.querySelector(`[data-criterion-group="${groupid}"][data-row-type="result"]`);
             var total = (resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML).split("/");
+            const parentTable = FeditorHelper.getClosest(e.target, '.level-mark-desc-table');
+            total = FeditorHelper.getMaxValueInLevel(parentTable);
             const maxinput = resultRow.querySelector('.total-input');
 
             levelsdesc[0].score = e.target.value;
+            
             if (levelsdesc[0].status == 'CREATED' || levelsdesc[0].status == 'UPDATED') {
                 levelsdesc[0].status = 'UPDATE';
             }
-            total = total[total.length - 1];
 
-            if (total === "") { //  Its the first value available.
-                resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${max}`;
-                total = max;
-
-            } else { // check if the max we have has to be replaced by a new max
-
-                if (parseFloat(total) < max) {
-                    total = max;
-                    resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${max}`;
-                }
-            }
+            resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${max}`;         
 
             // Update the max attribute.
             maxinput.setAttribute("max", total);
@@ -320,7 +299,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             FeditorHelper.setCriteriaJSON(criteria);
             FeditorHelper.setHiddenCriteriaJSON(criteria);
-
 
         }
 
@@ -344,7 +322,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             var countingdel = false;
 
-            if (descriptorContainer.children.length > 0) { //self.mode == 'create' &&
+            if (descriptorContainer.children.length > 0) {
                 positionLevel = descriptorContainer.children.length - 1; // When we add the first element, the delete set span is addedd too. we need to only count the divs t oget the right index.
 
                 if (descriptorContainer.children[0].classList.contains('action-delete-set-desc')) {

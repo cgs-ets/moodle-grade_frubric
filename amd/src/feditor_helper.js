@@ -94,7 +94,6 @@ define(["core/log"], function (Log) {
             return JSON.parse(document.getElementById("id_criteria").value);
         },
 
-
         getLevelsJSON: function (criteriaid) {
             return document.getElementById(`advancedgrading-frubric-${criteriaid}-leveljson`).value;
         },
@@ -135,13 +134,24 @@ define(["core/log"], function (Log) {
             }
         },
 
+        getMaxValueInLevel: function (table) {
+            const maxvalues = []
+            Array.from(table.querySelectorAll('.fmark')).forEach(score => {
+                const minmax = score.value.split('-');
+                maxvalues.push(Number(minmax[minmax.length - 1]));
+
+            }, maxvalues);
+
+          return  Math.max(...maxvalues);
+        },
+
         /**
          * keep track of the JSON so in case it the validation fails.
          * We send this value that has the data set to be rerended.
          * @param {JSON} criteria 
          */
-        setHiddenCriteriaJSON: function(criteria) {
-            document.querySelector('input[name="criteriajsonhelper"]').value =  JSON.stringify(criteria);
+        setHiddenCriteriaJSON: function (criteria) {
+            document.querySelector('input[name="criteriajsonhelper"]').value = JSON.stringify(criteria);
         }
 
     };
