@@ -141,7 +141,6 @@ define(["core/log"], function (Log) {
                 maxvalues.push(Number(minmax[minmax.length - 1]));
 
             }, maxvalues);
-
           return  Math.max(...maxvalues);
         },
 

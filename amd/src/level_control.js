@@ -209,7 +209,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
         LevelControl.prototype.changeMarkHandler = function (s, e) {
-            console.log("changeMarkHandler");
            
             // If it came from validatePreviousMarkValue we need to remove the class warning
             s.cleanPreviousMarkWarning();
@@ -253,7 +252,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     message = 'Invalid value. Accepts min-max or min/max';
                 } else {
                     // Evaluate min/max 
-                    var [min, max] = s.getMinMaxMark(score); // TODO: use the feditorhelper version
+                    var [min, max] = FeditorHelper.getMinMax(score);
                     if (min.length == 0 || max.length == 0) {
                         error = true;
                     } else if ((min.length > 0 && max.length > 0) && (parseFloat(min) > parseFloat(max))) {
@@ -291,7 +290,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 levelsdesc[0].status = 'UPDATE';
             }
 
-            resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${max}`;         
+            resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${total}`;         
 
             // Update the max attribute.
             maxinput.setAttribute("max", total);
@@ -997,14 +996,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             return levelsdesc;
         }
 
-        LevelControl.prototype.getMinMaxMark = function (score) {
-
-            if (score.indexOf('-') != -1) {
-                return score.split('-');
-            } else {
-                return score.split('/');
-            }
-        }
 
         LevelControl.prototype.setErrorMessage = function (e, message) {
 
