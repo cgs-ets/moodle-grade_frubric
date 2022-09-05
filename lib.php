@@ -1121,25 +1121,6 @@ class gradingform_frubric_instance extends gradingform_instance {
     }
 
     /**
-     * Determines whether the submitted form was empty.
-     *
-     * @param array $elementvalue value of element submitted from the form
-     * @return boolean true if the form is empty
-     */
-    public function is_empty_form($elementvalue) {
-        $criteria = $this->get_controller()->get_definition()->frubric_criteria;
-        foreach ($criteria as $id => $criterion) {
-            if (
-                isset($elementvalue['criteria'][$id]['levelid'])
-                || !empty($elementvalue['criteria'][$id]['remark'])
-            ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Removes the attempt from the gradingform_guide_fillings table
      * @param array $data the attempt data
      */
@@ -1154,7 +1135,9 @@ class gradingform_frubric_instance extends gradingform_instance {
     }
 
     /**
-     * Validates that frubric is fully completed and contains valid grade on each criterion
+     * Validates that frubric. Only check the totaloutof property.
+     * That way teachers can have rubrics and not check any descriptor,
+     * this will let them save a result, similar to the checklist  grading method.
      *
      * @param array $elementvalue value of element as came in form submit
      * @return boolean true if the form data is validated and contains no errors
@@ -1162,20 +1145,14 @@ class gradingform_frubric_instance extends gradingform_instance {
     public function validate_grading_element($elementvalue) {
 
         $criteria = $this->get_controller()->get_definition()->frubric_criteria;
-
-
+       
         if (!isset($elementvalue['criteria']) || !is_array($elementvalue['criteria']) || sizeof($elementvalue['criteria']) < sizeof($criteria)) {
             return false;
         }
-
+      
         foreach ($criteria as $id => $criterion) {
 
-            if (!isset($elementvalue['criteria'][$id]['levelid'])   || !array_key_exists($elementvalue['criteria'][$id]['levelid'], $criterion['levels'])) {
-                return false;
-            }
-
             $max = $criterion['totaloutof'];
-
 
             if ($elementvalue['criteria'][$id]['levelscore'] > $max) {
                 return false;
@@ -1184,9 +1161,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
 
         return true;
-    }
-
-
+    } 
 
     /**
      * @return array An array containing a single key/value pair with the 'rubric_criteria' external_multiple_structure.
@@ -1251,9 +1226,10 @@ class gradingform_frubric_instance extends gradingform_instance {
      */
     public function update($data) {
         global $DB;
+       
         $currentgrade = $this->get_frubric_filling();
-
         parent::update($data);
+        
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array(
@@ -1337,8 +1313,6 @@ class gradingform_frubric_instance extends gradingform_instance {
     public function render_grading_element($page, $gradingformelement) {
         global  $OUTPUT;
 
-
-
         $definition = $this->get_controller()->get_definition();
         $criteria = $definition->frubric_criteria;
         $commentsoption = (json_decode($definition->options));
@@ -1378,7 +1352,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
             $crite->feedback = '';
             $crite->disablecomment = $commentsoption->disablecriteriacomments;
-            $crite->levelscore = '';
+            $crite->levelscore = '0';
             $crite->leveljson = json_encode($crite->levels);
             unset($crite->levels); // The levels property is not needed anymore. The relevant information is in the definition.
             unset($crite->id); // This is the criteria id. I made it available with the name criteriaid
@@ -1391,17 +1365,15 @@ class gradingform_frubric_instance extends gradingform_instance {
         if ($value === null) {
             $value = $this->get_frubric_filling();
         } else if (!$this->validate_grading_element($value)) {
-
-
             $page->requires->js_call_amd('gradingform_frubric/submission_control', 'init',   array(json_encode($value),  $definition->id));
             $data['incomplete'] = 1;
             // In case there are some descriptors that where checked, we need to render it.  $elementvalue['criteria']
-
             $data['criteria'] = $this->format_element_value($value, $data['criteria']);
         }
 
         if (!$gradingformelement->_flagFrozen) {
             $data['eval'] = 1;
+            error_log(print_r($data, true));
             $page->requires->js_call_amd('gradingform_frubric/evaluate_control', 'init', array(json_encode($data)));
         } else {
             if ($gradingformelement->_persistantFreeze) {
@@ -1411,10 +1383,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             }
         }
 
-
         $html = '';
-
-
         $currentinstance = $this->get_current_instance();
 
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
@@ -1496,7 +1465,7 @@ class gradingform_frubric_instance extends gradingform_instance {
                     ($aux[$def->id])->descriptors = $descriptor;
                 }
             }
-            $crit->leveljson = json_encode($aux); //$crit->definitions
+            $crit->leveljson = json_encode($aux);
         }
 
         return $criteria;

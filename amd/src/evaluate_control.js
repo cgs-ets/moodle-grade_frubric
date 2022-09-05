@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['core/log', 'gradingform_frubric/feditor_helper'],
-    function (Log, FeditorHelper) {
+define(['gradingform_frubric/feditor_helper'],
+    function (FeditorHelper) {
         'use strict';
 
         function init(data) {
@@ -129,13 +129,13 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
 
         EvaluateControl.prototype.onChangeEvaluationHandler = function (s, e) {
 
-            e.target.classList.remove('total-input-error');
+           e.target.classList.remove('total-input-error');
 
             let enteredscore = parseFloat(document.getElementById(e.target.id).value);
 
             let maxscore = document.getElementById(e.target.id + '-out-of-value').innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-
+    
             if (enteredscore > maxscore || enteredscore < 0) {
                 e.target.classList.add('total-input-error');
             } else {
@@ -164,13 +164,13 @@ define(['core/log', 'gradingform_frubric/feditor_helper'],
                     haserror = true;
                 }
 
+                var maxtotal = parseFloat(tables[i].getAttribute('max'));
+    
+                if (!haserror && sum <= maxtotal) {
+                    tables[i].value = sum;
+                }
             });
 
-            var maxtotal = parseFloat(tables[i].getAttribute('max'));
-
-            if (!haserror && sum <= maxtotal) {
-                tables[i].value = sum;
-            }
         }
 
         return {

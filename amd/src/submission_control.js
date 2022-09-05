@@ -27,7 +27,7 @@ define(['core/log'],
         'use strict';
 
         function init(submiteddata, definitionID) {
-           
+
             submiteddata = JSON.parse(submiteddata);
             const control = new SubmissionControl(submiteddata, definitionID);
             control.main(submiteddata, definitionID);
@@ -48,14 +48,13 @@ define(['core/log'],
             self.checkScore(self.criteria);
         }
 
-
-
         SubmissionControl.prototype.checkCriteria = function () {
             var self = this;
             Object.entries(self.submiteddata.criteria).forEach(([key, value]) => {
 
                 // Check score given to the criterion
                 const scoregiven = document.getElementById(`advancedgrading-frubric-criteria-${key}-level-grade`);
+                console.log("checkCriteria: ")
                 if (scoregiven.value != '') {
                     scoregiven.classList.remove('total-input-error');
                     if (!document.querySelector('span.frubric-no-descriptor-error').hasAttribute('hidden')) {
@@ -73,29 +72,8 @@ define(['core/log'],
                     scoregiven.classList.add('total-input-error');
                 }
 
-                // Check that at least one  descriptor is selected
-                var totaldescriptor = 0;
-                var totalnotchecked = 0;
-                
-                Object.values(JSON.parse(value.leveljson)).forEach(val => {
-                    totaldescriptor += val.descriptors.length;
-                    
-                    val.descriptors.forEach(d => {
-                        if (d.checked == false) {
-                            totalnotchecked++;
-                        }
-                    });
-
-                  
-                });
-
-                if (totaldescriptor == totalnotchecked) {
-                    document.getElementById(`advancedgrading-frubric-criteria-${key}`).classList.add('error_no_descriptors_selected'); 
-                    document.querySelector('span.frubric-no-score-error').removeAttribute('hidden');
-                } else {
-                    if (!document.querySelector('span.frubric-no-score-error').hasAttribute('hidden')) {
-                        document.querySelector('span.frubric-no-score-error').hidden = true;
-                    }
+                if (!document.querySelector('span.frubric-no-score-error').hasAttribute('hidden')) {
+                    document.querySelector('span.frubric-no-score-error').hidden = true;
                 }
             });
 
@@ -103,21 +81,22 @@ define(['core/log'],
 
         SubmissionControl.prototype.checkScore = function () {
             var self = this;
+            console.log(this);
             let scoregiven = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`);
             scoregiven.classList.remove('total-input-error');
             let enteredscore = parseFloat(scoregiven.value);
             let maxscore = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade-given`).innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-
+            console.log("checkScore: enteredscore", enteredscore)
             if (enteredscore > maxscore || enteredscore < 0) {
                 scoregiven.classList.add('total-input-error');
             }
 
         }
 
-      
 
-        
+
+
 
 
 
