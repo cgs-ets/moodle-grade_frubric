@@ -34,7 +34,7 @@ This template is called in the grading step.
     </div>
 {{/needupdate}}
 
-<div class="form-frubric-evaluate">
+<div class="form-frubric-evaluate" data-criteria = "{{datajson}}" data-values = "{{valuejson}}">
         
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}

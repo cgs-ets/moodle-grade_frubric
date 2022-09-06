@@ -33,10 +33,10 @@ define(['core/log'],
             control.main(submiteddata, definitionID);
         }
 
-        function SubmissionControl(submiteddata, definitionID) {
+        function SubmissionControl(definitionID) {
             const self = this;
             self.definitionID = definitionID;
-            self.submiteddata = submiteddata;
+            self.submiteddata = JSON.parse(document.querySelector('.form-frubric-evaluate').getAttribute('data-values'));
             self.definitionID = document.getElementById('advancedgrading-criteria').getAttribute('data-definition-id');
 
 
@@ -54,7 +54,6 @@ define(['core/log'],
 
                 // Check score given to the criterion
                 const scoregiven = document.getElementById(`advancedgrading-frubric-criteria-${key}-level-grade`);
-                console.log("checkCriteria: ")
                 if (scoregiven.value != '') {
                     scoregiven.classList.remove('total-input-error');
                     if (!document.querySelector('span.frubric-no-descriptor-error').hasAttribute('hidden')) {
@@ -81,24 +80,17 @@ define(['core/log'],
 
         SubmissionControl.prototype.checkScore = function () {
             var self = this;
-            console.log(this);
             let scoregiven = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade`);
             scoregiven.classList.remove('total-input-error');
             let enteredscore = parseFloat(scoregiven.value);
             let maxscore = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade-given`).innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-            console.log("checkScore: enteredscore", enteredscore)
+          
             if (enteredscore > maxscore || enteredscore < 0) {
                 scoregiven.classList.add('total-input-error');
             }
 
         }
-
-
-
-
-
-
 
         return {
             init: init

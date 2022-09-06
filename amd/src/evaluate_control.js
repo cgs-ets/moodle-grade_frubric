@@ -26,17 +26,16 @@ define(['gradingform_frubric/feditor_helper'],
     function (FeditorHelper) {
         'use strict';
 
-        function init(data) {
+        function init() {
 
-            data = JSON.parse(data);
           
-            const control = new EvaluateControl(data.criteria);
-            control.main(data.criteria);
+            const control = new EvaluateControl();
+            control.main();
         }
 
-        function EvaluateControl(criteria) {
+        function EvaluateControl() {
             const self = this;
-            self.criteria = criteria;
+            self.criteria = (JSON.parse(document.querySelector('.form-frubric-evaluate').getAttribute('data-criteria')).criteria); //criteria;
             self.definitionID = document.getElementById('advancedgrading-criteria').getAttribute('data-definition-id');
         }
 
@@ -54,7 +53,6 @@ define(['gradingform_frubric/feditor_helper'],
                 const level = criterion.children[0].children;
                 const score = document.getElementById(`advancedgrading-frubric-criteria-${element.criteriaid}-level-grade`);
                 score.addEventListener('focus', self.focusEvaluationHandler.bind(this, self));
-                //score.addEventListener('change', self.sumTotal.bind(this, self));;
 
                 Array.from(level).forEach(function (leveldetails) {
                     const descriptorsCollection = leveldetails.children[1];

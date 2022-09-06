@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'gradingform_frubric';
 $plugin->release = '0.1.0';
-$plugin->version = 2022042600;
+$plugin->version = 2022090600;
 

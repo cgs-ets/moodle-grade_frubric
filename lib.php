@@ -1145,11 +1145,11 @@ class gradingform_frubric_instance extends gradingform_instance {
     public function validate_grading_element($elementvalue) {
 
         $criteria = $this->get_controller()->get_definition()->frubric_criteria;
-       
+
         if (!isset($elementvalue['criteria']) || !is_array($elementvalue['criteria']) || sizeof($elementvalue['criteria']) < sizeof($criteria)) {
             return false;
         }
-      
+
         foreach ($criteria as $id => $criterion) {
 
             $max = $criterion['totaloutof'];
@@ -1161,7 +1161,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
 
         return true;
-    } 
+    }
 
     /**
      * @return array An array containing a single key/value pair with the 'rubric_criteria' external_multiple_structure.
@@ -1226,10 +1226,10 @@ class gradingform_frubric_instance extends gradingform_instance {
      */
     public function update($data) {
         global $DB;
-       
+
         $currentgrade = $this->get_frubric_filling();
         parent::update($data);
-        
+
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
                 $newrecord = array(
@@ -1314,9 +1314,9 @@ class gradingform_frubric_instance extends gradingform_instance {
         global  $OUTPUT;
 
         $definition = $this->get_controller()->get_definition();
+        $areaid = $this->get_controller()->get_areaid();
         $criteria = $definition->frubric_criteria;
         $commentsoption = (json_decode($definition->options));
-
 
         $data = [
             'criteria' => [],
@@ -1328,6 +1328,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         ];
 
         $counter = 1;
+
         foreach ($criteria as $c => $criterion) {
             $crite = new \stdClass();
             $crite->labelcrit  = "Criterion $counter";
@@ -1360,21 +1361,28 @@ class gradingform_frubric_instance extends gradingform_instance {
             $counter++;
         }
 
-        $value = $gradingformelement->getValue();
+        $dataObject = new stdClass();
+        $dataObject->commentsoption = $commentsoption;
+        $dataObject->maxscore = ($this->get_controller()->get_min_max_score())['maxscore'];
+        $dataObject->name = $gradingformelement->getName();
+        $dataObject->definitionid = $definition->id;
+        $dataObject->areaid = $areaid;
 
+        $value = $gradingformelement->getValue();
+       
         if ($value === null) {
             $value = $this->get_frubric_filling();
         } else if (!$this->validate_grading_element($value)) {
-            $page->requires->js_call_amd('gradingform_frubric/submission_control', 'init',   array(json_encode($value),  $definition->id));
+            $data['valuejson'] = json_encode($value); // Pass the data as data-attribute
+            $page->requires->js_call_amd('gradingform_frubric/submission_control', 'init',   array($definition->id));
             $data['incomplete'] = 1;
-            // In case there are some descriptors that where checked, we need to render it.  $elementvalue['criteria']
+            // In case there are some descriptors that where checked, we need to render it.
             $data['criteria'] = $this->format_element_value($value, $data['criteria']);
         }
 
         if (!$gradingformelement->_flagFrozen) {
-            $data['eval'] = 1;
-            error_log(print_r($data, true));
-            $page->requires->js_call_amd('gradingform_frubric/evaluate_control', 'init', array(json_encode($data)));
+            $data['datajson'] = json_encode($data); // Pass the data as data-attribute
+            $page->requires->js_call_amd('gradingform_frubric/evaluate_control', 'init', array(''));
         } else {
             if ($gradingformelement->_persistantFreeze) {
                 $data['frozen'] = 1;
@@ -1585,5 +1593,125 @@ function format_descriptors($level) {
         $data['descriptors']['descriptor'][] = $descriptor;
     }
 
+    return $data;
+}
+
+/*Make this load definition available to be able to call from WS */
+function load_definition($areaid) {
+
+    global $DB;
+    $sql = "SELECT gd.*,
+                   rc.id AS rcid, rc.sortorder AS rcsortorder, rc.description AS rcdescription, rc.descriptionformat AS rcdescriptionformat,
+                   rc.criteriajson AS criteriajson, rl.id AS rlid, rl.score AS rlscore, rl.definition AS rldefinition, rl.definitionformat AS rldefinitionformat
+              FROM {grading_definitions} gd
+         LEFT JOIN {gradingform_frubric_criteria} rc ON (rc.definitionid = gd.id)
+         LEFT JOIN {gradingform_frubric_levels} rl ON (rl.criterionid = rc.id)
+             WHERE gd.areaid = :areaid AND gd.method = :method
+          ORDER BY rl.id";
+    $params = array('areaid' => $areaid, 'method' => 'frubric');
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+
+
+    foreach ($rs as $record) {
+
+        // pick the common definition data.
+        $definition = new stdClass();
+        foreach (array(
+            'id', 'name', 'description', 'descriptionformat', 'status', 'copiedfromid',
+            'timecreated', 'usercreated', 'timemodified', 'usermodified', 'timecopied', 'options',
+
+        ) as $fieldname) {
+            $definition->$fieldname = $record->$fieldname;
+        }
+        $definition->frubric_criteria = array();
+
+        // pick the criterion data.
+        if (!empty($record->rcid) and empty($definition->frubric_criteria[$record->rcid])) {
+            foreach (array('id', 'sortorder', 'description', 'descriptionformat') as $fieldname) {
+
+                $definition->frubric_criteria[$record->rcid][$fieldname] = $record->{'rc' . $fieldname};
+            }
+            $definition->frubric_criteria[$record->rcid]['levels'] = array();
+        }
+        // pick the level data.
+        if (!empty($record->rlid)) {
+            foreach (array('id', 'score', 'definition', 'definitionformat') as $fieldname) {
+                $value = $record->{'rl' . $fieldname};
+                $definition->frubric_criteria[$record->rcid]['levels'][$record->rlid][$fieldname] = $value;
+
+                if ($fieldname == 'definition') { // Get the descriptors for the level
+                    $descrip =  json_decode($value);
+                    if (isset($descrip->descriptors)) {
+                        $definition->frubric_criteria[$record->rcid]['levels'][$record->rlid]['descriptors'] = $descrip->descriptors;
+                    }
+                }
+            }
+        }
+
+        $criteriajson = json_decode($record->criteriajson);
+
+        if (!isset($definition->frubric_criteria[$record->rcid]['sumscore'])) {
+
+            if (isset($criteriajson->sumscore)) {
+                $definition->frubric_criteria[$record->rcid]['sumscore'] = $criteriajson->sumscore;
+            }
+        }
+        if ($criteriajson != null) {
+            if (isset($criteriajson->totaloutof)) {
+                $definition->frubric_criteria[$record->rcid]['totaloutof'] = $criteriajson->totaloutof;
+            }
+        }
+    }
+
+    $rs->close();
+    return $definition->frubric_criteria;
+}
+
+function get_formated_criteria($dataObject) {
+    $counter = 1;
+    $data = [
+        'criteria' => [],
+        'preview' => 1, // doesnt display criterion controls.
+        'name' => $dataObject->name,
+        'totalscore' => $dataObject->maxscore,
+        'sumscores' => 0,
+        'criteriadefinitionid' => $dataObject->definitionid,
+        'eval' => 1
+    ];
+    $criteria = load_definition($dataObject->areaid);
+    foreach ($criteria as $c => $criterion) {
+        $crite = new \stdClass();
+        $crite->labelcrit  = "Criterion $counter";
+        foreach ($criterion as $cr => $def) {  // The index has the name of the property.
+
+            if ($cr == 'levels') {
+                // Re index the array
+                $levels = [];
+                foreach ($def as $l => $level) {
+                    $levels[] = toObject($level);
+                }
+
+                $crite->definitions = $levels;
+            }
+            if ($cr == 'id') {
+                $crite->criteriaid = $def;
+            }
+
+            $crite->{$cr} = $def;
+        }
+
+
+        $crite->feedback = '';
+        $crite->disablecomment = $dataObject->commentsoption->disablecriteriacomments;
+        $crite->levelscore = '0';
+        $crite->leveljson = json_encode($crite->levels);
+        unset($crite->levels); // The levels property is not needed anymore. The relevant information is in the definition.
+        unset($crite->id); // This is the criteria id. I made it available with the name criteriaid
+        $data['criteria'][] =  $crite;
+        $counter++;
+    }
+   
+    error_log(print_r($data, true));
     return $data;
 }
