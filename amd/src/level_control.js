@@ -1,3 +1,4 @@
+/* eslint-disable no-eq-null */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,7 +24,11 @@
 define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frubric/feditor_helper', 'core/templates'],
     function ($, Log, Str, Notification, FeditorHelper, Templates) {
         'use strict';
-
+        /**
+         *
+         * @param {*} id
+         * @param {*} parentid
+         */
         function init(id, parentid) {
 
             const mode = FeditorHelper.getMode();
@@ -35,11 +40,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
 
-        /**
-         *
-         * @param {*} level
-         * @param {*} mode
-         */
+     /**
+      *
+      * @param {*} level
+      * @param {*} mode
+      * @param {*} id
+      * @param {*} parentid
+      */
         function LevelControl(level, mode, id, parentid) {
             const self = this;
             self.level = level;
@@ -54,18 +61,21 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         /**
          * Run the controller.
          */
-        LevelControl.prototype.main = function () {
+        LevelControl.prototype.main = function() {
             let self = this;
 
             if (self.mode == 'edit') {
                 if (self.level.classList.contains('criterion-header')) {
-                    self.editModeSetupEvents(self.level.nextElementSibling); //self.level.nextElementSibling
+                    self.editModeSetupEvents(self.level.nextElementSibling);
                 } else {
                     self.editModeSetupEvents(self.level);
                 }
             } else {
                 if (self.level != null) {
-                    self.validatePreviousMarkValue() // CASE: last level  has 0 mark. A new level is added, previous level can't be zero. As 0 is only allowed for the last level,
+                    // CASE: last level  has 0 mark.
+                    // A new level is added, previous level can't be zero.
+                    // As 0 is only allowed for the last level,
+                    self.validatePreviousMarkValue();
                     self.setupEvents(self.level);
                 }
             }
@@ -73,11 +83,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         };
 
         LevelControl.prototype.editModeSetupEvents = function (level) {
-
-
             const self = this;
-
-            if (level.getAttribute('data-row-type') == 'result' || level.getAttribute('data-row-type') == 'add-level-r') { // get the current level. Its the new level added.  
+            // Get the current level. Its the new level added.
+            if (level.getAttribute('data-row-type') == 'result'
+                || level.getAttribute('data-row-type') == 'add-level-r') {
                 level = level.previousElementSibling;
             }
 
@@ -108,7 +117,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                             }
 
                             if (container.classList.contains('add-descriptor')) {
-                                container.querySelector('.add-desc-btn').addEventListener('click', self.addDescriptor.bind(self)); //.bind(self)
+                                container.querySelector('.add-desc-btn').addEventListener('click', self.addDescriptor.bind(self));
                             }
 
                             if (container.classList.contains('action-delete-set-desc')) {
@@ -118,13 +127,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                         });
 
-                    })
+                    });
 
                 });
             }
 
 
-        }
+        };
 
         LevelControl.prototype.editModeSetupEventsHelper = function (desciptorContainer) {
 
@@ -146,7 +155,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         if (container.classList.contains('fmark')) {
                             return;
                         }
-                        
+
                         container.setAttribute('descriptor-index', x);
                         const action = container.querySelector('.action-el');
                         const checkbox = container.querySelector('.standard-check');
@@ -205,11 +214,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 score.classList.add('changeh');
             }
 
-
-        }
+        };
 
         LevelControl.prototype.changeMarkHandler = function (s, e) {
-           
+
             // If it came from validatePreviousMarkValue we need to remove the class warning
             s.cleanPreviousMarkWarning();
             // Remove error message if the user inserted wrong data before.
@@ -229,6 +237,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             }
 
             var levelid;
+
             if (e.target.getAttribute('data-level-id') != null) {
                 levelid = e.target.getAttribute('data-level-id');
             }
@@ -245,13 +254,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (nonum) {
                 error = true;
                 message = 'Please insert a number value range';
-            }  else {
+            } else {
 
                 if (score.indexOf('-') == -1 && score.indexOf('/') == -1) {
                     error = true;
                     message = 'Invalid value. Accepts min-max or min/max';
                 } else {
-                    // Evaluate min/max 
+                    // Evaluate min/max
                     var [min, max] = FeditorHelper.getMinMax(score);
                     if (min.length == 0 || max.length == 0) {
                         error = true;
@@ -270,27 +279,28 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             }
 
             var groupid;
-
+            var isNew = false;
             // Update the total result input. with the highest value.
             if (!s.parentid.includes('frubric-criteria-NEWID')) {
                 groupid = document.getElementById(s.id).getAttribute('data-criterion-group');
             } else {
                 groupid = document.getElementById(s.parentid).getAttribute('data-criterion-group');
+                isNew = true;
             }
 
             const resultRow = document.querySelector(`[data-criterion-group="${groupid}"][data-row-type="result"]`);
             var total = (resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML).split("/");
             const parentTable = FeditorHelper.getClosest(e.target, '.level-mark-desc-table');
-            total = FeditorHelper.getMaxValueInLevel(parentTable);
+            total = !isNew ? FeditorHelper.getMaxValueInLevel(parentTable) : FeditorHelper.getMaxValueInLevelWhenCreating(groupid);
             const maxinput = resultRow.querySelector('.total-input');
 
             levelsdesc[0].score = e.target.value;
-            
+
             if (levelsdesc[0].status == 'CREATED' || levelsdesc[0].status == 'UPDATED') {
                 levelsdesc[0].status = 'UPDATE';
             }
 
-            resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${total}`;         
+            resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML = `/${total}`;
 
             // Update the max attribute.
             maxinput.setAttribute("max", total);
@@ -299,7 +309,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             FeditorHelper.setCriteriaJSON(criteria);
             FeditorHelper.setHiddenCriteriaJSON(criteria);
 
-        }
+        };
 
         LevelControl.prototype.addDescriptor = function (e) {
             const self = this;
@@ -313,7 +323,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             let id;
             if ((self.mode != 'edit') || descriptorContainer.children.length == 0) {
                 id = `${self.id}-${FeditorHelper.getRandomID()}`;
-                positionLevel = descriptorContainer.children.length; // By adding the delete set 
+                positionLevel = descriptorContainer.children.length; // By adding the delete set
             } else {
                 id = `${self.id}-${descriptorContainer.children[0].getAttribute('id')}`;
             }
@@ -491,7 +501,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
         LevelControl.prototype.deleteDescriptor = function (descriptorContainer, checkboxcontainer) {
-            
+
             var self = this;
             if (checkboxcontainer.getAttribute('descriptor-index')) { // This means the descriptor is already saved in the BD. ask if theya re sure to remove
 
@@ -546,7 +556,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                                 criteria.forEach(function (criterion) {
                                     if (criterion.id == parentid) {
-                                        if (criterion.levels.length == 1) { // There is only one level in this criterion. Check if the descriptor has info. 
+                                        if (criterion.levels.length == 1) { // There is only one level in this criterion. Check if the descriptor has info.
                                             criterion.status = 'DELETE'
 
                                         } else {
@@ -658,7 +668,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                     if (table.rows.length == 1) {
                         const level = table.closest("[data-criterion-group]");
-                     
+
                         if (!fromRenderer) {
                             criteria.forEach(function (criterion) {
                                 if (criterion.id == level.getAttribute('data-criterion-group')) {
@@ -683,7 +693,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                     } else {
 
-                        // It has a few levels. 
+                        // It has a few levels.
                         const crit = tr.closest("[data-criterion-group]"); // This row has the criterion these levels belong to
                         const descriptors = Array.from(e.target.parentNode.nextElementSibling.children);
                         const descriptorids = [];
@@ -885,7 +895,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     } else {
                         lev.definition = e.target.value;
                     }
-                    if (lev.status == 'CREATED' || lev.status == 'UPDATED') { // It was updated before. 
+                    if (lev.status == 'CREATED' || lev.status == 'UPDATED') { // It was updated before.
                         lev.status = 'UPDATE';
                     }
 
@@ -976,13 +986,15 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     }]
                 });
             }
-
-            const levelsdesc = criterion[0].levels.filter(function (level) { // User tried to save and make ready a criteria with a level with no descriptor. We are in the fix error view of the form
+            // User tried to save and make ready a criteria with a level with no descriptor.
+            //We are in the fix error view of the form
+            const levelsdesc = criterion[0].levels.filter(function (level) {
                 if (obj.ids != undefined) {
                     if ((obj.ids).includes((level.id).toString())) {
                         return level.descriptors;
                     }
-                } else if (obj.parentid == (level.id).toString() || (obj.parentid).toString().includes((level.id).toString())) {
+                } else if (obj.parentid == (level.id).toString()
+                            || (obj.parentid).toString().includes((level.id).toString())) {
                     return level.descriptors;
                 }
 
@@ -994,8 +1006,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             FeditorHelper.setHiddenCriteriaJSON(criteria);
 
             return levelsdesc;
-        }
-
+        };
 
         LevelControl.prototype.setErrorMessage = function (e, message) {
 
@@ -1003,7 +1014,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             e.target.setAttribute('data-toggle', 'tooltip');
             e.target.setAttribute('data-placement', 'right');
             e.target.setAttribute('data-title', message);
-        }
+        };
 
         LevelControl.prototype.validatePreviousMarkValue = function () {
             const self = this;
@@ -1017,7 +1028,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
             }
 
-        }
+        };
 
         LevelControl.prototype.cleanPreviousMarkWarning = function () {
             const self = this;
@@ -1028,11 +1039,11 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 level.querySelector('.level-mark').removeChild(level.querySelector('small'));
             }
 
-        }
+        };
 
         LevelControl.prototype.countSelectedDescriptors = function () {
 
-        }
+        };
 
 
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,12 +21,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['core/log', 'core/templates',  'core/str', 'core/notification', 'gradingform_frubric/level_control', 'gradingform_frubric/feditor_helper'],
-    function (Log, Templates, Str, Notification, LevelControl, FeditorHelper) {
+define(['core/log', 'core/templates',
+            'core/str', 'core/notification',
+            'gradingform_frubric/level_control',
+            'gradingform_frubric/feditor_helper'
+        ],
+        function (Log, Templates, Str, Notification, LevelControl, FeditorHelper) {
         'use strict';
-
+        /**
+         *
+         * @param {*} id
+         */
         function init(id) {
-            
             const mode = FeditorHelper.getMode();
             let control = new CriterionControl(mode, id);
             control.main();
@@ -34,6 +41,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
         /**
          *
          * @param {*} mode
+         * @param {*} id
          */
         function CriterionControl(mode, id) {
             const self = this;
@@ -71,7 +79,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             let self = this;
             const actions = currentRow.querySelector('.act'); // Get actions cell data-row-type="criterion-add-level"
             const addLevelRow = FeditorHelper.getNextElement(currentRow, '.add-level-r');
-       
+
             if (!actions) {
                 return;
             }
@@ -106,58 +114,54 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                 'criteriongroupid': row.getAttribute('data-criterion-group'),
                 'id': randomid,
             };
-         
 
-          
             Templates.render(self.LEVEL_ROW, context)
                 .done(function (html, js) {
 
                     var prevlevel;
                     const classname = `.level-${row.getAttribute('data-criterion-group')}`;
                     let nextCriterion = FeditorHelper.getNextElement(row, '.criterion-header');
-
-                    if (nextCriterion != undefined) { //  If there is another criterion the level is on top of this row
-
-                        const prevresultlevel = FeditorHelper.getPreviousElement(nextCriterion, '.result-r'); // The new level is on top of the result row for this criterion.
+                     //  If there is another criterion the level is on top of this row.
+                    if (nextCriterion != undefined) {
+                        // The new level is on top of the result row for this criterion.
+                        const prevresultlevel = FeditorHelper.getPreviousElement(nextCriterion, '.result-r');
                         prevlevel = FeditorHelper.getPreviousElement(prevresultlevel, classname);
-
-                        if (prevlevel == undefined) { // If undefined, the criterion represented by row has no levels. Add the level under the current criterion
+                        // If undefined, the criterion represented by row has no levels.
+                        // Add the level under the current criterion
+                        if (prevlevel == undefined) {
                             prevlevel = row;
                         }
 
                     } else {
-
-                        const resultrow = FeditorHelper.getNextElement(row, '.result-r'); // Get the result row for this criterion
-
+                        // Get the result row for this criterion
+                        const resultrow = FeditorHelper.getNextElement(row, '.result-r');
                         prevlevel = FeditorHelper.getPreviousElement(resultrow, classname);
-                        
-                       
+
+
                         if (prevlevel == undefined) { // This criterion doesnt have levels yet.
                             prevlevel = row;
                         }
 
-                          //Check if the row has a red border around when it failed validation
+                          // Check if the row has a red border around when it failed validation.
                         if (prevlevel.classList.contains('is-invalid')) {
                             prevlevel.classList.remove('is-invalid');
                             prevlevel.classList.remove('form-control');
-                            
-
                         }
                     }
 
-                    prevlevel.insertAdjacentHTML('beforebegin', html); 
+                    prevlevel.insertAdjacentHTML('beforebegin', html);
 
                     const levelObject = {
                         score: 0,
                         status: 'NEW',
                         id: randomid,
                         descriptors: []
-                    }
+                    };
                     const criterioncollection = FeditorHelper.getCriteriaJSON();
                     const filterCriterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criterioncollection);
 
                     filterCriterion[0].levels.push(levelObject);
-                    // Refresh the JSON input
+                    // Refresh the JSON input.
                     FeditorHelper.setCriteriaJSON(criterioncollection);
                     FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
                     LevelControl.init(randomid, self.id);
@@ -207,10 +211,10 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                         }
                     }, row.target.parentNode.parentNode.parentNode.parentNode);
 
-                
+
                     frctodel[0].status = "DELETE";
                     const levels = frctodel[0].levels;
-               
+
                     // Change the status for the levels in this criterion
 
                     for (let j = 0; j < levels.length; j++) {
@@ -219,11 +223,11 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
                     if ('new' in frctodel[0]) {
                         const postodel = frctodel[0].id - 1;
                         frc.splice(postodel, 1);
-                     
+
                     }
                     FeditorHelper.setCriteriaJSON(frc);
                     FeditorHelper.setHiddenCriteriaJSON(frc);
-                  
+
                     // Delete all the levels in that criterion.
                     for (let i = (criterionToDelete + 1); i < criTable.rows.length; i++) {
                         if (criTable.rows[i].getAttribute('data-criterion-group') == criteariaID) {
@@ -244,8 +248,8 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
 
                     criTable.deleteRow(criterionToDelete);
 
-                    //if this is a new criterion that is not saved in the DB. We can just delete it. We do the previous work to 
-                 
+                    //if this is a new criterion that is not saved in the DB. We can just delete it. We do the previous work to
+
 
                 }, function () {
                     return;
@@ -253,12 +257,12 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             });
         };
 
-   
+
         CriterionControl.prototype.editCriterionDescription = function (e) {
             e.stopPropagation();
-            
+
             let textarea = e.target;
-           
+
             textarea.removeAttribute('disabled');
             textarea.focus();
 
@@ -293,7 +297,7 @@ define(['core/log', 'core/templates',  'core/str', 'core/notification', 'grading
             //document.getElementById('id_criteria').value = JSON.stringify(criterioncollection);
             FeditorHelper.setCriteriaJSON(criterioncollection);
             FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
-            
+
             // Check if the criterion has a red border because it comes from a failed attempt to save and make ready.
 
             if (e.target.classList.contains('is-invalid')) {

@@ -21,13 +21,13 @@
             <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"></textarea>
             {{#firstLevel}}
              <div id="addRow" class="flex-actions">
-              <span class="add-criterion" title="Add level" id="yui_3_17_2_1_1649830892888_672"><i class="fa fa-plus" id="yui_3_17_2_1_1649830892888_671"></i></span>
+              <span class="add-criterion" title="Add level"><i class="fa fa-plus"></i></span>
             </div>
             {{/firstLevel}}
         </td>
         <td>
             <div class="standard-desc-container"></div>
-            
+
             <div class="add-descriptor">
                 <button class="btn btn-primary add-desc-btn">{{#str}}adddescriptorlabel, gradingform_frubric{{/str}}</button>
             </div>
@@ -40,13 +40,13 @@
         <tr>
             <td  class="level-mark">
                 <textarea  class="fmark" placeholder="{{#str}}mark, gradingform_frubric{{/str}}"  data-level-id ="{{id}}">{{score}}</textarea>
-                
+
             </td>
             <td>
              {{> gradingform_frubric/level_decriptors_delete_set}}
-           
+
                 <div class="standard-desc-container">
-               
+
                 {{#descriptors}}
                     <div class="checkbox-container" data-type="level" id="{{id}}" data-parent-id="{{definitionid}}">
                         <input  type="checkbox" {{#edit}} disabled {{/edit}}  class="standard-check" data-container-id="{{id}}-{{definitionid}}" {{#checked}} checked {{/checked}}>

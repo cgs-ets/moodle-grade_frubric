@@ -1,3 +1,5 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable no-unused-vars */
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -135,19 +137,34 @@ define(["core/log"], function (Log) {
         },
 
         getMaxValueInLevel: function (table) {
-            const maxvalues = []
+            const maxvalues = [];
             Array.from(table.querySelectorAll('.fmark')).forEach(score => {
                 const minmax = score.value.split('-');
                 maxvalues.push(Number(minmax[minmax.length - 1]));
 
             }, maxvalues);
-          return  Math.max(...maxvalues);
+
+            return Math.max(...maxvalues);
+        },
+        // The table structure is different when creating the frubric.
+        // We need a way to find the max value.
+        getMaxValueInLevelWhenCreating: function (groupid) {
+            const maxvalues = [];
+            const marks = document.querySelectorAll(`.level-${groupid} .level-mark .fmark`);
+
+            Array.from(marks).forEach(score => {
+                const minmax = score.value.split('-');
+                maxvalues.push(Number(minmax[minmax.length - 1]));
+
+            }, maxvalues);
+
+            return Math.max(...maxvalues);
         },
 
         /**
-         * keep track of the JSON so in case it the validation fails.
+         * Keep track of the JSON so in case it the validation fails.
          * We send this value that has the data set to be rerended.
-         * @param {JSON} criteria 
+         * @param {JSON} criteria
          */
         setHiddenCriteriaJSON: function (criteria) {
             document.querySelector('input[name="criteriajsonhelper"]').value = JSON.stringify(criteria);
