@@ -1551,10 +1551,12 @@ class gradingform_frubric_instance extends gradingform_instance {
                                 $haschanges = true;
                             } else {
                                 // Check if the descriptor changed. after grading.
-                                $currdes = ($cri->levels[$level->id]['descriptors'][0]);
-                                if ($currdes->descText != ($lf->descriptors[0])->descText) {
-                                    ($lf->descriptors[0])->descText = $currdes->descText;
+                                foreach ($cri->levels[$level->id]['descriptors'] as $index => $cd) {
+                                    if ($cd->descText != ($lf->descriptors[$index])->descText) {
+                                        ($lf->descriptors[$index])->descText = $cd->descText;
+                                    }
                                 }
+
                                 $level->definition['descriptors']['descriptor'] = $lf->descriptors;
                                 $haschanges = true;
                             }
