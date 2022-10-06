@@ -364,7 +364,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function update_definition(stdClass $newdefinition, $usermodified = null) {
 
         $this->update_or_check_frubric($newdefinition, $usermodified, true);
-        if (isset($newdefinition->regrade) && $newdefinition->regrade == -1) {
+        if (isset($newdefinition->regrade) && $newdefinition->regrade == 1) {
             $this->mark_for_regrade();
         }
     }
