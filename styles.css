@@ -1,5 +1,6 @@
 div#cont {
     margin-left: 1rem;
+    overflow-x: hidden
 }
 
 table#criteriaTable th,
@@ -29,11 +30,13 @@ table.inner-level-table.preview th,
 table.inner-level-table.preview td {
     border: 1px solid black;
     padding: 0.5rem;
+    word-wrap: break-word;
 }
 
 table.inner-level-table.graded {
     background: inherit;
 }
+
 /*
 .frubric-add-criterion {
     width: fit-content;
@@ -90,7 +93,7 @@ table.level-mark-desc-table td.level-mark {
     display: none;
 }
 
-#fitem_id_criteria > div {
+#fitem_id_criteria>div {
     display: none;
 }
 
@@ -117,6 +120,7 @@ table.level-mark-desc-table td.level-mark {
 .border-danger-fr {
     border: solid 2px red;
 }
+
 textarea.fmark {
     resize: none;
     margin-top: 0;
@@ -252,7 +256,6 @@ div.checkbox-container .action-el {
     cursor: pointer;
 }
 
-
 #criteria-preview {
     width: max-content;
 }
@@ -273,14 +276,17 @@ p.preview-def {
 /* div.criteria-eval {
     width: 60%;
 } */
-
+/* Break descriptor word.*/
+td.frubric-descriptor-td {
+    word-break: break-all;
+}
 
 td.frubric-score-column {
     width: 8%;
 }
 
 p.frubric-descriptor-preview {
-width: 60%;
+    width: 60%;
 }
 
 .gradingform_frubric-error {
@@ -294,7 +300,7 @@ input:out-of-range {
 }
 
 
-input:out-of-range ~ strong::after {
+input:out-of-range~strong::after {
     content: 'Value out of range';
     color: red;
 }
@@ -310,7 +316,7 @@ span.regrade_confirm {
 
     td.level-mark {
         margin: auto;
-        text-align: center;
+        text-align:center;
     }
 
     textarea.standard-desc {

@@ -1531,12 +1531,14 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function set_criteria_fillings_level(&$criteria, $criteriaid, $leveljson, &$haschanges) {
         $levelfilling = json_decode($leveljson);
+
         foreach ($criteria as $i => $criterion) {
             if (is_array($criterion)) {
                 foreach ($criterion as $j => $cri) {
 
                     if ($cri->criteriaid == $criteriaid) {
                         foreach ($cri->definitions as $level) {
+                            // The frubric was updated after grading. More levels added.
                             if (!isset($levelfilling->{$level->id})) {
                                 $levelfilling->{$level->id} = $cri->levels[$level->id];
                             }
@@ -1548,6 +1550,11 @@ class gradingform_frubric_instance extends gradingform_instance {
                                 $level->definition['descriptors']['descriptor'] = $deschecker;
                                 $haschanges = true;
                             } else {
+                                // Check if the descriptor changed. after grading.
+                                $currdes = ($cri->levels[$level->id]['descriptors'][0]);
+                                if ($currdes->descText != ($lf->descriptors[0])->descText) {
+                                    ($lf->descriptors[0])->descText = $currdes->descText;
+                                }
                                 $level->definition['descriptors']['descriptor'] = $lf->descriptors;
                                 $haschanges = true;
                             }

@@ -24,23 +24,23 @@ This template is called in the grading step.
         <span>{{#str}} frubricnotcompleted, gradingform_frubric {{/str}}</span> <br>
         <span hidden class = 'frubric-no-descriptor-error'>{{#str}} nodescriptor, gradingform_frubric {{/str}}</span> <br>
         <span hidden class = 'frubric-no-score-error'>{{#str}} nodscore, gradingform_frubric {{/str}}</span> <br>
-       
+
     </div>
 {{/incomplete}}
 
-{{#needupdate}} 
+{{#needupdate}}
     <div class = 'gradingform_frubric-regrade alert alert-danger'>
         {{#str}} needregrademessage, gradingform_frubric {{/str}}
     </div>
 {{/needupdate}}
 
 <div class="form-frubric-evaluate" data-criteria = "{{datajson}}" data-values = "{{valuejson}}">
-        
+
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}
         <table class ="frubric-table-evaluate">
         <tr><strong>{{description}}</strong></tr><br><br>
-           
+
             <table class="table table-bordered" id = "{{name}}-frubric-criteria-{{criteriaid}}">
                 {{#definitions}}
                 <tr id= "{{name}}-frubric-criteria-{{criteriaid}}-level">
@@ -49,9 +49,9 @@ This template is called in the grading step.
                     </td>
                     {{#definition}}
                         {{#descriptors}}
-                        <td>
-                            {{#descriptor}} 
-                                <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-{{id}}-descriptor-{{descriptorid}}" 
+                        <td class = "frubric-descriptor-td">
+                            {{#descriptor}}
+                                <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-{{id}}-descriptor-{{descriptorid}}"
                                  name = "{{name}}[criteria][{{criteriaid}}][levelid]" value = "{{id}}"
                                  type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
                             {{/descriptor}}
@@ -67,7 +67,7 @@ This template is called in the grading step.
                     <td>
                         <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input"  min = "0" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
                         <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}  </span></strong>
-                       
+
                     </td>
                 </tr>
                {{^disablecomment}}
@@ -86,7 +86,7 @@ This template is called in the grading step.
         </table>
         {{/criteria}}
 
-     <span><strong> Total: </strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input result" min = "0" max = "{{totalscore}}" value ="{{sumscores}}" disabled> 
+     <span><strong> Total: </strong></span> <input id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade" type="number" class="total-input result" min = "0" max = "{{totalscore}}" value ="{{sumscores}}" disabled>
      <strong><span id="{{name}}-{{criteriadefinitionid}}-frubric-total-grade-given"> /{{totalscore}}</span></strong>
     </div>
 
