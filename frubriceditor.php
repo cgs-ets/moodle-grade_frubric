@@ -117,7 +117,6 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
 
     private function getCriterionData() {
 
-
         $definitionid = $this->_attributes['definitionid'];;
 
         $d = new \stdClass();

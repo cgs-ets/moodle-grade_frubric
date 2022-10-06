@@ -35,28 +35,25 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
 
     public function render_template($mode, $data) {
-        global $OUTPUT, $PAGE, $CFG;
-
         switch ($mode) {
             case gradingform_frubric_controller::DISPLAY_PREVIEW:
                 $data = $this->preview_prepare_data($data);
-                return $OUTPUT->render_from_template('gradingform_frubric/editor_preview', $data);
+                return $this->output->render_from_template('gradingform_frubric/editor_preview', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_PREVIEW_GRADED:
                 $data = $this->preview_prepare_data($data);
-                return  $OUTPUT->render_from_template('gradingform_frubric/editor_preview_graded', $data);
+                return  $this->output->render_from_template('gradingform_frubric/editor_preview_graded', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EVAL:
-                return  $OUTPUT->render_from_template('gradingform_frubric/editor_evaluate', $data);
+                return  $this->output->render_from_template('gradingform_frubric/editor_evaluate', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EDIT_FULL:
-                return $OUTPUT->render_from_template('gradingform_frubric/frubriceditor', $data);
+                return $this->output->render_from_template('gradingform_frubric/frubriceditor', $data);
                 break;
         }
     }
 
     public function display_preview_graded($criteria) {
-        global $OUTPUT;
         $criteria = array_values($criteria);
 
         foreach ($criteria as $i => &$criterion) {
@@ -75,11 +72,13 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             'criteria' => $criteria,
         ];
 
-        return  $OUTPUT->render_from_template('gradingform_frubric/editor_preview_graded', $data);
+        return   $this->output->render_from_template('gradingform_frubric/editor_preview_graded', $data);
     }
 
     private function preview_prepare_data($criteria, $hide = null) {
-        ksort($criteria); // When deleting all descriptors from  a level that is already in the DB. When adding new descriptors to this level. the order changes. to latest to earliest.
+        // When deleting all descriptors from  a level that is already in the DB.
+        // When adding new descriptors to this level. the order changes. to latest to earliest.
+        ksort($criteria);
 
         $criteria = array_values($criteria);
         $counter = 1;
@@ -102,9 +101,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             'criteria' => $criteria,
             'hide' => $hide
         ];
-
-
-        // error_log(print_r($data, true));
 
         return $data;
     }
@@ -135,27 +131,27 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_instances($instances, $defaultcontent,  $maxscore, $assigngradeid) {
-        global $PAGE, $CFG, $USER, $DB;
+        global $CFG, $USER, $DB;
         $return = '';
         if (sizeof($instances)) {
 
-            // hide criteria from submission status. 
-            $sql =   "SELECT workflowstate FROM mdl_assign_user_flags 
-                      WHERE userid = :userid AND assignment = (SELECT assignment  
-                                                               FROM mdl_assign_grades 
-                                                               WHERE id = :assigngradeid AND userid = :userid2)";
+            // Hide criteria from submission status.
+            $sql = "SELECT workflowstate FROM mdl_assign_user_flags
+                    WHERE userid = :userid AND assignment = (SELECT assignment
+                                                            FROM mdl_assign_grades
+                                                            WHERE id = :assigngradeid AND userid = :userid2)";
             $params = ['userid' => $USER->id, 'assigngradeid' => $assigngradeid, 'userid2' => $USER->id];
             $workflow = $DB->get_record_sql($sql, $params);
 
-            if($workflow = $DB->get_record_sql($sql, $params)) {
+            if ($workflow = $DB->get_record_sql($sql, $params)) {
 
                 if ($workflow->workflowstate == 'released' || $workflow->workflowstate == '') {
-                    $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidegradingcriteria.js'));
+                    $this->page->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidegradingcriteria.js'));
                 }
             }
 
             $return .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
-          
+
             foreach ($instances as $instance) {
                 $return .= $this->display_instance($instance,  $maxscore);
             }
@@ -173,18 +169,16 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @param bool $cangrade whether current user has capability to grade in this context
      */
     public function display_instance(gradingform_frubric_instance $instance,  $maxscore) {
-        global $OUTPUT;
 
-        $definition = $instance->get_controller()->get_definition();
-        $criteria = $definition->frubric_criteria;
-        $options = json_decode($definition->options);
-
-        $values = $instance->get_frubric_filling(true);
-        $sumscores = 0;
+        $definition     = $instance->get_controller()->get_definition();
+        $criteria       = $definition->frubric_criteria;
+        $options        = json_decode($definition->options);
+        $values         = $instance->get_frubric_filling(true);
+        $sumscores      = 0;
 
         $data = [
             'criteria' => [],
-            'preview' => 1, // doesnt display criterion controls.
+            'preview' => 1, // Doesnt display criterion controls.
             'totalscore' => $maxscore,
             'sumscores' => 0.0,
         ];
@@ -196,12 +190,12 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             foreach ($criteria as $i => &$criterion) {
                 if (isset($values['criteria'][$i])) {
 
-                    $value = $values['criteria'][$i];
-                    $sumscores += $value['levelscore'];
+                    $value          = $values['criteria'][$i];
+                    $sumscores     += $value['levelscore'];
                     $counter++;
-                    $descriptorids = '';
+                    $descriptorids  = '';
                     foreach ($criterion as $j => &$cri) {
-    
+
                         if (!isset($criterion['descriptiontotal'])) {
                             $criterion['descriptiontotal'] = "Criterion $counter";
                         }
@@ -209,22 +203,22 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                             $criterionlevelids = $this->get_level_ids_per_criterion($i);
                             $leveljson = (array)json_decode($value['leveljson']);
                             foreach ($criterionlevelids as $index => $lid) {
-    
+
                                 if (isset($leveljson[$lid->id])) {
                                     $level = (array)$leveljson[$lid->id];
-                                    foreach ($level['descriptors'] as $desc) { // get the score for the descript
-    
+                                    foreach ($level['descriptors'] as $desc) { // Get the score for the descript.
+
                                         if ($desc->checked) {
                                             $descriptorids .= "$desc->descriptorid,";
                                         }
                                     }
-    
+
                                     $cri[$lid->id] = $level;
                                 }
                             }
                         }
                     }
-    
+
                     $criterion['levelscore'] = (int)$value['levelscore'];
                     $criterion['feedback'] = $value['remark'];
                     $criterion['disablecomment'] = isset($options->disablecriteriacomments) ? $options->disablecriteriacomments : false;
@@ -236,7 +230,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
 
-        return $OUTPUT->render_from_template('gradingform_frubric/editor_evaluated', $data);
+        return $this->ouput->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
     private function format_criteria_array(&$criteria) {

@@ -170,7 +170,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
     /**
      * Converts the current definition into an object suitable for the editor form's set_data()
-     * bool	$addemptycriterion	whether to add an empty criterion if the guide is completely empty (just being created)
+     * bool    $addemptycriterion    whether to add an empty criterion if the guide is completely empty (just being created)
      */
     public function get_definition_for_editing($addemptycriterion = false) {
 
@@ -251,7 +251,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     }
 
     // Generate the context for the feditor template.
-    public function getCriterionData($criteriacollection = null) {
+    public function getcriteriondata($criteriacollection = null) {
 
         $criteria = json_decode($criteriacollection);
 
@@ -321,7 +321,7 @@ class gradingform_frubric_controller extends gradingform_controller {
      *
      * The only exception is 'lockzeropoints' - if other options are present in the json string but this
      * one is absent, this means that the Flexrubric was created before Moodle 3.2 and the 0 value should be used.
-     * TODO: Maybe remove?
+     *
      * @return array
      */
     public function get_options() {
@@ -348,6 +348,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             'alwaysshowdefinition' => 0,
             'showdescriptionstudent' => 0,
             'disablecriteriacomments' => 0,
+            'lockzeropoints' => 0,
 
         );
         return $options;
@@ -375,7 +376,8 @@ class gradingform_frubric_controller extends gradingform_controller {
      * 0 - no changes
      * 1 - only texts or criteria sortorders are changed, students probably do not require re-grading
      * 2 - added levels but maximum score on frubric is the same, students still may not require re-grading
-     * 3 - removed criteria or added levels or changed number of points, students require re-grading but may be re-graded automatically
+     * 3 - removed criteria or added levels or changed number of points, students require re-grading
+     *     but may be re-graded automatically
      * 4 - removed levels - students require re-grading and not all students may be re-graded automatically
      * 5 - added criteria - all students require manual re-grading
      *
@@ -389,7 +391,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         if ($this->definition === false) {
             if (!$doupdate) {
-                // if we create the new definition there is no such thing as re-grading anyway.
+                // If we create the new definition there is no such thing as re-grading anyway.
                 return 5;
             }
 
@@ -418,9 +420,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         // Reload the definition from the database.
         $currentdefinition = $this->get_definition(true);
-
         $haschanges = array();
-        // $currentoptions = $this->get_options();
 
         if (!isset($newdefinition->frubric['criteria'])) {
             $newcriteria = json_decode($newdefinition->criteria);
@@ -463,13 +463,15 @@ class gradingform_frubric_controller extends gradingform_controller {
             if (count($levels) == 0) {
                 array_push($levels, $dummylevel);
             }
-
-            if ($criterion->status == "NEW" || ($criterion->status == "DELETE" &&  strpos($criterion->cid, 'NEWID') != false)) { // The criteria is marked as delete but is the only one it has.
+            // The criteria is marked as delete but is the only one it has.
+            if ($criterion->status == "NEW" || ($criterion->status == "DELETE" &&  strpos($criterion->cid, 'NEWID') != false)) {
                 // Insert criterion into DB.
-                $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE); // TODO MDL-31235 format is not supported yet
+                $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE);
 
                 foreach ($criteriafields as $key) {
-                    if ($key == 'descriptionformat' || $key == 'criteriajson') continue;
+                    if ($key == 'descriptionformat' || $key == 'criteriajson') {
+                        continue;
+                    }
                     $data[$key] = ($key == 'sortorder') ? $criterion->rowindex : $criterion->{$key};
                 }
 
@@ -488,7 +490,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                     $haschanges[5] = true;
                 }
             } else if ($criterion->status == "UPDATE") {
-                // Update criterion in DB
+                // Update criterion in DB.
                 if ($doupdate) {
                     $updatecriterion = new \stdClass();
                     $updatecriterion->id = $criterion->id;
@@ -499,7 +501,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                     $DB->update_record('gradingform_frubric_criteria', $updatecriterion);
                 }
                 $haschanges[1] = true;
-            } else  if ($criterion->status == "DELETE") { // DELETE CRITERION.
+            } else if ($criterion->status == "DELETE") { // DELETE CRITERION.
                 if (isset($criterion->cid)) {
                     if (strpos($criterion->cid, 'NEWID') != false) {
                         continue;
@@ -507,7 +509,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 }
                 if ($doupdate) {
                     foreach ($criterion->levels as $level) {
-                        $DB->delete_records('gradingform_frubric_levels', array('id' => $level->id)); //DBID.
+                        $DB->delete_records('gradingform_frubric_levels', array('id' => $level->id)); // DBID.
                     }
                     $DB->delete_records('gradingform_frubric_criteria', array('id' => $criterion->id));
                 }
@@ -516,10 +518,11 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $id = $criterion->id;
             }
 
-
             foreach ($levels as $l => $level) {
 
-                if ($level->status == 'UPDATED') continue; // This level was updated before. Not this time.
+                if ($level->status == 'UPDATED') {
+                    continue;
+                } // This level was updated before. Not this time.
                 if ($level->status == 'NEW') {
                     if ($this->is_descriptor_empty($level)) {
                         $level->descriptors = [$dummydescriptor];
@@ -528,7 +531,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                     if (isset($id)) {
                         $leveldata = array('criterionid' => $id, 'definitionformat' => FORMAT_MOODLE);
                     }
-                    $leveldata['score'] =  0;
+                    $leveldata['score'] = 0;
 
                     if ($doupdate) {
                         $levelid = $DB->insert_record('gradingform_frubric_levels', $leveldata, true);
@@ -546,13 +549,13 @@ class gradingform_frubric_controller extends gradingform_controller {
                             $descriptordata->levelid = $levelid;
                             $descriptordata->score = $maxscore / count($level->descriptors);
                             $descriptordata->maxscore = $maxscore;
-                            $descriptordata->description = s($descriptor->descText, true); //$descriptor->descText;
+                            $descriptordata->description = s($descriptor->descText, true);
 
                             $descriptorid = $DB->insert_record('gradingform_frubric_descript', $descriptordata);
                             $descriptordata->id = $descriptorid;
                             $records[] = $descriptordata;
 
-                            $descriptor->descriptorid =  $descriptorid;
+                            $descriptor->descriptorid = $descriptorid;
                             // Update the level definition. Just save the descriptors for this level.
                             // Collect all the descriptorids.
                             $leveldescriptorids[] = $levelid;
@@ -577,7 +580,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
                     if ($doupdate) {
 
-                        // Update level in DB 
+                        // Update level in DB
                         $lr = $DB->get_record('gradingform_frubric_levels', ['id' => $level->id]); // Level record.
                         $lr->score = $level->score;
 
@@ -597,7 +600,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                                 $descupdate->selected = $ld->checked;
                                 $descupdate->deleted = $ld->delete;
                                 $descupdate->levelid = $level->id;
-                                $newdescid =  $DB->insert_record('gradingform_frubric_descript', $descupdate);
+                                $newdescid = $DB->insert_record('gradingform_frubric_descript', $descupdate);
                                 ($level->descriptors[$j])->descriptorid = $newdescid;
                                 $haschanges[3] = true;
                             } else {
@@ -636,9 +639,11 @@ class gradingform_frubric_controller extends gradingform_controller {
 
                     if ($doupdate) {
 
-                        // Delete level in DB. 
+                        // Delete level in DB.
                         foreach ($level->descriptors as $descriptor) {
-                            if (!isset($descriptor->descriptorid)) continue;
+                            if (!isset($descriptor->descriptorid)) {
+                                continue;
+                            }
                             $DB->delete_records('gradingform_frubric_descript', array('id' => $descriptor->descriptorid));
                         }
 
@@ -703,9 +708,9 @@ class gradingform_frubric_controller extends gradingform_controller {
 
     private function compare_existing_definition($currentdefinition, $newcriteria) {
 
-        $frubric_criteria = $currentdefinition->frubric_criteria;
-        $countcurrentcriteria =  count($frubric_criteria);
-        $countnewcriteria = count($newcriteria);
+        $frubriccriteria        = $currentdefinition->frubric_criteria;
+        $countcurrentcriteria   = count($frubriccriteria);
+        $countnewcriteria       = count($newcriteria);
 
         if ($countnewcriteria > $countcurrentcriteria) {
             return true;
@@ -721,14 +726,14 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $criterion->levels = array($criterion->levels);
             }
 
-            $levelscounter = count($criterion->levels);  // count the levels in the json
-            $existinglevels = count($frubric_criteria[$criterion->id]['levels']);
+            $levelscounter = count($criterion->levels);  // Count the levels in the json.
+            $existinglevels = count($frubriccriteria[$criterion->id]['levels']);
 
-            if ($levelscounter > $existinglevels) { // new descriptors added
+            if ($levelscounter > $existinglevels) { // New descriptors added.
                 return true;
             }
 
-            if ($levelscounter < $existinglevels) { // new descriptors added
+            if ($levelscounter < $existinglevels) { // New descriptors added.
                 return true;
             }
         }
@@ -738,7 +743,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
     /**
      * When creating a new definition, the criteria array is an array of objects
-     * When creating templates the criteria is an array of arrays. --> Modify it 
+     * When creating templates the criteria is an array of arrays. --> Modify it
      */
     private function format_definition($criteria) {
         $criteriaaux = [];
@@ -764,7 +769,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             return [0, 0];
         }
 
-        if (strpos($scorefield, '-')) { // format MIN-MAX.  
+        if (strpos($scorefield, '-')) { // Format MIN-MAX.
             return  explode('-', $scorefield);
         } else { // Format MIN/MAX.
             return  explode('/', $scorefield);
@@ -785,10 +790,13 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function get_or_create_instance($instanceid, $raterid, $itemid) {
 
         global $DB;
-        if (
-            $instanceid &&
-            $instance = $DB->get_record('grading_instances', array('id'  => $instanceid, 'raterid' => $raterid, 'itemid' => $itemid), '*', IGNORE_MISSING)
-        ) {
+        if ($instanceid &&
+            $instance = $DB->get_record('grading_instances',
+            array('id'  => $instanceid,
+                  'raterid' => $raterid,
+                  'itemid' => $itemid),
+                  '*',
+                  IGNORE_MISSING)) {
             return $this->get_instance($instance);
         }
         if ($itemid && $raterid) {
@@ -796,16 +804,13 @@ class gradingform_frubric_controller extends gradingform_controller {
             if ($rs = $DB->get_records('grading_instances', $params, 'timemodified DESC', '*', 0, 1)) {
                 $record = reset($rs);
                 $currentinstance = $this->get_current_instance($raterid, $itemid);
-                if (
-                    $record->status == gradingform_frubric_instance::INSTANCE_STATUS_INCOMPLETE &&
-                    (!$currentinstance || $record->timemodified > $currentinstance->get_data('timemodified'))
-                ) {
+                if ($record->status == gradingform_frubric_instance::INSTANCE_STATUS_INCOMPLETE
+                    && (!$currentinstance || $record->timemodified > $currentinstance->get_data('timemodified'))) {
                     $record->isrestored = true;
                     return $this->get_instance($record);
                 }
             }
         }
-
 
         return $this->create_instance($raterid, $itemid);
     }
@@ -911,8 +916,13 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         global $DB;
         $sql = "SELECT gd.*,
-                       rc.id AS rcid, rc.sortorder AS rcsortorder, rc.description AS rcdescription, rc.descriptionformat AS rcdescriptionformat,
-                       rc.criteriajson AS criteriajson, rl.id AS rlid, rl.score AS rlscore, rl.definition AS rldefinition, rl.definitionformat AS rldefinitionformat
+                       rc.id AS rcid, rc.sortorder AS rcsortorder,
+                       rc.description AS rcdescription,
+                       rc.descriptionformat AS rcdescriptionformat,
+                       rc.criteriajson AS criteriajson,
+                       rl.id AS rlid, rl.score AS rlscore,
+                       rl.definition AS rldefinition,
+                       rl.definitionformat AS rldefinitionformat
                   FROM {grading_definitions} gd
              LEFT JOIN {gradingform_frubric_criteria} rc ON (rc.definitionid = gd.id)
              LEFT JOIN {gradingform_frubric_levels} rl ON (rl.criterionid = rc.id)
@@ -925,7 +935,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $this->definition = false;
         foreach ($rs as $record) {
 
-            // pick the common definition data.
+            // Pick the common definition data.
             if ($this->definition === false) {
                 $this->definition = new stdClass();
                 foreach (array(
@@ -938,22 +948,22 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $this->definition->frubric_criteria = array();
             }
 
-            // pick the criterion data.
-            if (!empty($record->rcid) and empty($this->definition->frubric_criteria[$record->rcid])) {
+            // Pick the criterion data.
+            if (!empty($record->rcid) && empty($this->definition->frubric_criteria[$record->rcid])) {
                 foreach (array('id', 'sortorder', 'description', 'descriptionformat') as $fieldname) {
 
                     $this->definition->frubric_criteria[$record->rcid][$fieldname] = $record->{'rc' . $fieldname};
                 }
                 $this->definition->frubric_criteria[$record->rcid]['levels'] = array();
             }
-            // pick the level data.
+            // Pick the level data.
             if (!empty($record->rlid)) {
                 foreach (array('id', 'score', 'definition', 'definitionformat') as $fieldname) {
                     $value = $record->{'rl' . $fieldname};
                     $this->definition->frubric_criteria[$record->rcid]['levels'][$record->rlid][$fieldname] = $value;
 
-                    if ($fieldname == 'definition') { // Get the descriptors for the level
-                        $descrip =  json_decode($value);
+                    if ($fieldname == 'definition') { // Get the descriptors for the level.
+                        $descrip = json_decode($value);
                         if (isset($descrip->descriptors)) {
                             $this->definition->frubric_criteria[$record->rcid]['levels'][$record->rlid]['descriptors'] = $descrip->descriptors;
                         }
@@ -969,13 +979,14 @@ class gradingform_frubric_controller extends gradingform_controller {
                     $this->definition->frubric_criteria[$record->rcid]['sumscore'] = $criteriajson->sumscore;
                 }
             }
+
             if ($criteriajson != null) {
                 if (isset($criteriajson->totaloutof)) {
-
                     $this->definition->frubric_criteria[$record->rcid]['totaloutof'] = $criteriajson->totaloutof;
                 }
             }
         }
+
         $rs->close();
     }
 
@@ -988,22 +999,23 @@ class gradingform_frubric_controller extends gradingform_controller {
      */
     public function get_definition_copy(gradingform_controller $target) {
 
-        $new = parent::get_definition_copy($target);
-        $old = $this->get_definition_for_editing();
-        $new->description_editor = $old->description_editor;
-        $new->options  = $old->options;
-        $listcriterion = [];
+        $new                        = parent::get_definition_copy($target);
+        $old                        = $this->get_definition_for_editing();
+        $new->description_editor    = $old->description_editor;
+        $new->options               = $old->options;
+        $listcriterion              = [];
+
         foreach ($old->frubric as $criteria) {
             foreach ($criteria as $cr) {
                 $cr = (object)($cr);
 
                 $criterion = new stdClass();
                 $criterion->id = 1;
-                $criterion->cid = "frubric-criteria-NEWID1"; // Criterion ID for the DB
+                $criterion->cid = "frubric-criteria-NEWID1"; // Criterion ID for the DB.
                 $criterion->status = "NEW";
-                $criterion->description  = $cr->description; // Criterion descrption
+                $criterion->description  = $cr->description; // Criterion descrption.
                 $criterion->rowindex = 1; // Keep track of the header row.
-                $criterion->definitionid = 0; // Id from mdl_grading_definitions/
+                $criterion->definitionid = 0; // Id from mdl_grading_definitions.
                 $levels = [];
                 foreach ($cr->levels as $level) {
                     $level = (object) $level;
@@ -1024,7 +1036,6 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $criterion->levels = $levels;
                 $criterion->idsumscore = "";
                 $criterion->totaloutof = $cr->totaloutof;
-
 
                 $listcriterion[] = $criterion;
             }
@@ -1146,7 +1157,9 @@ class gradingform_frubric_instance extends gradingform_instance {
 
         $criteria = $this->get_controller()->get_definition()->frubric_criteria;
 
-        if (!isset($elementvalue['criteria']) || !is_array($elementvalue['criteria']) || sizeof($elementvalue['criteria']) < sizeof($criteria)) {
+        if (!isset($elementvalue['criteria'])
+            || !is_array($elementvalue['criteria'])
+            || count($elementvalue['criteria']) < count($criteria)) {
             return false;
         }
 
@@ -1159,7 +1172,6 @@ class gradingform_frubric_instance extends gradingform_instance {
             }
         }
 
-
         return true;
     }
 
@@ -1169,7 +1181,7 @@ class gradingform_frubric_instance extends gradingform_instance {
      * @since Moodle 2.5
      */
     public static function get_external_definition_details() {
-        $frubric_criteria = new external_multiple_structure(
+        $frubriccriteria = new external_multiple_structure(
             new external_single_structure(
                 array(
                     'id'   => new external_value(PARAM_INT, 'criterion id', VALUE_OPTIONAL),
@@ -1193,7 +1205,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             'definition details',
             VALUE_OPTIONAL
         );
-        return array('frubric_criteria' => $frubric_criteria);
+        return array('frubric_criteria' => $frubriccriteria);
     }
 
 
@@ -1244,7 +1256,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             } else {
                 $newrecord = array('id' => $currentgrade['criteria'][$criterionid]['id']);
                 foreach (array('levelid', 'remark'/*, 'remarkformat' */, 'levelscore', 'leveljson') as $key) {
-                    // TODO MDL-31235 format is not supported yet
+
                     if (isset($record[$key]) && $currentgrade['criteria'][$criterionid][$key] != $record[$key]) {
                         $newrecord[$key] = $record[$key];
                     }
@@ -1282,7 +1294,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         sort($graderange);
 
         $mingrade = $graderange[0];
-        $maxgrade = $graderange[sizeof($graderange) - 1];
+        $maxgrade = $graderange[count($graderange) - 1];
 
         $curscore = 0;
         foreach ($grade['criteria'] as $id => $record) {
@@ -1320,7 +1332,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
         $data = [
             'criteria' => [],
-            'preview' => 1, // doesnt display criterion controls.
+            'preview' => 1, // Doesnt display criterion controls.
             'name' => $gradingformelement->getName(),
             'totalscore' => ($this->get_controller()->get_min_max_score())['maxscore'],
             'sumscores' => 0,
@@ -1335,10 +1347,10 @@ class gradingform_frubric_instance extends gradingform_instance {
             foreach ($criterion as $cr => $def) {  // The index has the name of the property.
 
                 if ($cr == 'levels') {
-                    // Re index the array
+                    // Re index the array.
                     $levels = [];
                     foreach ($def as $l => $level) {
-                        $levels[] = toObject($level);
+                        $levels[] = toobject($level);
                     }
 
                     $crite->definitions = $levels;
@@ -1350,26 +1362,24 @@ class gradingform_frubric_instance extends gradingform_instance {
                 $crite->{$cr} = $def;
             }
 
-
-            $crite->feedback = '';
-            $crite->disablecomment = $commentsoption->disablecriteriacomments;
-            $crite->levelscore = '0';
-            $crite->leveljson = json_encode($crite->levels);
-            unset($crite->levels); // The levels property is not needed anymore. The relevant information is in the definition.
-            unset($crite->id); // This is the criteria id. I made it available with the name criteriaid
-            $data['criteria'][] =  $crite;
+            $crite->feedback        = '';
+            $crite->disablecomment  = $commentsoption->disablecriteriacomments;
+            $crite->levelscore      = '0';
+            $crite->leveljson       = json_encode($crite->levels);
+            unset($crite->id);      // This is the criteria id. I made it available with the name criteriaid.
+            $data['criteria'][]     = $crite;
             $counter++;
         }
 
-        $dataObject = new stdClass();
-        $dataObject->commentsoption = $commentsoption;
-        $dataObject->maxscore = ($this->get_controller()->get_min_max_score())['maxscore'];
-        $dataObject->name = $gradingformelement->getName();
-        $dataObject->definitionid = $definition->id;
-        $dataObject->areaid = $areaid;
+        $dataobject                     = new stdClass();
+        $dataobject->commentsoption     = $commentsoption;
+        $dataobject->maxscore           = ($this->get_controller()->get_min_max_score())['maxscore'];
+        $dataobject->name               = $gradingformelement->getName();
+        $dataobject->definitionid       = $definition->id;
+        $dataobject->areaid             = $areaid;
 
-        $value = $gradingformelement->getValue();
-       
+        $value                          = $gradingformelement->getValue();
+
         if ($value === null) {
             $value = $this->get_frubric_filling();
         } else if (!$this->validate_grading_element($value)) {
@@ -1391,7 +1401,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             }
         }
 
-        $html = '';
+        $html            = '';
         $currentinstance = $this->get_current_instance();
 
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
@@ -1405,7 +1415,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             $curfilling = $currentinstance->get_frubric_filling();
             foreach ($curfilling['criteria'] as $criterionid => $curvalues) {
                 $value['criteria'][$criterionid]['savedlevelid'] = $curvalues['levelid'];
-                $newremark = null;
+                $newremark  = null;
                 $newlevelid = null;
 
                 if (isset($value['criteria'][$criterionid]['remark'])) {
@@ -1414,8 +1424,8 @@ class gradingform_frubric_instance extends gradingform_instance {
                 }
 
                 if (isset($value['criteria'][$criterionid]['levelscore'])) {
-                    $levelscore = $value['criteria'][$criterionid]['levelscore'];
-                    $totalscore += $levelscore;
+                    $levelscore     = $value['criteria'][$criterionid]['levelscore'];
+                    $totalscore    += $levelscore;
                     $this->set_criteria_fillings_levelscore($data, $criterionid, $levelscore);
                 }
 
@@ -1424,7 +1434,6 @@ class gradingform_frubric_instance extends gradingform_instance {
 
                     $this->set_criteria_fillings_level($data, $criterionid, $leveljson, $haschanges);
                 }
-
 
                 if (isset($value['criteria'][$criterionid]['levelid'])) {
                     $newlevelid = $value['criteria'][$criterionid]['levelid'];
@@ -1439,9 +1448,10 @@ class gradingform_frubric_instance extends gradingform_instance {
         $data['sumscores'] = $totalscore;
 
         if (!empty($options['showdescriptionteacher'])) {
-            $html .= html_writer::tag('div', $this->get_controller()->get_formatted_description(), array('class' => 'gradingform_rubric-description'));
+            $contents       = $this->get_controller()->get_formatted_description();
+            $attributes     = array('class' => 'gradingform_rubric-description');
+            $html .= html_writer::tag('div', $contents, $attributes);
         }
-
 
         $html .= $OUTPUT->render_from_template('gradingform_frubric/editor_evaluate', $data);
 
@@ -1451,7 +1461,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function format_element_value($elementvalue, &$criteria) {
 
-        foreach ($criteria as  $crit) {
+        foreach ($criteria as $crit) {
 
             if (isset($elementvalue['criteria'][$crit->criteriaid]['levelscore'])) {
                 $crit->levelscore = $elementvalue['criteria'][$crit->criteriaid]['levelscore'];
@@ -1512,7 +1522,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         foreach ($criteria as $i => $criterion) {
             foreach ($criterion as $j => $cri) {
                 if ($cri->criteriaid == $criteriaid) {
-                    $cri->levelscore =  round($levelscore, 1);
+                    $cri->levelscore = round($levelscore, 1);
                     return;
                 }
             }
@@ -1521,23 +1531,28 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function set_criteria_fillings_level(&$criteria, $criteriaid, $leveljson, &$haschanges) {
         $levelfilling = json_decode($leveljson);
-
         foreach ($criteria as $i => $criterion) {
             if (is_array($criterion)) {
                 foreach ($criterion as $j => $cri) {
+
                     if ($cri->criteriaid == $criteriaid) {
                         foreach ($cri->definitions as $level) {
+                            if (!isset($levelfilling->{$level->id})) {
+                                $levelfilling->{$level->id} = $cri->levels[$level->id];
+                            }
                             $lf = $levelfilling->{$level->id};
-
-                            if (count($level->definition['descriptors']['descriptor']) > count($lf->descriptors)) { // Checks if there were updates on the number of descriptors
-                                $level->definition['descriptors']['descriptor'] = $this->descriptorschecker($lf->descriptors, $level->definition['descriptors']['descriptor']);
+                            // Checks if there were updates on the number of descriptors.
+                            if (count($level->definition['descriptors']['descriptor']) > count($lf->descriptors)) {
+                                $deschecker                     = $this->descriptorschecker($lf->descriptors,
+                                                                        $level->definition['descriptors']['descriptor']);
+                                $level->definition['descriptors']['descriptor'] = $deschecker;
                                 $haschanges = true;
                             } else {
                                 $level->definition['descriptors']['descriptor'] = $lf->descriptors;
                                 $haschanges = true;
                             }
                         }
-                        $cri->leveljson = $leveljson;
+                        $cri->leveljson = json_encode($levelfilling);
                     }
                 }
             }
@@ -1559,17 +1574,19 @@ class gradingform_frubric_instance extends gradingform_instance {
 }
 
 
-function toObject($array) {
+function toobject($array) {
 
-    // Create new stdClass object
+    // Create new stdClass object.
     $object = new stdClass();
-    if ($array == '') return $object;
-    // Use loop to convert array into
-    // stdClass object
+    if ($array == '') {
+        return $object;
+    }
+    // Use loop to convert array into.
+    // stdClass object.
     foreach ($array as $key => $value) {
 
         if (is_array($value)) {
-            $value = ToObject($value);
+            $value = toobject($value);
         }
 
         if ($key == 'definition') {
@@ -1601,21 +1618,24 @@ function load_definition($areaid) {
 
     global $DB;
     $sql = "SELECT gd.*,
-                   rc.id AS rcid, rc.sortorder AS rcsortorder, rc.description AS rcdescription, rc.descriptionformat AS rcdescriptionformat,
-                   rc.criteriajson AS criteriajson, rl.id AS rlid, rl.score AS rlscore, rl.definition AS rldefinition, rl.definitionformat AS rldefinitionformat
+                   rc.id AS rcid, rc.sortorder AS rcsortorder,
+                   rc.description AS rcdescription,
+                   rc.descriptionformat AS rcdescriptionformat,
+                   rc.criteriajson AS criteriajson,
+                   rl.id AS rlid, rl.score AS rlscore,
+                   rl.definition AS rldefinition,
+                   rl.definitionformat AS rldefinitionformat
               FROM {grading_definitions} gd
          LEFT JOIN {gradingform_frubric_criteria} rc ON (rc.definitionid = gd.id)
          LEFT JOIN {gradingform_frubric_levels} rl ON (rl.criterionid = rc.id)
              WHERE gd.areaid = :areaid AND gd.method = :method
           ORDER BY rl.id";
     $params = array('areaid' => $areaid, 'method' => 'frubric');
-
-    $rs = $DB->get_recordset_sql($sql, $params);
-
+    $rs     = $DB->get_recordset_sql($sql, $params);
 
     foreach ($rs as $record) {
 
-        // pick the common definition data.
+        // Pick the common definition data.
         $definition = new stdClass();
         foreach (array(
             'id', 'name', 'description', 'descriptionformat', 'status', 'copiedfromid',
@@ -1626,22 +1646,22 @@ function load_definition($areaid) {
         }
         $definition->frubric_criteria = array();
 
-        // pick the criterion data.
-        if (!empty($record->rcid) and empty($definition->frubric_criteria[$record->rcid])) {
+        // Pick the criterion data.
+        if (!empty($record->rcid) && empty($definition->frubric_criteria[$record->rcid])) {
             foreach (array('id', 'sortorder', 'description', 'descriptionformat') as $fieldname) {
 
                 $definition->frubric_criteria[$record->rcid][$fieldname] = $record->{'rc' . $fieldname};
             }
             $definition->frubric_criteria[$record->rcid]['levels'] = array();
         }
-        // pick the level data.
+        // Pick the level data.
         if (!empty($record->rlid)) {
             foreach (array('id', 'score', 'definition', 'definitionformat') as $fieldname) {
                 $value = $record->{'rl' . $fieldname};
                 $definition->frubric_criteria[$record->rcid]['levels'][$record->rlid][$fieldname] = $value;
 
-                if ($fieldname == 'definition') { // Get the descriptors for the level
-                    $descrip =  json_decode($value);
+                if ($fieldname == 'definition') { // Get the descriptors for the level.
+                    $descrip = json_decode($value);
                     if (isset($descrip->descriptors)) {
                         $definition->frubric_criteria[$record->rcid]['levels'][$record->rlid]['descriptors'] = $descrip->descriptors;
                     }
@@ -1668,28 +1688,29 @@ function load_definition($areaid) {
     return $definition->frubric_criteria;
 }
 
-function get_formated_criteria($dataObject) {
+function get_formated_criteria($dataobject) {
     $counter = 1;
     $data = [
-        'criteria' => [],
-        'preview' => 1, // doesnt display criterion controls.
-        'name' => $dataObject->name,
-        'totalscore' => $dataObject->maxscore,
-        'sumscores' => 0,
-        'criteriadefinitionid' => $dataObject->definitionid,
-        'eval' => 1
+        'criteria'              => [],
+        'preview'               => 1, // Doesnt display criterion controls.
+        'name'                  => $dataobject->name,
+        'totalscore'            => $dataobject->maxscore,
+        'sumscores'             => 0,
+        'eval'                  => 1,
+        'criteriadefinitionid'  => $dataobject->definitionid,
     ];
-    $criteria = load_definition($dataObject->areaid);
+
+    $criteria = load_definition($dataobject->areaid);
     foreach ($criteria as $c => $criterion) {
         $crite = new \stdClass();
         $crite->labelcrit  = "Criterion $counter";
         foreach ($criterion as $cr => $def) {  // The index has the name of the property.
 
             if ($cr == 'levels') {
-                // Re index the array
+                // Re index the array.
                 $levels = [];
                 foreach ($def as $l => $level) {
-                    $levels[] = toObject($level);
+                    $levels[] = toobject($level);
                 }
 
                 $crite->definitions = $levels;
@@ -1701,17 +1722,14 @@ function get_formated_criteria($dataObject) {
             $crite->{$cr} = $def;
         }
 
-
-        $crite->feedback = '';
-        $crite->disablecomment = $dataObject->commentsoption->disablecriteriacomments;
-        $crite->levelscore = '0';
-        $crite->leveljson = json_encode($crite->levels);
-        unset($crite->levels); // The levels property is not needed anymore. The relevant information is in the definition.
-        unset($crite->id); // This is the criteria id. I made it available with the name criteriaid
-        $data['criteria'][] =  $crite;
+        $crite->feedback        = '';
+        $crite->disablecomment  = $dataobject->commentsoption->disablecriteriacomments;
+        $crite->levelscore      = '0';
+        $crite->leveljson       = json_encode($crite->levels);
+        unset($crite->id); // This is the criteria id. I made it available with the name criteriaid.
+        $data['criteria'][]     = $crite;
         $counter++;
     }
-   
-    error_log(print_r($data, true));
+
     return $data;
 }

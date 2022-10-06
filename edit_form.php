@@ -45,8 +45,6 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('hidden', 'regrade');
         $form->setType('regrade', PARAM_INT);
 
-
-
         // Name.
         $form->addElement(
             'text',
@@ -119,9 +117,15 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('html',  $flexrubireditorhtml);
 
         $options = [
-            $form->createElement('advcheckbox', 'options[alwaysshowdefinition]', '', get_string('alwaysshowdefinition', 'gradingform_frubric'), array('group' => 1) , array(0,1)),
-            $form->createElement('advcheckbox', 'options[showdescriptionstudent]', '', get_string('showdescriptionstudent', 'gradingform_frubric'), array('group' => 1), array(0,1)),
-            $form->createElement('advcheckbox', 'options[disablecriteriacomments]', '', get_string('disablecriteriacomments', 'gradingform_frubric'), array('group' => 1), array(0, 1))
+            $form->createElement('advcheckbox', 'options[alwaysshowdefinition]',
+            '', get_string('alwaysshowdefinition', 'gradingform_frubric'),
+                array('group' => 1), array(0, 1)),
+            $form->createElement('advcheckbox', 'options[showdescriptionstudent]',
+            '', get_string('showdescriptionstudent', 'gradingform_frubric'),
+            array('group' => 1), array(0, 1)),
+            $form->createElement('advcheckbox', 'options[disablecriteriacomments]',
+            '', get_string('disablecriteriacomments',
+            'gradingform_frubric'), array('group' => 1), array(0, 1))
         ];
 
         $form->addGroup($options, 'options', "Frubric options", array('<br>'), false);
