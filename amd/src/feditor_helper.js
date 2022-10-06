@@ -136,19 +136,9 @@ define(["core/log"], function (Log) {
             }
         },
 
-        getMaxValueInLevel: function (table) {
-            const maxvalues = [];
-            Array.from(table.querySelectorAll('.fmark')).forEach(score => {
-                const minmax = score.value.split('-');
-                maxvalues.push(Number(minmax[minmax.length - 1]));
-
-            }, maxvalues);
-
-            return Math.max(...maxvalues);
-        },
         // The table structure is different when creating the frubric.
-        // We need a way to find the max value.
-        getMaxValueInLevelWhenCreating: function (groupid) {
+        // We need a way to find the max value. getMaxValueInLevelInCriterion
+        getMaxValueInLevelInCriterion: function (groupid) {
             const maxvalues = [];
             const marks = document.querySelectorAll(`.level-${groupid} .level-mark .fmark`);
 

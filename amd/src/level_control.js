@@ -279,19 +279,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             }
 
             var groupid;
-            var isNew = false;
             // Update the total result input. with the highest value.
-            if (!s.parentid.includes('frubric-criteria-NEWID')) {
-                groupid = document.getElementById(s.id).getAttribute('data-criterion-group');
-            } else {
-                groupid = document.getElementById(s.parentid).getAttribute('data-criterion-group');
-                isNew = true;
-            }
+            groupid = document.getElementById(s.id).getAttribute('data-criterion-group');
 
             const resultRow = document.querySelector(`[data-criterion-group="${groupid}"][data-row-type="result"]`);
             var total = (resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML).split("/");
-            const parentTable = FeditorHelper.getClosest(e.target, '.level-mark-desc-table');
-            total = !isNew ? FeditorHelper.getMaxValueInLevel(parentTable) : FeditorHelper.getMaxValueInLevelWhenCreating(groupid);
+
+            total =  FeditorHelper.getMaxValueInLevelInCriterion(groupid);
             const maxinput = resultRow.querySelector('.total-input');
 
             levelsdesc[0].score = e.target.value;
