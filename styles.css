@@ -37,11 +37,9 @@ table.inner-level-table.graded {
     background: inherit;
 }
 
-/*
-.frubric-add-criterion {
-    width: fit-content;
-    margin-top: 1rem;
-}*/
+input#addCriterion {
+    margin-left: 0.3rem;
+}
 
 .criterion-tr {
     background-color: #f2f2f2;
@@ -312,7 +310,7 @@ span.regrade_confirm {
     color: red;
 }
 
-@media screen (max-width: 950px) {
+@media screen and (max-width: 950px) {
 
     td.level-mark {
         margin: auto;
