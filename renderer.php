@@ -230,7 +230,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['criteria'] = array_values($criteria);
         $this->format_criteria_array($data['criteria']);
 
-        return $this->ouput->render_from_template('gradingform_frubric/editor_evaluated', $data);
+        return $this->output->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
     private function format_criteria_array(&$criteria) {
