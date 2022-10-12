@@ -78,6 +78,8 @@ $string['nodscore']                                     = '* Level score cannot 
 
 $string['needregrademessage']                           = 'The frubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['regrademessage5']                              = 'You are about to save changes to a frubric that has already been used for grading.';
+$string['regradeoption0']                               = 'Do not mark for regrade';
+$string['regradeoption1']                               = 'Mark for regrade';
 $string['disablecriteriacomment']                       = 'Disable criteria comments';
 $string['alwaysshowdefinition']                         = 'Allow users to preview frubric (otherwise it will only be displayed after grading)';
 $string['showdescriptionstudent']                       = 'Display frubric description to those being graded (only if allow preview is set)';

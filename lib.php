@@ -167,7 +167,6 @@ class gradingform_frubric_controller extends gradingform_controller {
         $DB->delete_records_list('gradingform_frubric_criteria', 'id', $criteria);
     }
 
-
     /**
      * Converts the current definition into an object suitable for the editor form's set_data()
      * bool    $addemptycriterion    whether to add an empty criterion if the guide is completely empty (just being created)
@@ -315,7 +314,6 @@ class gradingform_frubric_controller extends gradingform_controller {
         );
     }
 
-
     /**
      * Gets the options of this Flexrubric definition, fills the missing options with default values
      *
@@ -368,7 +366,6 @@ class gradingform_frubric_controller extends gradingform_controller {
             $this->mark_for_regrade();
         }
     }
-
 
     /**
      * Either saves the frubric definition into the database or check if it has been changed.
@@ -1244,6 +1241,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
+
                 $newrecord = array(
                     'instanceid' => $this->get_id(), 'criterionid' => $criterionid,
                     'levelid' => $record['levelid'], 'remarkformat' => FORMAT_MOODLE,

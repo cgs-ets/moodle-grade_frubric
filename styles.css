@@ -297,7 +297,6 @@ input:out-of-range {
     border: 2px solid red;
 }
 
-
 input:out-of-range~strong::after {
     content: 'Value out of range';
     color: red;
@@ -305,9 +304,19 @@ input:out-of-range~strong::after {
 
 span.regrade_confirm {
     display: inline-block;
-    width: 50%;
-    margin-left: 10%;
+    /* width: 50%;*/
+    margin-left: 1rem;
     color: red;
+}
+
+.regrade-container {
+    height: 4rem;
+    padding: 1rem;
+    text-align: center;
+    background: #F8D7DA;
+    margin-bottom: 1rem;
+    display: inline-block;
+    margin-left: 24vw;
 }
 
 @media screen and (max-width: 950px) {

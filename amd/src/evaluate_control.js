@@ -27,15 +27,13 @@ define(['gradingform_frubric/feditor_helper'],
         'use strict';
 
         function init() {
-
-          
             const control = new EvaluateControl();
             control.main();
         }
 
         function EvaluateControl() {
             const self = this;
-            self.criteria = (JSON.parse(document.querySelector('.form-frubric-evaluate').getAttribute('data-criteria')).criteria); //criteria;
+            self.criteria = (JSON.parse(document.querySelector('.form-frubric-evaluate').getAttribute('data-criteria')).criteria);
             self.definitionID = document.getElementById('advancedgrading-criteria').getAttribute('data-definition-id');
         }
 
@@ -79,10 +77,10 @@ define(['gradingform_frubric/feditor_helper'],
             const levelID = id[5];
             const descriptorID = id[id.length - 1];
             let levelsInput = JSON.parse(FeditorHelper.getLevelsJSON(criteriaID));
-            levelsInput[levelID].definition.replace(/\\/g, ''); // Remove the //  from the string. 
+            levelsInput[levelID].definition.replace(/\\/g, ''); // Remove the //  from the string.
             let definition = JSON.parse(levelsInput[levelID].definition);
             let levelDescriptors = levelsInput[levelID].descriptors;
-        
+
             let descriptorids = [];
             levelDescriptors.forEach(element => {
                 descriptorids.push(element.descriptorid);
@@ -133,7 +131,7 @@ define(['gradingform_frubric/feditor_helper'],
 
             let maxscore = document.getElementById(e.target.id + '-out-of-value').innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-    
+
             if (enteredscore > maxscore || enteredscore < 0) {
                 e.target.classList.add('total-input-error');
             } else {
@@ -147,13 +145,13 @@ define(['gradingform_frubric/feditor_helper'],
             var sum = 0;
             var haserror = false;
             var i = 0;
-            
+
             tables.forEach((t, index) => {
-                
+
                 if (!t.classList.contains('result') && !t.classList.contains('total-input-error')) {
                     sum += parseFloat(t.value);
                 }
-                
+
                 if (t.classList.contains('result'))  {
                     i = index;
                 }
@@ -163,7 +161,7 @@ define(['gradingform_frubric/feditor_helper'],
                 }
 
                 var maxtotal = parseFloat(tables[i].getAttribute('max'));
-    
+
                 if (!haserror && sum <= maxtotal) {
                     tables[i].value = sum;
                 }

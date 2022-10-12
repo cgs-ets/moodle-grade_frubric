@@ -28,11 +28,11 @@ require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/edit_form.php');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
 
-$areaid = required_param('areaid', PARAM_INT);
-$criteriajson = optional_param('criteriajsonhelper', '', PARAM_RAW);
-$regradecheck  = optional_param('regrade', '0', PARAM_RAW);
-
-$manager = get_grading_manager($areaid);
+$areaid                 = required_param('areaid', PARAM_INT);
+$criteriajson           = optional_param('criteriajsonhelper', '', PARAM_RAW);
+$regradecheck           = optional_param('regrade', '0', PARAM_RAW);
+$regradeoptselected     = optional_param('regradeoptionselected', '0', PARAM_RAW);
+$manager                = get_grading_manager($areaid);
 
 list($context, $course, $cm) = get_context_info_array($manager->get_context()->id);
 
@@ -56,29 +56,28 @@ $customdata =
         'criteriajsonhelper' => $criteriajson,
         'allowdraft' => !$controller->has_active_instances()
     );
-$target = array('class' => 'gradingform_rubric_editform');
-$mform = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $target);
+$target     = array('class' => 'gradingform_rubric_editform');
+$mform      = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $target);
 
 $mform->need_confirm_regrading($controller);
-$returnurl = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
+$returnurl  = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data = $controller->get_definition_for_editing(true);
 
 $data->returnurl = $returnurl;
-$data->regrade = 0;
+$data->regrade   = 0;
 $mform->set_data($data);
 
 $confirmregrading = (!$mform->need_confirm_regrading($controller) || $regradecheck == 1);
+
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 } else if ($mform->is_submitted() && $mform->is_validated() && $confirmregrading) {
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
-
+    $data->regrade = $regradeoptselected;
     $controller->update_definition($data);
-
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.
     $warning = null;
-
     redirect($returnurl, $warning, null, \core\output\notification::NOTIFY_ERROR);
 }
 

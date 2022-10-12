@@ -44,6 +44,8 @@ class gradingform_frubric_editrubric extends moodleform {
 
         $form->addElement('hidden', 'regrade');
         $form->setType('regrade', PARAM_INT);
+        $form->addElement('hidden', 'regradeoptionselected');
+        $form->setType('regradeoptionselected', PARAM_RAW);
 
         // Name.
         $form->addElement(
@@ -99,20 +101,13 @@ class gradingform_frubric_editrubric extends moodleform {
 
         $form->addElement('hidden', 'criteriajsonhelper');
         $form->setType('criteriajsonhelper', PARAM_RAW);
-
-        $regrademsg = html_writer::start_tag(
-            'span',
-            [
-                'hidden' => true,
-                'class' =>
-                'regrade_confirm'
-            ]
-        ) . get_string('regrademessage5', 'gradingform_frubric') .  html_writer::end_tag('span');
+        $renderer = $PAGE->get_renderer('gradingform_frubric');
+        $regrademsg = $renderer->render_regregade_content();
         $form->addElement('html', $regrademsg);
 
         // Frubric editor.
         $form->setType('frubric', PARAM_RAW);
-        $renderer = $PAGE->get_renderer('gradingform_frubric');
+
         $flexrubireditorhtml = $renderer->render_template(gradingform_frubric_controller::DISPLAY_EDIT_FULL, $d);
         $form->addElement('html',  $flexrubireditorhtml);
 
@@ -442,7 +437,6 @@ class gradingform_frubric_editrubric extends moodleform {
         $form = $this->_form;
         $el = &$form->getElement('regrade');
         $val = $form->getSubmitValue($el->getName());
-
         return $val;
     }
 }
