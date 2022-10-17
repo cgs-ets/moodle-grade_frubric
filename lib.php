@@ -577,7 +577,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
                     if ($doupdate) {
 
-                        // Update level in DB
+                        // Update level in DB.
                         $lr = $DB->get_record('gradingform_frubric_levels', ['id' => $level->id]); // Level record.
                         $lr->score = $level->score;
 
