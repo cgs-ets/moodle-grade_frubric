@@ -246,7 +246,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             const criterion = FeditorHelper.getCriterionFromCriteriaCollection(document.getElementById(s.id), criteria);
             const levelsdesc = s.getLevelDescriptors(s.id, criteria, levelid);
             const score = (e.target.value).trim();
-            const nonum = /[a-z]/gi.test(e.target.value);
+            const nonum = /[a-z]/gi.test(score);
 
             let error = false;
             let message = '';
@@ -288,7 +288,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             total =  FeditorHelper.getMaxValueInLevelInCriterion(groupid);
             const maxinput = resultRow.querySelector('.total-input');
 
-            levelsdesc[0].score = (e.target.value).trim();
+            levelsdesc[0].score = e.target.value.trim();
 
             if (levelsdesc[0].status == 'CREATED' || levelsdesc[0].status == 'UPDATED') {
                 levelsdesc[0].status = 'UPDATE';
