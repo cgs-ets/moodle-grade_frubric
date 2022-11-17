@@ -128,14 +128,17 @@ define(['gradingform_frubric/feditor_helper'],
            e.target.classList.remove('total-input-error');
 
             let enteredscore = parseFloat(document.getElementById(e.target.id).value);
-
+            console.log("onChangeEvaluationHandler");
+            console.log(enteredscore);
             let maxscore = document.getElementById(e.target.id + '-out-of-value').innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-
+            console.log("maxscore");
+            console.log(maxscore);
             if (enteredscore > maxscore || enteredscore < 0) {
                 e.target.classList.add('total-input-error');
             } else {
                 document.getElementById(e.target.id).value = enteredscore;
+                document.getElementById(e.target.id).innerHTML = enteredscore;
             }
 
         }
@@ -144,7 +147,7 @@ define(['gradingform_frubric/feditor_helper'],
             var tables = document.getElementById('advancedgrading-criteria').querySelectorAll('.total-input');
             var sum = 0;
             var haserror = false;
-            var i = 0;
+            var i = -1;
 
             tables.forEach((t, index) => {
 
@@ -160,11 +163,14 @@ define(['gradingform_frubric/feditor_helper'],
                     haserror = true;
                 }
 
-                var maxtotal = parseFloat(tables[i].getAttribute('max'));
+                if (i > -1) {
 
-                if (!haserror && sum <= maxtotal) {
-                    tables[i].value = sum;
+                    var maxtotal = parseFloat(tables[i].getAttribute('max'));
+                    if (!haserror && sum <= maxtotal) {
+                        tables[i].value = sum;
+                    }
                 }
+
             });
 
         }

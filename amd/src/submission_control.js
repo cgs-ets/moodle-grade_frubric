@@ -54,6 +54,8 @@ define(['core/log'],
 
                 // Check score given to the criterion
                 const scoregiven = document.getElementById(`advancedgrading-frubric-criteria-${key}-level-grade`);
+                console.log("scoregiven");
+                console.log(scoregiven);
                 if (scoregiven.value != '') {
                     scoregiven.classList.remove('total-input-error');
                     if (!document.querySelector('span.frubric-no-descriptor-error').hasAttribute('hidden')) {
@@ -85,7 +87,7 @@ define(['core/log'],
             let enteredscore = parseFloat(scoregiven.value);
             let maxscore = document.getElementById(`advancedgrading-${self.definitionID}-frubric-total-grade-given`).innerText.split('/');
             maxscore = parseFloat(maxscore[maxscore.length - 1]);
-          
+
             if (enteredscore > maxscore || enteredscore < 0) {
                 scoregiven.classList.add('total-input-error');
             }

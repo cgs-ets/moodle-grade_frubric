@@ -1379,7 +1379,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         if ($value === null) {
             $value = $this->get_frubric_filling();
         } else if (!$this->validate_grading_element($value)) {
-            $data['valuejson'] = json_encode($value); // Pass the data as data-attribute
+            $data['valuejson'] = json_encode($value); // Pass the data as data-attribute.
             $page->requires->js_call_amd('gradingform_frubric/submission_control', 'init',   array($definition->id));
             $data['incomplete'] = 1;
             // In case there are some descriptors that where checked, we need to render it.
@@ -1387,7 +1387,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         }
 
         if (!$gradingformelement->_flagFrozen) {
-            $data['datajson'] = json_encode($data); // Pass the data as data-attribute
+            $data['datajson'] = json_encode($data); // Pass the data as data-attribute.
             $page->requires->js_call_amd('gradingform_frubric/evaluate_control', 'init', array(''));
         } else {
             if ($gradingformelement->_persistantFreeze) {
