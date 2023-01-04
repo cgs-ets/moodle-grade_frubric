@@ -3,8 +3,11 @@
 Grading form.
 Each criterion is divided by levels and each level can have multiple descriptors.
 
-#### Example ####
+#### Example Frubric definition ####
 ![](/screenshots/Frubric.JPG)
+
+#### Example Frubric grading ####
+![](/screenshots/Grading.png)
 
 ## Installing via uploaded ZIP file ##
 
