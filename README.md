@@ -1,8 +1,10 @@
 # frubric #
 
-TODO Describe the plugin shortly here.
+Grading form.
+Each criterion is divided by levels and each level can have multiple descriptors.
 
-TODO Provide more detailed description here.
+#### Example ####
+![](/screenshots/Frubric.JPG)
 
 ## Installing via uploaded ZIP file ##
 
