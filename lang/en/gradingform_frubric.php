@@ -25,14 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname']                                   = 'Frubric';
+$string['pluginname']                                   = 'Flexrubric';
 $string['name']                                         = 'Name';
-$string['definefrubric']                                = 'Define Frubric';
+$string['definefrubric']                                = 'Define Flexrubric';
 $string['gradingof']                                    = '{$a} grading';
 $string['description']                                  = 'Description';
 $string['frubricstatus']                                = 'Status';
 $string['criteriajson']                                 = 'Criteria JSON';
-$string['savefrubric']                                  = 'Save Frubric and make it ready';
+$string['savefrubric']                                  = 'Save Flexrubric and make it ready';
 $string['savefrubricdraft']                             = 'Save as draft';
 $string['save']                                         = 'Save';
 $string['backtoediting']                                = 'Back to editing';
@@ -76,11 +76,11 @@ Please fix the following error(s) and save changes.';
 $string['nodescriptor']                                 = '* Each level has to have at least one descriptor checked.';
 $string['nodscore']                                     = '* Level score cannot be empty.';
 
-$string['needregrademessage']                           = 'The frubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
-$string['regrademessage5']                              = 'You are about to save changes to a frubric that has already been used for grading.';
+$string['needregrademessage']                           = 'The Flexrubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
+$string['regrademessage5']                              = 'You are about to save changes to a flexrubric that has already been used for grading.';
 $string['regradeoption0']                               = 'Do not mark for regrade';
 $string['regradeoption1']                               = 'Mark for regrade';
 $string['disablecriteriacomment']                       = 'Disable criteria comments';
-$string['alwaysshowdefinition']                         = 'Allow users to preview frubric (otherwise it will only be displayed after grading)';
-$string['showdescriptionstudent']                       = 'Display frubric description to those being graded (only if allow preview is set)';
+$string['alwaysshowdefinition']                         = 'Allow users to preview Flexrubric (otherwise it will only be displayed after grading)';
+$string['showdescriptionstudent']                       = 'Display Flexrubric description to those being graded (only if allow preview is set)';
 $string['disablecriteriacomments']                      = 'Disable criteria comments';

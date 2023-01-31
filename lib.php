@@ -849,7 +849,7 @@ class gradingform_frubric_controller extends gradingform_controller {
      * Returns the rubric plugin renderer
      *
      * @param moodle_page $page the target page
-     * @return gradingform_rubric_renderer
+     * @return gradingform_frubric_renderer
      */
     public function get_renderer(moodle_page $page) {
 
