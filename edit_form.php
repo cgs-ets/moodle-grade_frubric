@@ -123,7 +123,7 @@ class gradingform_frubric_editrubric extends moodleform {
             'gradingform_frubric'), array('group' => 1), array(0, 1))
         ];
 
-        $form->addGroup($options, 'options', "Frubric options", array('<br>'), false);
+        $form->addGroup($options, 'options', get_string('frubricoptions', 'gradingform_frubric'), array('<br>'), false);
 
         $buttonarray = array();
         $buttonarray[] = &$form->createElement(

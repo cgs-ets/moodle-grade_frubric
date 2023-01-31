@@ -84,3 +84,5 @@ $string['disablecriteriacomment']                       = 'Disable criteria comm
 $string['alwaysshowdefinition']                         = 'Allow users to preview Flexrubric (otherwise it will only be displayed after grading)';
 $string['showdescriptionstudent']                       = 'Display Flexrubric description to those being graded (only if allow preview is set)';
 $string['disablecriteriacomments']                      = 'Disable criteria comments';
+$string['frubricoptions']                               = 'Flexrubric options';
+
