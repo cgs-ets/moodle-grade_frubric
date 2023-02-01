@@ -129,7 +129,6 @@ class gradingform_frubric_controller extends gradingform_controller {
         }
 
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
-
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW, $criteria);
         } else {
 
@@ -1349,7 +1348,7 @@ class gradingform_frubric_instance extends gradingform_instance {
                         $levels[] = toobject($level);
                     }
 
-                    $crite->definitions = $levels;
+                    $crite->definitions = sortlevels($levels);
                 }
                 if ($cr == 'id') {
                     $crite->criteriaid = $def;
@@ -1737,4 +1736,17 @@ function get_formated_criteria($dataobject) {
     }
 
     return $data;
+}
+
+function sortlevels (&$levels) {
+    // Sort the levels from in descent order.
+    usort($levels, function($l1, $l2) {
+        $score1 = explode('-', $l1->score);
+        $score1 = trim($score1[count($score1) - 1]);
+        $score2 = explode('-', $l2->score);
+        $score2 = trim($score2[count($score2) - 1]);
+        return ( (int)$score1 < (int)$score2);
+    });
+
+    return $levels;
 }

@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
+require_once(__DIR__ . '/lib.php');
 /**
  * Grading method plugin renderer
  *
@@ -89,6 +89,8 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             foreach ($criterion as $j => &$crit) {
 
                 if ($j == 'levels') {
+
+                    $criterion[$j] = $this->sortlevels($criterion[$j]);
                     foreach ($crit as $q => $c) {
                         $c = $this->preview_score_check($c);
                         $criterion[$j]['level'][] = $c;
@@ -256,6 +258,31 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $results = $DB->get_records_sql($sql);
 
         return $results;
+    }
+
+    private function sortlevels($levels) {
+        // error_log(print_r("ANTES", true));
+        // error_log(print_r($levels, true));
+        $aux = [];
+        foreach ($levels as $id => $level) {
+            $maxscore = explode('-', $level['score']);
+            $aux[$id] = trim($maxscore[count($maxscore) - 1]);
+        }
+
+        uasort($aux, function ($score1, $score2){
+            return ((int)$score1 < (int)$score2);
+        });
+
+        $sortedarray = [];
+
+        foreach ($aux as $id => $maxscore) {
+            $sortedarray[$id] = $levels[$id];
+        }
+
+        // error_log(print_r("DESPUES", true));
+        // error_log(print_r($sortedarray, true));
+
+        return $sortedarray;
     }
 
 

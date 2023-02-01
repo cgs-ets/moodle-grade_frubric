@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/formslib.php');
+require_once(__DIR__ . '/lib.php');
 
 class gradingform_frubric_editrubric extends moodleform {
 
@@ -290,6 +291,9 @@ class gradingform_frubric_editrubric extends moodleform {
                         $dummylevel->descriptors = [$dummydescriptor];
                         $criterion->levels = [$dummylevel];
                     }
+
+                    // Sort levels in descent order.
+                    sortlevels($criterion->levels);
 
                     foreach ($criterion->levels as $l => $level) {
 
