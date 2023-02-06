@@ -599,35 +599,30 @@ class gradingform_frubric_controller extends gradingform_controller {
                                 ($level->descriptors[$j])->descriptorid = $newdescid;
                                 $haschanges[3] = true;
                             } else {
-
                                 $descupdate->id = $ld->descriptorid;
                                 $descupdate->description = $ld->descText;
                                 $descupdate->selected = $ld->checked;
-                                if (isset($ld->delete)) {
+                                if (isset($ld->delete) && $ld->delete == 1) {
                                     $descupdate->deleted = $ld->delete;
-
-                                    if ($ld->delete == 1) {
-                                        $destodelete  = new \stdClass();
-                                        $destodelete->id = ($levelaux[$j])->descriptorid;
+                                    $destodelete  = new \stdClass();
+                                    $destodelete->id = ($levelaux[$j])->descriptorid;
+                                    $d = $DB->delete_records('gradingform_frubric_descript', ['id' => ($levelaux[$j])->descriptorid]);
+                                    if ($d) {
                                         $descriptorstodelete[] = $j;
-                                        $DB->delete_records('gradingform_frubric_descript', ['id' => ($levelaux[$j])->descriptorid]);
-                                        $haschanges[3] = true;
                                     }
-                                }
-
-                                if ($j == (count($level->descriptors) - 1)) {
-                                    foreach ($descriptorstodelete as $i => $index) {
-                                        unset($level->descriptors[$index]);
-                                    }
-
-                                    $level->descriptors = array_values($level->descriptors);
+                                    $haschanges[3] = true;
                                 }
 
                                 $DB->update_record('gradingform_frubric_descript', $descupdate);
                             }
-
-                            $lr->definition = json_encode($level);
                         }
+
+                        foreach ($descriptorstodelete as $i => $index) {
+                            unset($level->descriptors[$index]);
+                        }
+
+                        $level->descriptors = array_values($level->descriptors);
+                        $lr->definition = json_encode($level);
                         $DB->update_record('gradingform_frubric_levels', $lr);
                     }
                 } else if ($level->status == 'DELETE') {

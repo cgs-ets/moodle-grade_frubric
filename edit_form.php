@@ -302,7 +302,7 @@ class gradingform_frubric_editrubric extends moodleform {
                         if ($level->score == "0") {
                             $level->score = '';
                         }
-
+                      //  error_log(print_r($level->descriptors), true);
                         if (count($level->descriptors) == 0) {
                             $dummydescriptor = new stdClass();
                             $dummydescriptor->checked = false;
