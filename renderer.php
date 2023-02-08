@@ -54,7 +54,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     }
 
     public function render_regregade_content() {
-        return $this->output->render_from_template('gradingform_frubric/editor_regrade_content','');
+        return $this->output->render_from_template('gradingform_frubric/editor_regrade_content', '');
     }
     public function display_preview_graded($criteria) {
         $criteria = array_values($criteria);
@@ -62,7 +62,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         foreach ($criteria as $i => &$criterion) {
             foreach ($criterion as $j => &$crit) {
                 if ($j == 'levels') {
-
                     foreach ($crit as $q => $c) {
                         $criterion[$j]['level'][] = $c;
                         unset($crit[$q]);
@@ -93,6 +92,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                     $criterion[$j] = $this->sortlevels($criterion[$j]);
                     foreach ($crit as $q => $c) {
                         $c = $this->preview_score_check($c);
+
                         $criterion[$j]['level'][] = $c;
                         unset($crit[$q]);
                     }
@@ -218,12 +218,14 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                                         }
                                     }
 
-                                    $cri[$lid->id] = $level;
+                                    $cri[$lid->id] = (object)$level;
+
                                 }
                             }
+                            $this->sortlevelsgradedview($cri);
+
                         }
                     }
-
                     $criterion['levelscore'] = (int)$value['levelscore'];
                     $criterion['feedback'] = $value['remark'];
                     $criterion['disablecomment'] = isset($options->disablecriteriacomments) ? $options->disablecriteriacomments : false;
@@ -233,11 +235,32 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
         $data['sumscores'] = $sumscores;
         $data['criteria'] = array_values($criteria);
-        $this->format_criteria_array($data['criteria']);
 
+        $this->format_criteria_array($data['criteria']);
         return $this->output->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
+    // Sorts the levels in an descent order.
+    private function sortlevelsgradedview (&$levels) {
+        $aux = [];
+        foreach ($levels as $id => $level) {
+            $maxscore = explode('-', $level->score);
+            $aux[$id] = trim($maxscore[count($maxscore) - 1]);
+        }
+
+        uasort($aux, function ($score1, $score2){
+            return ((int)$score1 < (int)$score2);
+        });
+
+        $sortedarray = [];
+
+        foreach ($aux as $id => $maxscore) {
+            $sortedarray[$id] = $levels[$id];
+        }
+        $levels = $sortedarray;
+        return $sortedarray;
+
+    }
     private function format_criteria_array(&$criteria) {
         foreach ($criteria as &$criterion) {
             foreach ($criterion as $i => $cr) {
@@ -250,19 +273,20 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 }
             }
         }
+
     }
+
 
     public function get_level_ids_per_criterion($criterionid) {
         global $DB;
-        $sql = "SELECT id  FROM mdl_gradingform_frubric_levels WHERE criterionid = $criterionid";
+        $sql = "SELECT id  FROM mdl_gradingform_frubric_levels WHERE criterionid = $criterionid order by score";
         $results = $DB->get_records_sql($sql);
 
         return $results;
     }
 
     private function sortlevels($levels) {
-        // error_log(print_r("ANTES", true));
-        // error_log(print_r($levels, true));
+
         $aux = [];
         foreach ($levels as $id => $level) {
             $maxscore = explode('-', $level['score']);
@@ -278,9 +302,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         foreach ($aux as $id => $maxscore) {
             $sortedarray[$id] = $levels[$id];
         }
-
-        // error_log(print_r("DESPUES", true));
-        // error_log(print_r($sortedarray, true));
 
         return $sortedarray;
     }

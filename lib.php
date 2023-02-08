@@ -131,7 +131,6 @@ class gradingform_frubric_controller extends gradingform_controller {
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW, $criteria);
         } else {
-
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW_GRADED, $criteria);
         }
 
