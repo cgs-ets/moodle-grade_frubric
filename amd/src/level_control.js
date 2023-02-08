@@ -321,8 +321,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             } else {
                 id = `${self.id}-${descriptorContainer.children[0].getAttribute('id')}`;
             }
-
-
             var countingdel = false;
 
             if (descriptorContainer.children.length > 0) {
@@ -340,7 +338,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 editaddnewlevel = self.parentid.includes('frubric-criteria-NEWID');
             }
 
-
             const context = {
                 id: id,
                 parentid: self.parentid,
@@ -349,7 +346,6 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 index: (countingdel) ? descriptorContainer.children.length - 1 : descriptorContainer.children.length,
                 poslevel: positionLevel
             };
-
 
             if (self.mode != 'edit') {
                 delete context.index;
@@ -378,19 +374,18 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     action.addEventListener('click', self.deleteDescriptor.bind(self, descriptorContainer, container));
                     checkbox.addEventListener('click', self.selectdescriptor.bind(this, self)); // TODO: DO I NEED THIS?
 
+                    let criteria = FeditorHelper.getCriteriaJSON();
+                    let container2 = descriptorContainer.lastElementChild;
+                    if (container != null) {
+                        FeditorHelper.setCriteriaJSON(criteria);
+                        FeditorHelper.setHiddenCriteriaJSON(criteria);
+                    }
                 })
                 .fail(function (ex) {
                     Log.debug("error...");
                 });
 
 
-            let criteria = FeditorHelper.getCriteriaJSON();
-            let container = descriptorContainer.lastElementChild;
-
-            if (container != null) {
-                FeditorHelper.setCriteriaJSON(criteria);
-                FeditorHelper.setHiddenCriteriaJSON(criteria);
-            }
         }
 
 
@@ -430,6 +425,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             }
 
             const levelsdesc = s.getLevelDescriptors(s.id, criteria, levelid);
+
             if (descriptorIndex > levelsdesc[0].descriptors.length) { // Add descriptors inbetween when updating descriptors in different order.
                 for (var i = (levelsdesc[0].descriptors.length); i < descriptorIndex; i++) {
 
@@ -566,12 +562,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                             self.updateDescriptorIndex(descriptorContainer);
                         }
 
-                        checkboxcontainer.remove();
-
+                        // Get a reference to the parent container to be able to reasing the index
+                        checkboxcontainer.parentNode
+                        checkboxcontainer.style.display = 'none'; // I need to keep the element in the dom because if i add a new element after deleting one, it doesnt work properly.
                         // Update the input.
                         FeditorHelper.setCriteriaJSON(criteria);
                         FeditorHelper.setHiddenCriteriaJSON(criteria);
-
 
                     }, function () {
                         // For the cancel btn.
