@@ -131,6 +131,7 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
 
         $newid = $DB->insert_record('gradingform_frubric_descript', $data);
         $levelidmap = [];
+        $descriptoridmap = [];
         // The definition JSON has to update.
         if ($level = $DB->get_record('gradingform_frubric_levels', ['id' => $data->levelid], 'definition')) {
             $levelaux = json_decode($level->definition);
@@ -146,6 +147,7 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
 
                     foreach ($definition as &$descriptor) {
                         if ($descriptor->descriptorid == $oldid) {
+                            $descriptoridmap[$oldid] = $newid;
                             $descriptor->descriptorid = $newid;
                         }
                     }
@@ -158,13 +160,13 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
             $sql = "UPDATE mdl_gradingform_frubric_levels SET definition = :definition WHERE id = :id";
             $DB->execute($sql, ['definition' => $level->definition, 'id' => $data->levelid]);
             // Update the criteriajson.
-            $this->update_criteriajson($data, $levelidmap);
+            $this->update_criteriajson($data, $levelidmap, $descriptoridmap);
         }
 
         $this->set_mapping('gradingform_frubric_descriptor', $oldid, $newid);
     }
 
-    private function update_criteriajson($data, $levelidmap) {
+    private function update_criteriajson($data, $levelidmap, $descriptoridmap) {
         global $DB;
         if ($criterion = $DB->get_record('gradingform_frubric_criteria', ['id' => $data->criterionid], 'criteriajson')) {
             $criterionaux = json_decode($criterion->criteriajson);
@@ -179,12 +181,21 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
                         if ($la->id == $levelidmap[$data->levelid] ) {
                             $la->id = $data->levelid;
                         }
+
+                        // Update the descriptorid.
+                        foreach ($la->descriptors as $descriptor) {
+                            if (!isset($descriptoridmap[$descriptor->descriptorid])) {
+                                continue;
+                            }
+                            $descriptor->descriptorid = $descriptoridmap[$descriptor->descriptorid];
+                        }
                     }
+
                 }
             }
 
             $criterionaux = json_encode($criterionaux);
-            // // We need to  update the definition json.
+            // We need to  update the definition json.
             $sql = "UPDATE mdl_gradingform_frubric_criteria SET criteriajson = :criteriajson WHERE id = :id";
             $DB->execute($sql, ['criteriajson' => $criterionaux, 'id' => $data->criterionid]);
         }
