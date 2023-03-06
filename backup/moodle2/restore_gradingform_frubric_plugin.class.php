@@ -130,7 +130,7 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
         $data->levelid = $this->get_new_parentid('gradingform_frubric_level');
 
         $newid = $DB->insert_record('gradingform_frubric_descript', $data);
-
+        $levelidmap = [];
         // The definition JSON has to update.
         if ($level = $DB->get_record('gradingform_frubric_levels', ['id' => $data->levelid], 'definition')) {
             $levelaux = json_decode($level->definition);
@@ -138,6 +138,7 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
             foreach ($levelaux as $prop => &$definition) {
 
                 if ($prop == 'id') {
+                    $levelidmap[$data->levelid] = $definition; // new id for the level is the index.
                     $definition = $data->levelid;
                 }
 
@@ -157,23 +158,38 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
             $sql = "UPDATE mdl_gradingform_frubric_levels SET definition = :definition WHERE id = :id";
             $DB->execute($sql, ['definition' => $level->definition, 'id' => $data->levelid]);
             // Update the criteriajson.
-            if ($criterion = $DB->get_record('gradingform_frubric_criteria', ['id' => $data->criterionid], 'criteriajson')) {
-                $criterionaux = json_decode($criterion->criteriajson);
-
-                foreach ($criterionaux as $prop => &$val) {
-                    if ($prop == 'id') {
-                        $val = $data->criterionid;
-                    }
-
-                    if ($prop == 'levels') {
-                        $val = [$levelaux];
-                    }
-                }
-            }
+            $this->update_criteriajson($data, $levelidmap);
         }
 
         $this->set_mapping('gradingform_frubric_descriptor', $oldid, $newid);
     }
+
+    private function update_criteriajson($data, $levelidmap) {
+        global $DB;
+        if ($criterion = $DB->get_record('gradingform_frubric_criteria', ['id' => $data->criterionid], 'criteriajson')) {
+            $criterionaux = json_decode($criterion->criteriajson);
+
+            foreach ($criterionaux as $prop => &$val) {
+                if ($prop == 'id') {
+                    $val = $data->criterionid;
+                }
+
+                if ($prop == 'levels') {
+                    foreach ($val as &$la) {
+                        if ($la->id == $levelidmap[$data->levelid] ) {
+                            $la->id = $data->levelid;
+                        }
+                    }
+                }
+            }
+
+            $criterionaux = json_encode($criterionaux);
+            // // We need to  update the definition json.
+            $sql = "UPDATE mdl_gradingform_frubric_criteria SET criteriajson = :criteriajson WHERE id = :id";
+            $DB->execute($sql, ['criteriajson' => $criterionaux, 'id' => $data->criterionid]);
+        }
+    }
+
     /**
      * Processes filling element data
      *

@@ -520,54 +520,58 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                         const levelsdesc = self.getLevelDescriptors(parentid, criteria, levelid);
                         const d = levelsdesc[0].descriptors[descriptorIndex];
-
+                        console.log("DDDDD");
+                        console.log(d);
                         // Check that the descriptor you want to delete was saved in the DB.
                         // Else, you just have to remove it and update the JSON to avoid updates to the level.
-                        if (d.descriptorid != 0) {
-                            d.delete = 1;
-                            levelsdesc[0].status = 'UPDATE';
+                        if (d != undefined) { // Added a level but didnt put content, by mistake. Delete it as there is no info related to it.
 
-                            let countdeleted = 0;
-                            levelsdesc[0].descriptors.forEach(function (desc, index) {
-                                if (desc.delete == 1) {
-                                    countdeleted++;
-                                }
-                            }, countdeleted);
+                            if (d.descriptorid != 0) {
+                                d.delete = 1;
+                                levelsdesc[0].status = 'UPDATE';
 
-                            // Check if its the only descritor in the level. If it is, then remove the level completely
-                            if (levelsdesc[0].descriptors.length == countdeleted) {
-                                const checkboxaux = checkboxcontainer;
-                                levelsdesc[0].status = 'DELETE';
-
-                                // Check if the definition only has one criterion. If it does, and the level is removed. then the criterion has to be deleted too
-                                if (criteria.length == 1) {
-                                    criteria[0].status = 'DELETE';
-                                }
-
-                                criteria.forEach(function (criterion) {
-                                    if (criterion.id == parentid) {
-                                        if (criterion.levels.length == 1) { // There is only one level in this criterion. Check if the descriptor has info.
-                                            criterion.status = 'DELETE'
-
-                                        } else {
-                                            criterion.status = 'UPDATE'
-                                        }
+                                let countdeleted = 0;
+                                levelsdesc[0].descriptors.forEach(function (desc, index) {
+                                    if (desc.delete == 1) {
+                                        countdeleted++;
                                     }
-                                }, parentid);
+                                }, countdeleted);
+
+                                // Check if its the only descritor in the level. If it is, then remove the level completely
+                                if (levelsdesc[0].descriptors.length == countdeleted) {
+                                    const checkboxaux = checkboxcontainer;
+                                    levelsdesc[0].status = 'DELETE';
+
+                                    // Check if the definition only has one criterion. If it does, and the level is removed. then the criterion has to be deleted too
+                                    if (criteria.length == 1) {
+                                        criteria[0].status = 'DELETE';
+                                    }
+
+                                    criteria.forEach(function (criterion) {
+                                        if (criterion.id == parentid) {
+                                            if (criterion.levels.length == 1) { // There is only one level in this criterion. Check if the descriptor has info.
+                                                criterion.status = 'DELETE'
+
+                                            } else {
+                                                criterion.status = 'UPDATE'
+                                            }
+                                        }
+                                    }, parentid);
 
 
+                                }
+                            } else {
+                                levelsdesc[0].descriptors.splice(descriptorIndex, 1);
+                                self.updateDescriptorIndex(descriptorContainer);
                             }
-                        } else {
-                            levelsdesc[0].descriptors.splice(descriptorIndex, 1);
-                            self.updateDescriptorIndex(descriptorContainer);
+                            // Get a reference to the parent container to be able to reasing the index
+                            checkboxcontainer.parentNode
+                            checkboxcontainer.style.display = 'none'; // I need to keep the element in the dom because if i add a new element after deleting one, it doesnt work properly.
+                            // Update the input.
+                            FeditorHelper.setCriteriaJSON(criteria);
+                            FeditorHelper.setHiddenCriteriaJSON(criteria);
                         }
 
-                        // Get a reference to the parent container to be able to reasing the index
-                        checkboxcontainer.parentNode
-                        checkboxcontainer.style.display = 'none'; // I need to keep the element in the dom because if i add a new element after deleting one, it doesnt work properly.
-                        // Update the input.
-                        FeditorHelper.setCriteriaJSON(criteria);
-                        FeditorHelper.setHiddenCriteriaJSON(criteria);
 
                     }, function () {
                         // For the cancel btn.
