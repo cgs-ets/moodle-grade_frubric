@@ -169,17 +169,11 @@ class restore_gradingform_frubric_plugin extends restore_gradingform_plugin {
                         $val = [$levelaux];
                     }
                 }
-
-                $criterionaux = json_encode($criterionaux);
-                // We need to  update the definition json.
-                $sql = "UPDATE mdl_gradingform_frubric_criteria SET criteriajson = :criteriajson WHERE id = :id";
-                $DB->execute($sql, ['criteriajson' => $criterionaux, 'id' => $data->criterionid]);
             }
         }
 
         $this->set_mapping('gradingform_frubric_descriptor', $oldid, $newid);
     }
-
     /**
      * Processes filling element data
      *
