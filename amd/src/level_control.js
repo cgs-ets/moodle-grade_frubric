@@ -70,7 +70,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 } else {
                     self.editModeSetupEvents(self.level);
                 }
-            } else {
+            }
+            /*else {
                 if (self.level != null) { // TODO: Delete as now the level is reordered.
                     // CASE: last level  has 0 mark.
                     // A new level is added, previous level can't be zero.
@@ -78,7 +79,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     self.validatePreviousMarkValue();
                     self.setupEvents(self.level);
                 }
-            }
+            }*/
 
         };
 
@@ -513,6 +514,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                 ]).done(function (strs) {
                     Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
 
+
                         const criteria = FeditorHelper.getCriteriaJSON();
                         const levelid = checkboxcontainer.getAttribute('id');
                         const parentid = self.id;
@@ -520,7 +522,8 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                         const levelsdesc = self.getLevelDescriptors(parentid, criteria, levelid);
                         const d = levelsdesc[0].descriptors[descriptorIndex];
-
+                        console.log(d);
+                        console.log(checkboxcontainer);
                         // Check that the descriptor you want to delete was saved in the DB.
                         // Else, you just have to remove it and update the JSON to avoid updates to the level.
                         if (d != undefined) { // Added a level but didnt put content, so it didnt trigger any event. Delete it as there is no info related to it.
@@ -536,7 +539,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                                     }
                                 }, countdeleted);
 
-                                // Check if its the only descritor in the level. If it is, then remove the level completely
+                                // Check if its the only descritor in the level.
                                 if (levelsdesc[0].descriptors.length == countdeleted) {
                                     const checkboxaux = checkboxcontainer;
                                     levelsdesc[0].status = 'DELETE';
@@ -563,13 +566,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                                 levelsdesc[0].descriptors.splice(descriptorIndex, 1);
                                 self.updateDescriptorIndex(descriptorContainer);
                             }
-                            // Get a reference to the parent container to be able to reasing the index
-                            checkboxcontainer.parentNode
-                            checkboxcontainer.style.display = 'none'; // I need to keep the element in the dom because if i add a new element after deleting one, it doesnt work properly.
-                            // Update the input.
-                            FeditorHelper.setCriteriaJSON(criteria);
-                            FeditorHelper.setHiddenCriteriaJSON(criteria);
                         }
+                        // Get a reference to the parent container to be able to reasing the index
+                        //checkboxcontainer.parentNode
+                        checkboxcontainer.style.display = 'none'; // I need to keep the element in the dom because if i add a new element after deleting one, it doesnt work properly.
+                        // Update the input.
+                        FeditorHelper.setCriteriaJSON(criteria);
+                        FeditorHelper.setHiddenCriteriaJSON(criteria);
 
 
                     }, function () {
