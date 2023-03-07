@@ -10,7 +10,7 @@ export default defineConfig({
         watchForFileChanges: false, // Do not auto re-run tests every time code changes.
         env: {
             username: 'admin',
-            password: '',
+            password: 'Veronica11#',
         }
     },
 

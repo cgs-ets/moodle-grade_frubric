@@ -251,7 +251,7 @@ class gradingform_frubric_editrubric extends moodleform {
                 'criteriajson'
             );
 
-            foreach ($criteriacollection as $criterion) {
+            foreach ($criteriacollection as $t => $criterion) {
                 $criteria[] = json_decode($criterion->criteriajson);
             }
             $criteriajson = json_encode($criteria); // I need it in the criteria json input to work on the JS.
@@ -302,7 +302,7 @@ class gradingform_frubric_editrubric extends moodleform {
                         if ($level->score == "0") {
                             $level->score = '';
                         }
-                      //  error_log(print_r($level->descriptors), true);
+
                         if (count($level->descriptors) == 0) {
                             $dummydescriptor = new stdClass();
                             $dummydescriptor->checked = false;
