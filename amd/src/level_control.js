@@ -40,13 +40,13 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         }
 
 
-     /**
-      *
-      * @param {*} level
-      * @param {*} mode
-      * @param {*} id
-      * @param {*} parentid
-      */
+        /**
+         *
+         * @param {*} level
+         * @param {*} mode
+         * @param {*} id
+         * @param {*} parentid
+         */
         function LevelControl(level, mode, id, parentid) {
             const self = this;
             self.level = level;
@@ -61,7 +61,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         /**
          * Run the controller.
          */
-        LevelControl.prototype.main = function() {
+        LevelControl.prototype.main = function () {
             let self = this;
 
             if (self.mode == 'edit') {
@@ -71,7 +71,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     self.editModeSetupEvents(self.level);
                 }
             } else {
-                if (self.level != null) {
+                if (self.level != null) { // TODO: Delete as now the level is reordered.
                     // CASE: last level  has 0 mark.
                     // A new level is added, previous level can't be zero.
                     // As 0 is only allowed for the last level,
@@ -285,7 +285,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             const resultRow = document.querySelector(`[data-criterion-group="${groupid}"][data-row-type="result"]`);
             var total = (resultRow.querySelector(`#out-of-value-${groupid}`).innerHTML).split("/");
 
-            total =  FeditorHelper.getMaxValueInLevelInCriterion(groupid);
+            total = FeditorHelper.getMaxValueInLevelInCriterion(groupid);
             const maxinput = resultRow.querySelector('.total-input');
 
             levelsdesc[0].score = e.target.value.trim();
@@ -496,19 +496,19 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
             if (checkboxcontainer.getAttribute('descriptor-index')) { // This means the descriptor is already saved in the BD. ask if theya re sure to remove
 
                 Str.get_strings([{
-                        key: 'confirm',
-                        component: 'gradingform_frubric'
-                    },
-                    {
-                        key: 'confirmdeletedescriptor',
-                        component: 'gradingform_frubric'
-                    },
-                    {
-                        key: 'yes'
-                    },
-                    {
-                        key: 'no'
-                    },
+                    key: 'confirm',
+                    component: 'gradingform_frubric'
+                },
+                {
+                    key: 'confirmdeletedescriptor',
+                    component: 'gradingform_frubric'
+                },
+                {
+                    key: 'yes'
+                },
+                {
+                    key: 'no'
+                },
 
                 ]).done(function (strs) {
                     Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
@@ -520,11 +520,10 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
 
                         const levelsdesc = self.getLevelDescriptors(parentid, criteria, levelid);
                         const d = levelsdesc[0].descriptors[descriptorIndex];
-                        console.log("DDDDD");
-                        console.log(d);
+
                         // Check that the descriptor you want to delete was saved in the DB.
                         // Else, you just have to remove it and update the JSON to avoid updates to the level.
-                        if (d != undefined) { // Added a level but didnt put content, by mistake. Delete it as there is no info related to it.
+                        if (d != undefined) { // Added a level but didnt put content, so it didnt trigger any event. Delete it as there is no info related to it.
 
                             if (d.descriptorid != 0) {
                                 d.delete = 1;
@@ -639,49 +638,48 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         LevelControl.prototype.deleteSetCriterion = function (e) {
 
             Str.get_strings([{
-                    key: 'confirm',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'confirmdeletesetcriterion',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'yes'
-                },
-                {
-                    key: 'no'
-                },
+                key: 'confirm',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'confirmdeletesetcriterion',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'yes'
+            },
+            {
+                key: 'no'
+            },
 
             ]).done(function (strs) {
                 Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
+
                     const tr = e.target.closest('tr'); // get the tr this element is in
                     const table = e.target.closest('.level-mark-desc-table');
                     const criteria = JSON.parse(document.getElementById('id_criteria').value);
-                    const fromRenderer = e.target.classList.contains("first-time-render"); // When adding a new descriptor that was not saved in the db, just delete it.
+                    const fromRenderer = e.target.classList.contains("first-time-render"); // When adding a new descriptor that was not saved in the db, just delete it But you need to update the json.
 
                     if (table.rows.length == 1) {
                         const level = table.closest("[data-criterion-group]");
+                        const lid = level.getAttribute('id');
+                        criteria.forEach(function (criterion) {
+                            if (criterion.id == level.getAttribute('data-criterion-group')) {
 
-                        if (!fromRenderer) {
-                            criteria.forEach(function (criterion) {
-                                if (criterion.id == level.getAttribute('data-criterion-group')) {
-                                    criterion.status = 'DELETE';
+                                const cl = Object.values(criterion.levels);
 
-                                    const cl = Object.values(criterion.levels);
+                                cl.forEach(function (level, index) {
 
-                                    cl.forEach(function (level) {
-
-                                        if (level.status != "NEW") { // Case: We want to add a new level and delete the current one.
-                                            level.status = 'DELETE';
-                                            criterion.status = "UPDATE";
-
-                                        }
-                                    }, criterion);
-                                }
-                            });
-
-                        }
+                                    if (level.status != "NEW" && level.id == lid) { // Case: We want to add a new level and delete the current one.
+                                        level.status = 'DELETE';
+                                        criterion.status = "UPDATE";
+                                    } else if (level.id == lid && level.status == "NEW") { // This is not saved in the DB. Remove from the JSON.
+                                        criterion.levels.splice(index, 1);
+                                        console.log(criterion);
+                                    }
+                                }, criterion);
+                            }
+                        });
 
                         level.remove();
 
@@ -726,10 +724,9 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         }
 
                         table.deleteRow(tr.rowIndex);
-                        // Controlar que el max value  refleje el maximo si hay cambios
+
                     }
 
-                    // document.getElementById('id_criteria').value = JSON.stringify(criteria);
                     FeditorHelper.setCriteriaJSON(criteria);
                     FeditorHelper.setHiddenCriteriaJSON(criteria);
 
@@ -743,19 +740,19 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
         LevelControl.prototype.deleteLevel = function (e) {
 
             Str.get_strings([{
-                    key: 'confirm',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'confirmdeletelevel',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'yes'
-                },
-                {
-                    key: 'no'
-                },
+                key: 'confirm',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'confirmdeletelevel',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'yes'
+            },
+            {
+                key: 'no'
+            },
 
             ]).done(function (strs) {
                 Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
@@ -764,16 +761,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     const tr = e.target.parentNode.parentNode.parentNode;
                     const criterion = FeditorHelper.getPreviousElement(tr, '.criterion-header');
                     let criteria = FeditorHelper.getCriteriaJSON();
-                    const crid = tr.getAttribute('data-criterion-group')
 
 
                     if (criterion.getAttribute('data-criterion-levels').length > 0) {
 
-                        const dbids = JSON.parse(criterion.getAttribute('data-criterion-levels')); // These are the ids of the levels given by the DB.
-                        const index = FeditorHelper.getDistanceFromCriterionHeader(tr, '.criterion-header');
-                        const dblevelid = dbids[index];
-
-
+                        const crid = tr.getAttribute('data-criterion-group')
+                        const lid = tr.getAttribute('id'); // This is the level ID.
                         var levels;
 
                         for (let i = 0; i < criteria.length; i++) {
@@ -785,11 +778,14 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         }
 
                         for (let j = 0; j < levels.length; j++) {
-                            if (levels[j].id == dblevelid) {
+                            if (levels[j].id == lid && levels[j].status != 'NEW') {
                                 levels[j].status = 'DELETE';
                                 break;
+                            } else if (levels[j].status == 'NEW') { //  A new Level is added during editing BUT the user decides to delete it.
+                                levels.splice(j, j);
                             }
                         }
+
 
                     } else {
 
@@ -988,7 +984,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                         return level.descriptors;
                     }
                 } else if (obj.parentid == (level.id).toString()
-                            || (obj.parentid).toString().includes((level.id).toString())) {
+                    || (obj.parentid).toString().includes((level.id).toString())) {
                     return level.descriptors;
                 }
 
