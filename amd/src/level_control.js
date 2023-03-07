@@ -71,15 +71,12 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     self.editModeSetupEvents(self.level);
                 }
             }
-            /*else {
-                if (self.level != null) { // TODO: Delete as now the level is reordered.
-                    // CASE: last level  has 0 mark.
-                    // A new level is added, previous level can't be zero.
-                    // As 0 is only allowed for the last level,
-                    self.validatePreviousMarkValue();
+            else {
+                if (self.level != null) {
+                   // self.validatePreviousMarkValue();
                     self.setupEvents(self.level);
                 }
-            }*/
+            }
 
         };
 
