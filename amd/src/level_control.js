@@ -369,6 +369,7 @@ define(['jquery', 'core/log', 'core/str', 'core/notification', 'gradingform_frub
                     const descriptor = container.querySelector('.standard-desc');
 
                     descriptor.addEventListener('click', self.clickDescriptorHandler.bind(this, self));
+                    descriptor.addEventListener('focus', self.clickDescriptorHandler.bind(this, self));
                     action.addEventListener('click', self.deleteDescriptor.bind(self, descriptorContainer, container));
                     checkbox.addEventListener('click', self.selectdescriptor.bind(this, self)); // TODO: DO I NEED THIS?
 
