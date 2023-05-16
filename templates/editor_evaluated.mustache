@@ -18,11 +18,13 @@ This template displays the rubric filled with the result given to a particular s
 }}
 
 <div class="graded-form">
+    <span class = 'frubric-show-hide-levels'><i class="fa fa-eye" aria-hidden="true" title = "Hide levels"></i></span>
     {{#criteria}}
     <table class="criteria-table table-light ">
         <thead>
             <tr>
                 <th>
+
                     <p>{{description}}</p>
                 </th>
             </tr>
@@ -39,7 +41,10 @@ This template displays the rubric filled with the result given to a particular s
                             </td>
                             <td>
                                 {{#descriptors}}
-                                <input disabled type="checkbox" id ="{{idinput}}" name = "{{nameinput}}" {{#checked}} value = "1" checked = "checked"{{/checked}} {{^checked}} value = "1" {{/checked}} > {{descText}} <br>
+                                <label class="frubric-evaluated-checkbox">
+                                    <input disabled type="checkbox" id ="{{idinput}}" name = "{{nameinput}}" {{#checked}} value = "1" checked = "checked"{{/checked}} {{^checked}} value = "1" {{/checked}} class ='frubric-evaluated-checkbox' > {{descText}} <br>
+                                    <span class="checkmark"></span>
+                                </label>
                                 {{/descriptors}}
                             </td>
                         </tr>

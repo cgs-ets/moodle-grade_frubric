@@ -24,18 +24,18 @@
     TODO
 
     TODO
-    
+
 }}
 
 
-<tr data-criterion-group="{{criteriongroupid}}" data-mode="{{mode}}" class="criterion-header" 
+<tr data-criterion-group="{{criteriongroupid}}" data-mode="{{mode}}" class="criterion-header"
     id="{{^rerender}}{{id}}{{/rerender}}{{#rerender}}{{cid}}{{/rerender}}" data-criterion-levels="{{levelids}}">
 
     {{^preview}}
         <th class="fr-header act">
             <div id="delCriterion" class="flex-actions">
                 <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
-            </div>           
+            </div>
         </th>
         <th class="fr-header crit-desc">
             <textarea rows="4"  cols="131" disabled="true" class="criterion-description" placeholder= "Click to edit description">{{description}}</textarea>
@@ -44,13 +44,13 @@
 
     {{#preview}}
         <th class="fr-header crit-desc">
-            <textarea rows="4"  cols="110" 
+            <textarea rows="4"  cols="110"
             disabled="true" class="criterion-description">{{description}}</textarea>
         </th>
      {{/preview}}
 </tr>
 
-{{#new}} 
+{{#new}}
     {{^rerender}}
         {{> gradingform_frubric/criterion_total_row}}
     {{/rerender}}

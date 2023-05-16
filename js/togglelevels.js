@@ -16,13 +16,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Controls the visibility of the criterion levels in the evaluated view.
  * @package   gradingform_frubric
  * @copyright 2021 Veronica Bermegui
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Once the student is graded, dont display the grading criteria in the submission status section
 
-if (document.querySelector('div.graded-form-h') != null) {
-    document.querySelector('div.graded-form-h').closest('tr').style.display = 'none';
-}
+document.querySelector('.frubric-show-hide-levels').addEventListener('click', function (e) {
+
+    const icon = e.target;
+
+    if (icon.classList.contains('fa-eye')) {
+
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+        icon.setAttribute('title', 'Show levels');
+
+        // Hide all levels
+        document.querySelectorAll('.inner-level-table').forEach(level => {
+            level.style.display = 'none';
+        });
+    } else {
+
+        icon.classList.add('fa-eye');
+        icon.classList.remove('fa-eye-slash');
+        icon.setAttribute('title', 'Hide levels');
+        document.querySelectorAll('.inner-level-table').forEach(level => {
+            level.style.display = '';
+        });
+    }
+});

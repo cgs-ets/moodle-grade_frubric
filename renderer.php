@@ -174,6 +174,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @param bool $cangrade whether current user has capability to grade in this context
      */
     public function display_instance(gradingform_frubric_instance $instance,  $maxscore) {
+        global $CFG;
 
         $definition     = $instance->get_controller()->get_definition();
         $criteria       = $definition->frubric_criteria;
@@ -237,6 +238,8 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $data['criteria'] = array_values($criteria);
 
         $this->format_criteria_array($data['criteria']);
+        $this->page->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/togglelevels.js'));
+
         return $this->output->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
 
