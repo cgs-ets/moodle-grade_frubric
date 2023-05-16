@@ -15,6 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package   gradingform_frubric
+ * @copyright 2021 Veronica Bermegui
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 // Controls the regrading messages.
 document.querySelector('.regrade-container').removeAttribute('hidden');

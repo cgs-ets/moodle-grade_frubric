@@ -12,6 +12,10 @@ table#criteriaTable td {
     width: auto;
 }
 
+table.criteria-table.table-light.criteria-table-evaluated {
+    width: 100%;
+}
+
 table.inner-level-table {
     table-layout: fixed;
     width: 100%;
