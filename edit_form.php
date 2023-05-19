@@ -276,7 +276,12 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
-                    $d->visibility = $criterion->visibility;
+                    if(isset($criterion->visibility)) {
+                        $d->visibility = $criterion->visibility;
+                    } else {
+                        $d->visibility = true;
+
+                    }
 
                     $leveldbids = [];
 
@@ -372,8 +377,8 @@ class gradingform_frubric_editrubric extends moodleform {
                     if ($criterion->description == '') {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                     }
-
-                    if (!$criterion->visibility) {
+                    // For those rubrics created before the visibility option. Don't count the error.
+                    if (isset($criterion->visibility) && !$criterion->visibility) {
                         $visiblecounter++;
                     }
 
