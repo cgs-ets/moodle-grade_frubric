@@ -134,7 +134,7 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
             'first' => 1
         ];
         // To avoid multiple events attachment.
-        $edit =  0;
+        $edit = 0;
 
         $data['edit'] = $edit;
         return $data;

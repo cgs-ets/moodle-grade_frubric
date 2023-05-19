@@ -373,7 +373,7 @@ class gradingform_frubric_editrubric extends moodleform {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
                     }
 
-                    if(!$criterion->visibility) {
+                    if (!$criterion->visibility) {
                         $visiblecounter++;
                     }
 

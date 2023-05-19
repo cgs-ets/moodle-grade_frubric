@@ -37,7 +37,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     public function render_template($mode, $data) {
         switch ($mode) {
             case gradingform_frubric_controller::DISPLAY_PREVIEW:
-                error_log(print_r("PREVIEW!", true));
                 $data = $this->preview_prepare_data($data);
                 return $this->output->render_from_template('gradingform_frubric/editor_preview', $data);
                 break;
@@ -49,7 +48,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 return  $this->output->render_from_template('gradingform_frubric/editor_evaluate', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EDIT_FULL:
-                error_log(print_r($data, true));
                 return $this->output->render_from_template('gradingform_frubric/frubriceditor', $data);
                 break;
         }
@@ -87,7 +85,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $criteria = array_values($criteria);
         $counter = 1;
         foreach ($criteria as $i => &$criterion) {
-            // For templates created previous, without the visibility option
+            // For templates created previous, without the visibility option.
             if (!array_key_exists('visibility', $criterion)) {
                 $criterion['visibility'] = true;
             }
