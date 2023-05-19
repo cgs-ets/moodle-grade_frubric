@@ -824,7 +824,8 @@ class gradingform_frubric_controller extends gradingform_controller {
         $returnvalue = array('minscore' => 0, 'maxscore' => 0);
         foreach ($this->get_definition()->frubric_criteria as $id => $criterion) {
             foreach ($criterion as $description => $crit) {
-                if ($description == 'totaloutof') {
+                // Only count the max score if the criterion is visible
+                if ($description == 'totaloutof' && $criterion['visibility'] == 1) {
                     $returnvalue['maxscore'] += $crit;
                 }
             }
@@ -1328,6 +1329,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         $counter = 1;
 
         foreach ($criteria as $c => $criterion) {
+
             $crite = new \stdClass();
             $crite->labelcrit  = "Criterion $counter";
             foreach ($criterion as $cr => $def) {  // The index has the name of the property.
@@ -1563,7 +1565,6 @@ class gradingform_frubric_instance extends gradingform_instance {
         return $levelfilldesc;
     }
 }
-
 
 function toobject($array) {
 
