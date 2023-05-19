@@ -37,6 +37,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     public function render_template($mode, $data) {
         switch ($mode) {
             case gradingform_frubric_controller::DISPLAY_PREVIEW:
+                error_log(print_r("PREVIEW!", true));
                 $data = $this->preview_prepare_data($data);
                 return $this->output->render_from_template('gradingform_frubric/editor_preview', $data);
                 break;
@@ -48,6 +49,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 return  $this->output->render_from_template('gradingform_frubric/editor_evaluate', $data);
                 break;
             case gradingform_frubric_controller::DISPLAY_EDIT_FULL:
+                error_log(print_r($data, true));
                 return $this->output->render_from_template('gradingform_frubric/frubriceditor', $data);
                 break;
         }
@@ -85,6 +87,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $criteria = array_values($criteria);
         $counter = 1;
         foreach ($criteria as $i => &$criterion) {
+            // For templates created previous, without the visibility option
+            if (!array_key_exists('visibility', $criterion)) {
+                $criterion['visibility'] = true;
+            }
             foreach ($criterion as $j => &$crit) {
 
                 if ($j == 'levels') {
@@ -97,6 +103,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                         unset($crit[$q]);
                     }
                 }
+
             }
             $criterion['criterionlabel'] = "Criterion $counter";
             $counter++;
@@ -194,17 +201,21 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         if (isset($values)) {
 
             foreach ($criteria as $i => &$criterion) {
-                if (isset($values['criteria'][$i])) {
 
+                if (isset($values['criteria'][$i])) {
                     $value          = $values['criteria'][$i];
                     $sumscores     += $value['levelscore'];
-                    $counter++;
+
                     $descriptorids  = '';
                     foreach ($criterion as $j => &$cri) {
 
+                        if (isset($criterion['visibility']) &&  $criterion['visibility'] == 1) {
+                            $counter++;
+                        }
                         if (!isset($criterion['descriptiontotal'])) {
                             $criterion['descriptiontotal'] = "Criterion $counter";
                         }
+
                         if ($j == 'levels') {
                             $criterionlevelids = $this->get_level_ids_per_criterion($i);
                             $leveljson = (array)json_decode($value['leveljson']);
@@ -223,10 +234,12 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                                 }
                             }
+
                             $this->sortlevelsgradedview($cri);
 
                         }
                     }
+
                     $criterion['levelscore'] = (int)$value['levelscore'];
                     $criterion['feedback'] = $value['remark'];
                     $criterion['disablecomment'] = isset($options->disablecriteriacomments) ? $options->disablecriteriacomments : false;

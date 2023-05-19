@@ -36,6 +36,14 @@
             <div id="delCriterion" class="flex-actions">
                 <span class="del-criterion" title="Delete criterion"><i class="fa fa-close"></i></span>
             </div>
+            <div id="frubric-turn-off" class="flex-actions">
+                <input title="If checked, the criterion will be visible and used for grading.&#10;If unchecked, the criterion will be saved but not visible and not used for grading"
+                       type="checkbox"
+                       id="frubric-turn-off-criterion"
+                       name="frubric-turn-off-criterion"
+                       {{#visibility}}checked{{/visibility}}
+                >
+            </div>
         </th>
         <th class="fr-header crit-desc">
             <textarea rows="4"  cols="131" disabled="true" class="criterion-description" placeholder= "Click to edit description">{{description}}</textarea>

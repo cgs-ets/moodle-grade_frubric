@@ -163,13 +163,13 @@ class gradingform_frubric_editrubric extends moodleform {
     public function definition_after_data() {
 
         parent::definition_after_data();
-        $form = &$this->_form;
 
+        $form = &$this->_form;
         $el = $form->getElement('status');
+
         if (!$el->getValue()) {
             $form->removeElement('status');
         } else {
-
             $vals = array_values($el->getValue());
             if ($vals[0] == gradingform_controller::DEFINITION_STATUS_READY) {
                 $this->findbutton('savefrubric')->setValue(get_string('save', 'gradingform_frubric'));
@@ -180,7 +180,6 @@ class gradingform_frubric_editrubric extends moodleform {
     }
 
 
-
     /**
      * Return submitted data if properly submitted or returns NULL if validation fails or
      * if there is no submitted data.
@@ -188,6 +187,7 @@ class gradingform_frubric_editrubric extends moodleform {
      * @return object submitted data; NULL if not valid or not submitted or cancelled
      */
     public function get_data() {
+
         $data = parent::get_data();
 
         if (!empty($data->savefrubric)) {
@@ -232,6 +232,7 @@ class gradingform_frubric_editrubric extends moodleform {
         $d->id = "frubric-criteria-NEWID1";
         $d->criteriongroupid = 1;
         $d->new = $definitionid == 0;
+        $d->visibility = true;
 
         $data = [
             'criteria' => [$d],
@@ -275,6 +276,8 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
+                    $d->visibility = $criterion->visibility;
+
                     $leveldbids = [];
 
                     if (count((array)$criterion->levels) == 0) {
@@ -360,7 +363,7 @@ class gradingform_frubric_editrubric extends moodleform {
 
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
-
+            $visiblecounter = 0;
             foreach ($frubricel as $criterion) {
                 if ($criterion->status == 'DELETE' && count($frubricel) > 1) {
                     continue;
@@ -368,6 +371,10 @@ class gradingform_frubric_editrubric extends moodleform {
 
                     if ($criterion->description == '') {
                         $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
+                    }
+
+                    if(!$criterion->visibility) {
+                        $visiblecounter++;
                     }
 
                     if (count($criterion->levels) == 0) {
@@ -398,6 +405,10 @@ class gradingform_frubric_editrubric extends moodleform {
                         }
                     }
                 }
+            }
+
+            if ($visiblecounter == count($frubricel)) {
+                $err['criteria'] = 'uno tiene que ser visible';
             }
         }
 

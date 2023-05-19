@@ -22,11 +22,11 @@
  */
 
 define(['core/log', 'core/templates',
-            'core/str', 'core/notification',
-            'gradingform_frubric/level_control',
-            'gradingform_frubric/feditor_helper'
-        ],
-        function (Log, Templates, Str, Notification, LevelControl, FeditorHelper) {
+    'core/str', 'core/notification',
+    'gradingform_frubric/level_control',
+    'gradingform_frubric/feditor_helper'
+],
+    function (Log, Templates, Str, Notification, LevelControl, FeditorHelper) {
         'use strict';
         /**
          *
@@ -88,7 +88,9 @@ define(['core/log', 'core/templates',
 
             // Criterion actions.
             actionChildren[0].addEventListener('click', self.removeCriterion.bind(currentRow));
-           addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
+            actionChildren[1].addEventListener('click', self.turnOnOffCriterion.bind(currentRow));
+
+            addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
 
             const description = currentRow.querySelector('.crit-desc'); // Get description
             description.addEventListener('click', self.editCriterionDescription.bind(this));
@@ -121,7 +123,7 @@ define(['core/log', 'core/templates',
                     var prevlevel;
                     const classname = `.level-${row.getAttribute('data-criterion-group')}`;
                     let nextCriterion = FeditorHelper.getNextElement(row, '.criterion-header');
-                     //  If there is another criterion the level is on top of this row.
+                    //  If there is another criterion the level is on top of this row.
                     if (nextCriterion != undefined) {
                         // The new level is on top of the result row for this criterion.
                         const prevresultlevel = FeditorHelper.getPreviousElement(nextCriterion, '.result-r');
@@ -142,7 +144,7 @@ define(['core/log', 'core/templates',
                             prevlevel = row;
                         }
 
-                          // Check if the row has a red border around when it failed validation.
+                        // Check if the row has a red border around when it failed validation.
                         if (prevlevel.classList.contains('is-invalid')) {
                             prevlevel.classList.remove('is-invalid');
                             prevlevel.classList.remove('form-control');
@@ -178,19 +180,19 @@ define(['core/log', 'core/templates',
         CriterionControl.prototype.removeCriterion = function (row) {
 
             Str.get_strings([{
-                    key: 'confirm',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'confirmdeletecriterion',
-                    component: 'gradingform_frubric'
-                },
-                {
-                    key: 'yes'
-                },
-                {
-                    key: 'no'
-                },
+                key: 'confirm',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'confirmdeletecriterion',
+                component: 'gradingform_frubric'
+            },
+            {
+                key: 'yes'
+            },
+            {
+                key: 'no'
+            },
 
             ]).done(function (strs) {
                 Notification.confirm(strs[0], strs[1], strs[2], strs[3], function () {
@@ -248,14 +250,43 @@ define(['core/log', 'core/templates',
 
                     criTable.deleteRow(criterionToDelete);
 
-                    //if this is a new criterion that is not saved in the DB. We can just delete it. We do the previous work to
-
 
                 }, function () {
                     return;
                 });
             });
         };
+
+        //
+        CriterionControl.prototype.turnOnOffCriterion = function (row) {
+
+            const criteriontr = FeditorHelper.getClosest(row.target, "tr");
+
+            // If it comes from re-render, remove error styles
+            Array.from(document.querySelectorAll('.fr-header.act')).forEach(th => {
+                console.log(th.children[1]);
+                (th.children[1]).classList.remove('form-control');
+                (th.children[1]).classList.remove('is-invalid');
+
+            });
+            let frc = FeditorHelper.getCriteriaJSON();
+
+            const frcriterion = frc.filter(function (criterion, index) {
+                const criteariaID = this.getAttribute('data-criterion-group');
+                criterion.rowindex = index;
+                if (criteariaID == criterion.id) {
+                    return criterion;
+                }
+            }, criteriontr);
+
+            const filteredCriterion = frcriterion[frcriterion.length - 1];
+            filteredCriterion.visibility = row.target.checked;
+
+            // Update the criteria JSON.
+            FeditorHelper.setCriteriaJSON(frc);
+            FeditorHelper.setHiddenCriteriaJSON(frc);
+
+        }
 
 
         CriterionControl.prototype.editCriterionDescription = function (e) {
@@ -288,7 +319,7 @@ define(['core/log', 'core/templates',
             }, e);
 
             if (filterCriterion[0].description != e.target.value && (FeditorHelper.getMode() == 'edit' &&
-                    !filterCriterion[0].cid.includes('frubric-criteria-NEWID'))) { // A new criterion is added to an existing definition
+                !filterCriterion[0].cid.includes('frubric-criteria-NEWID'))) { // A new criterion is added to an existing definition
                 filterCriterion[0].status = 'UPDATE';
             }
 

@@ -158,7 +158,7 @@ define(["core/log"], function (Log) {
          */
         setHiddenCriteriaJSON: function (criteria) {
             document.querySelector('input[name="criteriajsonhelper"]').value = JSON.stringify(criteria);
-        }
+        },
 
     };
 });

@@ -29,17 +29,18 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
         function init() {
             const mode = FeditorHelper.getMode();
             let criterioncollection;
-         
+
             // In case the all the rubric is deleted and saved in the DB. We need to put an empty one again.
             //Otherwise the add button submits the form.
             const empty = JSON.parse(document.getElementById('id_criteria').value).length == 0;
-            
+
             if (mode === 'create' && empty) {
                 // Initialise the first criterion
                 var criterion = {
                     id: '1',
                     cid: `frubric-criteria-NEWID${document.querySelectorAll(".criterion-header").length}`, // Criterion ID for the DB
                     status: "NEW",
+                    visibility: true,  // By default the criterion is visible.
                     description: "", // Criterion descrption
                     rowindex: 1, // Keep track of the header row.
                     definitionid: document
@@ -56,6 +57,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                 FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
             }
+
             if (mode === 'edit' || (mode === 'create' && document.getElementById('id_criteria').classList.contains('is-invalid') != undefined)) { // Validation error, keep the values inserted
                 criterioncollection = document.getElementById('id_criteria').value;
 
@@ -65,6 +67,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                     id: "1",
                     cid: `frubric-criteria-NEWID${document.querySelectorAll(".criterion-header").length}`, // Criterion ID for the DB
                     status: "NEW",
+                    visibility: true,  // By default the criterion is visible.
                     description: "", // Criterion descrption
                     rowindex: 1, // Keep track of the header row.
                     definitionid: document
@@ -76,7 +79,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                 };
 
                 criterioncollection = [criterion]; // Collects all the criterions
-               
+
                 FeditorHelper.setCriteriaJSON(criterioncollection);
                 FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
 
@@ -123,6 +126,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                 id: `frubric-criteria-NEWID${countcriteria + 1}`,
                 criteriongroupid: countcriteria + 1,
                 new: 1, // Adds the result row
+                visibility: true
             };
 
 
@@ -136,6 +140,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                         id: cr.getAttribute('data-criterion-group'),
                         cid: `frubric-criteria-NEWID${countcriteria + 1}`, // Criterion ID for the DB
                         status: 'NEW',
+                        visibility: true,
                         new: 1, // to add the result row
                         description: '', // Criterion descrption
                         rowindex: cr.rowIndex, // Keep track of the header row.

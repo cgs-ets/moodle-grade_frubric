@@ -198,6 +198,16 @@ textarea.level_descriptor_txtarea.preview {
     width: 90%;
 }
 
+/* Criterion turned off */
+table.frubric-not-visible {
+    color: grey;
+}
+
+/* Hide the criterion in the grading page */
+.frubric-hide-criterion {
+    display: none;
+}
+
 /* New layout */
 label.standard-desc {
     text-align: justify;

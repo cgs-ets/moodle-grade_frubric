@@ -34,54 +34,58 @@ This template is called in the grading step.
     </div>
 {{/needupdate}}
 
-<div class="form-frubric-evaluate" data-criteria = "{{datajson}}" data-values = "{{valuejson}}">
+<div class="form-frubric-evaluate " data-criteria = "{{datajson}}" data-values = "{{valuejson}}">
 
     <div id="{{name}}-criteria"  class = 'criteria-eval' aria-label = 'Frubric' data-definition-id = "{{criteriadefinitionid}}">
         {{#criteria}}
         <table class ="frubric-table-evaluate">
-        <tr><strong>{{description}}</strong></tr><br><br>
+            <tr>
+                <span class =" {{^visibility}}frubric-hide-criterion{{/visibility}}"><strong>{{description}}</strong></span>
+            </tr>
+            <br>
+            <br>
 
-            <table class="table table-bordered" id = "{{name}}-frubric-criteria-{{criteriaid}}">
-                {{#definitions}}
-                <tr id= "{{name}}-frubric-criteria-{{criteriaid}}-level">
-                    <td>
-                        <p>{{score}}</p>
-                    </td>
-                    {{#definition}}
-                        {{#descriptors}}
-                        <td class = "frubric-descriptor-td">
-                            {{#descriptor}}
-                                <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-{{id}}-descriptor-{{descriptorid}}"
-                                 name = "{{name}}[criteria][{{criteriaid}}][levelid]" value = "{{id}}"
-                                 type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
-                            {{/descriptor}}
-                        </td>
-                        {{/descriptors}}
-                    {{/definition}}
-                </tr>
-                {{/definitions}}
-                <tr>
-                    <td>
-                        <p><strong>{{labelcrit}}</strong> </p>
-                    </td>
-                    <td>
-                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input"  min = "0" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
-                        <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}  </span></strong>
-
-                    </td>
-                </tr>
-               {{^disablecomment}}
+            <table class="table table-bordered {{^visibility}}frubric-hide-criterion{{/visibility}}" id = "{{name}}-frubric-criteria-{{criteriaid}}">
+                    {{#definitions}}
+                        <tr id= "{{name}}-frubric-criteria-{{criteriaid}}-level">
+                            <td>
+                                <p>{{score}}</p>
+                            </td>
+                            {{#definition}}
+                                {{#descriptors}}
+                                <td class = "frubric-descriptor-td">
+                                    {{#descriptor}}
+                                        <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-{{id}}-descriptor-{{descriptorid}}"
+                                        name = "{{name}}[criteria][{{criteriaid}}][levelid]" value = "{{id}}"
+                                        type="checkbox" {{#checked}}checked{{/checked}}> {{descText}} <br>
+                                    {{/descriptor}}
+                                </td>
+                                {{/descriptors}}
+                            {{/definition}}
+                        </tr>
+                    {{/definitions}}
                     <tr>
                         <td>
-                            <p><strong>{{labelcrit}} FEEDBACK:</strong> </p>
+                            <p><strong>{{labelcrit}}</strong> </p>
                         </td>
                         <td>
-                            <textarea  {{#disablecomment}}disabled {{/disablecomment}} name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
+                            <input id = "{{name}}-frubric-criteria-{{criteriaid}}-level-grade" type="number" class="total-input"  min = "0" max = "{{totaloutof}}" value= "{{levelscore}}" name = "{{name}}[criteria][{{criteriaid}}][levelscore]">
+                            <strong><span id="{{name}}-frubric-criteria-{{criteriaid}}-level-grade-out-of-value" name = "{{name}}[criteria][{{criteriaid}}][maxscore]" > /{{totaloutof}}  </span></strong>
+
                         </td>
                     </tr>
-                {{/disablecomment}}
-                <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" hidden value = "{{leveljson}}">
-                <input name = "{{name}}[criteria][{{criteriaid}}][leveljsonaux]" id = "{{name}}-frubric-{{criteriaid}}-leveljsonaux" hidden value ="{{leveljson}}">
+                {{^disablecomment}}
+                        <tr>
+                            <td>
+                                <p><strong>{{labelcrit}} FEEDBACK:</strong> </p>
+                            </td>
+                            <td>
+                                <textarea  {{#disablecomment}}disabled {{/disablecomment}} name = "{{name}}[criteria][{{criteriaid}}][remark]" id = "{{name}}-frubric-{{criteriaid}}-remark" rows="4"  cols="110" class="criterion-description">{{feedback}}</textarea>
+                            </td>
+                        </tr>
+                    {{/disablecomment}}
+                    <input name = "{{name}}[criteria][{{criteriaid}}][leveljson]" id = "{{name}}-frubric-{{criteriaid}}-leveljson" hidden value = "{{leveljson}}">
+                    <input name = "{{name}}[criteria][{{criteriaid}}][leveljsonaux]" id = "{{name}}-frubric-{{criteriaid}}-leveljsonaux" hidden value ="{{leveljson}}">
             </table>
         </table>
         {{/criteria}}

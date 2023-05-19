@@ -19,7 +19,7 @@ along with Moodle. If not, see
 <div class="preview-frubric-form">
 
     {{#criteria}}
-    <table class ="preview-table table-responsive">
+    <table class ="preview-table table-responsive {{^visibility}}frubric-not-visible{{/visibility}}">
         <thead>
             <tr>
                 <th>
@@ -52,7 +52,7 @@ along with Moodle. If not, see
                                 <strong><p> {{levelscore}}/{{totaloutof}}</span></p>
                             </td>
                         </tr>
-                       
+
                     </table>
                     {{/levels}}
                 </td>

@@ -20,7 +20,7 @@ This template displays the rubric filled with the result given to a particular s
 <div class="graded-form">
     <span class = 'frubric-show-hide-levels'><i class="fa fa-eye" aria-hidden="true" title = "Hide levels"></i></span>
     {{#criteria}}
-    <table class="criteria-table table-light criteria-table-evaluated">
+    <table class="criteria-table table-light criteria-table-evaluated {{^visibility}}frubric-hide-criterion{{/visibility}}">
         <thead>
             <tr>
                 <th>

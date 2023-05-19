@@ -33,7 +33,13 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
         if (!tr.classList.contains('result-r')) {
 
             Array.from(tr.children).forEach(function (th) {
-                if (th.classList.contains('fr-header') && th.classList.contains('crit-desc')) {
+
+                if (th.classList.contains('fr-header') && th.classList.contains('act')) {
+                    if (!(th.children[1]).checked) {
+                        th.children[1].classList.add('form-control', 'is-invalid');
+                        th.setAttribute('title', 'At least one criterion has to be selected');
+                    }
+                } else if (th.classList.contains('fr-header') && th.classList.contains('crit-desc')) {
                     if (th.children[0].value == '') {
                         th.children[0].classList.add('form-control', 'is-invalid');
                         th.children[0].setAttribute('title', 'Description cannot be empty');
@@ -47,7 +53,6 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
                                 Array.from(t.querySelectorAll('tr')).forEach(function (itd, index) {
 
                                     Array.from(itd.children).forEach(function (tdch, index) {
-                                        Y.log(itd.children);
                                         if (tdch.classList.contains('level-mark')) {
 
                                             Array.from(tdch.children).forEach(function (mark) {
@@ -89,7 +94,7 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
         }
     });
 
-    //Rebuild the criterionjson in case the error came because hte user didnt add a level to the descriptor.
+    //Rebuild the criterionjson in case the error came because the user didnt add a level to the descriptor.
     //For some reason, the form doesn't refresh json
 
 }
