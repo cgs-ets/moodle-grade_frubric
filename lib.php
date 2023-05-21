@@ -825,8 +825,13 @@ class gradingform_frubric_controller extends gradingform_controller {
         foreach ($this->get_definition()->frubric_criteria as $id => $criterion) {
             foreach ($criterion as $description => $crit) {
                 // Only count the max score if the criterion is visible
-                if ($description == 'totaloutof' && $criterion['visibility'] == 1) {
+                if ($description == 'totaloutof' ) {
                     $returnvalue['maxscore'] += $crit;
+                }
+
+                if(isset($criterion['visibility']) && $criterion['visibility'] != 1 && $description == 'totaloutof') {
+
+                    $returnvalue['maxscore'] -= $crit;
                 }
             }
         }
@@ -1357,7 +1362,7 @@ class gradingform_frubric_instance extends gradingform_instance {
             unset($crite->id);      // This is the criteria id. I made it available with the name criteriaid.
             $data['criteria'][]     = $crite;
             // Only count the position if the criterion is visible.
-            if ($crite->visibility) {
+            if (isset($crite->visibility) && $crite->visibility) {
                 $counter++;
             }
         }
