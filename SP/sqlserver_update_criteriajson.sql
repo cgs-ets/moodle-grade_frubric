@@ -19,7 +19,7 @@ GO
 -- Description:	Flexrubrics that were created before the option to enable/disable a criterion, needs to be updated to have
 -- the attribute visible true to display all the criterions.
 -- =============================================
-CREATE PROCEDURE update_frubric_criteriajson
+CREATE PROCEDURE cgs.grade_gradingform_update_frubric_criteriajson
 
 AS
 BEGIN

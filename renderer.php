@@ -161,7 +161,6 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
             }
 
             $return .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
-
             foreach ($instances as $instance) {
                 $return .= $this->display_instance($instance,  $maxscore);
             }
@@ -205,18 +204,22 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                     $sumscores     += $value['levelscore'];
 
                     $descriptorids  = '';
+
                     foreach ($criterion as $j => &$cri) {
 
                         if (isset($criterion['visibility']) &&  $criterion['visibility'] == 1) {
                             $counter++;
                         }
+
                         if (!isset($criterion['descriptiontotal'])) {
                             $criterion['descriptiontotal'] = "Criterion $counter";
                         }
 
                         if ($j == 'levels') {
+
                             $criterionlevelids = $this->get_level_ids_per_criterion($i);
                             $leveljson = (array)json_decode($value['leveljson']);
+
                             foreach ($criterionlevelids as $index => $lid) {
 
                                 if (isset($leveljson[$lid->id])) {
@@ -240,7 +243,9 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                     $criterion['levelscore'] = (int)$value['levelscore'];
                     $criterion['feedback'] = $value['remark'];
-                    $criterion['disablecomment'] = isset($options->disablecriteriacomments) ? $options->disablecriteriacomments : false;
+                    $criterion['disablecomment'] = isset($options->disablecriteriacomments)
+                                                   ? $options->disablecriteriacomments
+                                                   : false;
                 }
             }
         }
