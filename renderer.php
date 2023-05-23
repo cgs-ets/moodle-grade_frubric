@@ -138,9 +138,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @param array $instances array of objects of type gradingform_rubric_instance
      * @param string $defaultcontent default string that would be displayed without advanced grading
      * @param int $assigngradeid id from mdl_assign_grades
+     * @param boolean $todownload if its comes from assignment_downloader plugin
      * @return string
      */
-    public function display_instances($instances, $defaultcontent,  $maxscore, $assigngradeid) {
+    public function display_instances($instances, $defaultcontent,  $maxscore, $assigngradeid, $todownload = false) {
         global $CFG, $USER, $DB;
         $return = '';
         if (sizeof($instances)) {
@@ -162,7 +163,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
             $return .= html_writer::start_tag('div', array('class' => 'advancedgrade'));
             foreach ($instances as $instance) {
-                $return .= $this->display_instance($instance,  $maxscore);
+                $return .= $this->display_instance($instance,  $maxscore, $todownload);
             }
             $return .= html_writer::end_tag('div');
         }
@@ -177,7 +178,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
      * @param int $idx unique number of instance on page
      * @param bool $cangrade whether current user has capability to grade in this context
      */
-    public function display_instance(gradingform_frubric_instance $instance,  $maxscore) {
+    public function display_instance(gradingform_frubric_instance $instance,  $maxscore, $todownload = false) {
         global $CFG;
 
         $definition     = $instance->get_controller()->get_definition();
@@ -202,8 +203,15 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 if (isset($values['criteria'][$i])) {
                     $value          = $values['criteria'][$i];
                     $sumscores     += $value['levelscore'];
-
                     $descriptorids  = '';
+                    $toremove = [];
+
+                    if (isset($criterion['visibility'])
+                        &&  !$criterion['visibility']
+                        && $todownload) {
+                            $toremove[] = $i;
+                        continue;
+                    }
 
                     foreach ($criterion as $j => &$cri) {
 
@@ -243,11 +251,19 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
                     $criterion['levelscore'] = (int)$value['levelscore'];
                     $criterion['feedback'] = $value['remark'];
+
                     $criterion['disablecomment'] = isset($options->disablecriteriacomments)
-                                                   ? $options->disablecriteriacomments
-                                                   : false;
+                    ? $options->disablecriteriacomments
+                    : false;
+                    if (!$todownload && $criterion['disablecomment']) {
+                    }
                 }
             }
+        }
+
+        // For some reason I cant filter this in the previous loops.
+        foreach ($toremove as $key) {
+            unset($criteria[$key]);
         }
 
         $data['sumscores'] = $sumscores;

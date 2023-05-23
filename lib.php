@@ -812,6 +812,10 @@ class gradingform_frubric_controller extends gradingform_controller {
         return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, ($this->get_min_max_score())['maxscore'], $itemid);
     }
 
+    public function render_grade_to_download($page, $itemid, $gradinginfo, $defaultcontent, $cangrade) {
+        return $this->get_renderer($page)->display_instances($this->get_active_instances($itemid), $defaultcontent, ($this->get_min_max_score())['maxscore'], $itemid, true);
+    }
+
     /**
      * Calculates and returns the possible minimum and maximum score (in points) for this rubric
      *
