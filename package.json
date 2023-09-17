@@ -1,9 +1,18 @@
 {
   "name": "frubric",
+  "description": "Advanced grading method",
+  "devDependencies": {
+    "cypress": "^12.3.0",
+    "grunt": "^1.1.0",
+    "grunt-contrib-less": "^2.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-watch": "^1.1.0"
+  },
+  "engines": {
+    "node": ">=8.9 <9"
+  },
   "version": "1.0.0",
-  "description": "Grading form",
-  "main": "index.js",
-  "type":"module",
+  "main": "Gruntfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,19 +20,7 @@
     "type": "git",
     "url": "git+https://github.com/cgs-ets/moodle-grade_frubric.git"
   },
-  "keywords": [
-    "moodle",
-    "grading",
-    "flexible",
-    "rubric"
-  ],
   "author": "Veronica Bermegui",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cgs-ets/moodle-grade_frubric/issues"
-  },
-  "homepage": "https://github.com/cgs-ets/moodle-grade_frubric#readme",
-  "devDependencies": {
-    "cypress": "^12.3.0"
-  }
+  "homepage": "https://github.com/cgs-ets/moodle-grade_frubric#readme"
 }

@@ -88,11 +88,11 @@ define(['core/log', 'core/templates',
 
             // Criterion actions.
             actionChildren[0].addEventListener('click', self.removeCriterion.bind(currentRow));
-           addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
+            addLevelRow.children[0].addEventListener('click', self.addLevel.bind(self, currentRow));
 
             const description = currentRow.querySelector('.crit-desc'); // Get description
             description.addEventListener('click', self.editCriterionDescription.bind(this));
-            description.addEventListener('focusout', self.focusoutHandlerDisabled);
+            //description.addEventListener('focusout', self.focusoutHandlerDisabled);
 
             // Get the previous criterion to attach events to the total criterion row at the top of this one.
             const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
@@ -102,7 +102,8 @@ define(['core/log', 'core/templates',
                 criterionTotaltd.querySelector('.total-input').addEventListener('blur', self.validateTotal);
             }
 
-
+            // Setup outcome select.
+            self.handleOutcomeSelect(currentRow);
         };
 
         CriterionControl.prototype.addLevel = function (row) {
@@ -170,8 +171,6 @@ define(['core/log', 'core/templates',
                     Log.debug("error...");
                     Log.debug(ex);
                 });
-
-
         };
 
 
@@ -260,6 +259,7 @@ define(['core/log', 'core/templates',
 
         CriterionControl.prototype.editCriterionDescription = function (e) {
             e.stopPropagation();
+            //console.log(e)
 
             let textarea = e.target;
 
@@ -271,7 +271,7 @@ define(['core/log', 'core/templates',
 
 
         CriterionControl.prototype.focusoutHandlerDisabled = function (e) {
-            e.target.setAttribute('disabled', true);
+            //e.target.setAttribute('disabled', true);
         };
 
         CriterionControl.prototype.changeCriterionHandlerDisabled = function (e) {
@@ -333,8 +333,25 @@ define(['core/log', 'core/templates',
                 FeditorHelper.setCriteriaJSON(criteria);
                 FeditorHelper.setHiddenCriteriaJSON(criteria);
             }
-
         }
+
+        CriterionControl.prototype.handleOutcomeSelect = function (currentRow) {
+          /*const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
+          const sel = resultRow.querySelector('.sel-outcomes');
+          sel.addEventListener('change', event => {
+            console.log(event)
+            console.log(event.currentTarget.value)
+
+            const criterioncollection = FeditorHelper.getCriteriaJSON();
+            const filterCriterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criterioncollection);
+            console.log(criterioncollection)
+            console.log(filterCriterion)
+
+            // TODO Update the JSON input.
+            //FeditorHelper.setCriteriaJSON(criterioncollection);
+            //FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
+          });*/
+        };
 
 
         return {
