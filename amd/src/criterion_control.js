@@ -259,7 +259,6 @@ define(['core/log', 'core/templates',
 
         CriterionControl.prototype.editCriterionDescription = function (e) {
             e.stopPropagation();
-            //console.log(e)
 
             let textarea = e.target;
 
@@ -336,21 +335,31 @@ define(['core/log', 'core/templates',
         }
 
         CriterionControl.prototype.handleOutcomeSelect = function (currentRow) {
-          /*const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
+          const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
           const sel = resultRow.querySelector('.sel-outcomes');
+
+          if (!sel) {
+            return;
+          }
+
+          // Set the outcome default.
+          const criteria = FeditorHelper.getCriteriaJSON();
+          const criterion = FeditorHelper.getCriterionFromCriteriaCollection(resultRow, criteria);
+          sel.value=criterion[0].outcomeid
+
           sel.addEventListener('change', event => {
-            console.log(event)
-            console.log(event.currentTarget.value)
-
-            const criterioncollection = FeditorHelper.getCriteriaJSON();
-            const filterCriterion = FeditorHelper.getCriterionFromCriteriaCollection(row, criterioncollection);
-            console.log(criterioncollection)
-            console.log(filterCriterion)
-
-            // TODO Update the JSON input.
-            //FeditorHelper.setCriteriaJSON(criterioncollection);
-            //FeditorHelper.setHiddenCriteriaJSON(criterioncollection);
-          });*/
+            const criteria = FeditorHelper.getCriteriaJSON();
+            const criterion = FeditorHelper.getCriterionFromCriteriaCollection(resultRow, criteria);
+            if (criterion[0].outcomeid != event.currentTarget.value && 
+                FeditorHelper.getMode() == 'edit' &&
+                !criterion[0].cid.includes('frubric-criteria-NEWID')) {
+                  criterion[0].status = 'UPDATE';
+            }
+            criterion[0].outcomeid = event.currentTarget.value;
+            FeditorHelper.setCriteriaJSON(criteria);
+            FeditorHelper.setHiddenCriteriaJSON(criteria);
+            console.log(criterion)
+          });
         };
 
 

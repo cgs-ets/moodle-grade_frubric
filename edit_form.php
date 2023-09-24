@@ -48,6 +48,9 @@ class gradingform_frubric_editrubric extends moodleform {
         $form->addElement('hidden', 'regradeoptionselected');
         $form->setType('regradeoptionselected', PARAM_RAW);
 
+        $form->addElement('hidden', 'outcomesjson');
+        $form->setType('outcomesjson', PARAM_RAW);
+
         // Name.
         $form->addElement(
             'text',
@@ -108,7 +111,9 @@ class gradingform_frubric_editrubric extends moodleform {
 
         // Frubric editor.
         $form->setType('frubric', PARAM_RAW);
-
+        $outcomes = $this->_customdata['outcomes'];
+        $d['outcomes'] = $outcomes;
+        $d['hasoutcomes'] = count($outcomes);
         $flexrubireditorhtml = $renderer->render_template(gradingform_frubric_controller::DISPLAY_EDIT_FULL, $d);
         $form->addElement('html',  $flexrubireditorhtml);
 
@@ -275,6 +280,7 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
+                    $d->outcomeid = $criterion->outcomeid;
                     $leveldbids = [];
 
                     if (count((array)$criterion->levels) == 0) {

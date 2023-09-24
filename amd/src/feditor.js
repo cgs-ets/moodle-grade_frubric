@@ -118,13 +118,16 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
             let self = this;
 
             const countcriteria = document.querySelectorAll('.criterion-header').length;
+            // Get outcomes.
+            const outcomes = JSON.parse(document.querySelector('input[name="outcomesjson"]').value);
+
             // Set context
-            const context = {
+            let context = {
                 id: `frubric-criteria-NEWID${countcriteria + 1}`,
                 criteriongroupid: countcriteria + 1,
                 new: 1, // Adds the result row
             };
-
+            context = {...context, ...outcomes}
 
             Templates.render(self.CRITERION_ROW, context)
                 .done(function (html, js) {
@@ -142,6 +145,7 @@ define(['core/log', 'core/templates', 'gradingform_frubric/feditor_helper'],
                         definitionid: document.getElementById('cont').getAttribute('data-definition-id'), // Id from mdl_grading_definitions
                         levels: [],
                         sumscore: "",
+                        outcomeid: "0",
                     };
 
 

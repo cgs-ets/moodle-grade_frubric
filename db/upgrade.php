@@ -43,5 +43,21 @@ function xmldb_gradingform_frubric_upgrade($oldversion) {
     // You will also have to create the db/install.xml file by using the XMLDB Editor.
     // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
 
+    if ($oldversion < 2023091900) {
+
+        // Define field outcomeid to be added to gradingform_frubric_criteria.
+        $table = new xmldb_table('gradingform_frubric_criteria');
+        $field = new xmldb_field('outcomeid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'descriptionformat');
+
+        // Conditionally launch add field outcomeid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Frubric savepoint reached.
+        upgrade_plugin_savepoint(true, 2023091900, 'gradingform', 'frubric');
+    }
+
     return true;
+
 }

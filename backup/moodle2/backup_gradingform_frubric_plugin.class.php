@@ -52,7 +52,7 @@ class backup_gradingform_frubric_plugin extends backup_gradingform_plugin {
         $criteria = new backup_nested_element('frcriteria');
 
         $criterion = new backup_nested_element('frcriterion', array('id'), array(
-            'sortorder', 'description', 'descriptionformat', 'criteriajson'
+            'sortorder', 'description', 'descriptionformat', 'criteriajson', 'outcomeid'
         ));
 
         $levels = new backup_nested_element('frlevels');

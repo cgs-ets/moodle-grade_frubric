@@ -125,6 +125,7 @@ class MoodleQuickForm_frubriceditor extends HTML_QuickForm_input {
         $d->id = "frubric-criteria-NEWID1";
         $d->criteriongroupid = 1;
         $d->description = get_string('editcriterion', 'gradingform_frubric');
+        $d->outcomeid = 0;
         $d->new = 1;
 
         $data = [

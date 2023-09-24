@@ -54,7 +54,8 @@ $customdata =
         'context' => $context,
         'defid' => $definitionid,
         'criteriajsonhelper' => $criteriajson,
-        'allowdraft' => !$controller->has_active_instances()
+        'allowdraft' => !$controller->has_active_instances(),
+        'outcomes' => array_values($controller->get_course_outcomes($course->id)), //Used to populate select on initial load.
     );
 $target     = array('class' => 'gradingform_rubric_editform');
 $mform      = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $target);
@@ -62,10 +63,15 @@ $mform      = new gradingform_frubric_editrubric(null, $customdata, 'post', '', 
 $mform->need_confirm_regrading($controller);
 $returnurl  = optional_param('returnurl', $manager->get_management_url(), PARAM_LOCALURL);
 $data = $controller->get_definition_for_editing(true);
-
 $data->returnurl = $returnurl;
 $data->regrade   = 0;
+$outcomes = array_values($controller->get_course_outcomes($course->id));
+$data->outcomesjson = json_encode(array( // Used for populating select when adding new criteria.
+    'outcomes' => $outcomes,
+    'hasoutcomes' => count($outcomes),
+));
 $mform->set_data($data);
+
 
 $confirmregrading = (!$mform->need_confirm_regrading($controller) || $regradecheck == 1);
 
@@ -75,6 +81,7 @@ if ($mform->is_cancelled()) {
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
     $data->regrade = $regradeoptselected;
+    //echo "<pre>"; var_export($data); exit;
     $controller->update_definition($data);
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.
     $warning = null;

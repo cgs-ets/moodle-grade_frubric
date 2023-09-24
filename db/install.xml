@@ -11,6 +11,7 @@
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Defines the order of the criterion in the rubric"/>
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The criterion description"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="The format of the description field"/>
+        <FIELD NAME="outcomeid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" DEFAULT="0" COMMENT="Reference to mdl_grade_outcomes"/>
         <FIELD NAME="criteriajson" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Keep a reference to the criteria and its levels in JSON format"/>
       </FIELDS>
       <KEYS>

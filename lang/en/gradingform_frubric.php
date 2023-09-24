@@ -86,3 +86,5 @@ $string['showdescriptionstudent']                       = 'Display Flexrubric de
 $string['disablecriteriacomments']                      = 'Disable criteria comments';
 $string['frubricoptions']                               = 'Flexrubric options';
 
+$string['cron_grade_outcomes']                          = 'Flexrubric grade outcomes';
+$string['gradeoutcomes_lastrun']                        = 'Grade outcomes last run';
