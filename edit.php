@@ -26,6 +26,7 @@
 require_once(__DIR__ . '/../../../../config.php');
 require_once(__DIR__ . '/lib.php');
 require_once(__DIR__ . '/edit_form.php');
+require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot . '/grade/grading/lib.php');
 
 $areaid                 = required_param('areaid', PARAM_INT);
@@ -55,7 +56,7 @@ $customdata =
         'defid' => $definitionid,
         'criteriajsonhelper' => $criteriajson,
         'allowdraft' => !$controller->has_active_instances(),
-        'outcomes' => array_values($controller->get_course_outcomes($course->id)), //Used to populate select on initial load.
+        'outcomes' => array_values($controller->get_assign_outcomes($cm->instance)), //Used to populate select on initial load.
     );
 $target     = array('class' => 'gradingform_rubric_editform');
 $mform      = new gradingform_frubric_editrubric(null, $customdata, 'post', '', $target);
@@ -65,13 +66,14 @@ $returnurl  = optional_param('returnurl', $manager->get_management_url(), PARAM_
 $data = $controller->get_definition_for_editing(true);
 $data->returnurl = $returnurl;
 $data->regrade   = 0;
-$outcomes = array_values($controller->get_course_outcomes($course->id));
+
+$outcomes = array_values($controller->get_assign_outcomes($cm->instance));
 $data->outcomesjson = json_encode(array( // Used for populating select when adding new criteria.
     'outcomes' => $outcomes,
     'hasoutcomes' => count($outcomes),
 ));
-$mform->set_data($data);
 
+$mform->set_data($data);
 
 $confirmregrading = (!$mform->need_confirm_regrading($controller) || $regradecheck == 1);
 

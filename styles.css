@@ -407,3 +407,9 @@ span.frubric-show-hide-levels {
         width: 80%;
     }
 }
+
+/* Hide normal outcomes */
+[id^="fitem_menuoutcome_"] {
+  display: none !important;
+  pointer-events:none;
+}

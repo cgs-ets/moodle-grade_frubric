@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
-    /*array(
+    array(
         'classname' => 'gradingform_frubric\task\cron_grade_outcomes',
         'blocking' => 0,
         'minute' => '*',
@@ -33,5 +33,5 @@ $tasks = array(
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*'
-    ),*/
+    ),
 );
