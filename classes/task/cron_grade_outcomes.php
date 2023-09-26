@@ -53,7 +53,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
         }
 
         // Immediately update last run time.
-        $DB->execute("UPDATE {config} SET value = ? WHERE name = 'frubric_gradeoutcomes_lastrun'", [time()]);
+        //$DB->execute("UPDATE {config} SET value = ? WHERE name = 'frubric_gradeoutcomes_lastrun'", [time()]);
         
         // Find frubric grades that have changed since last run.
         $this->log("Looking for frubric grades since last run: $lastrun");
@@ -98,49 +98,76 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                 $fillings = $DB->get_records_sql($sql);
                 $this->log("User $assigngrade->userid was graded for this assignment since last run. Found the criterion fillings: " . json_encode(array_column($fillings, 'id')), 3);
 
+                // Process the grades first.
+                $gradesbyoutcome = array();
                 foreach ($fillings as $filling) {
-                    // Get the criterions outcome.
                     $outcomeid = $DB->get_field('gradingform_frubric_criteria', 'outcomeid', array('id' => $filling->criterionid));
-                    $this->log("Criterion $filling->criterionid is mapped to outcome $outcomeid", 4);
-                    
-                    if ($outcomeid) {
-                        // Get the grade item for the outcome that needs to be filled.
-                        $outcomeitem = $DB->get_record('grade_items', array(
-                            'iteminstance' => $fgrade->iteminstance,
-                            'outcomeid' => $outcomeid,
-                        ));
-                        $this->log("Grade item $outcomeitem->id is used for outcome $outcomeid", 4);
-                        if ($outcomeitem) {
-                            // Look for existing outcome grade for the user.
-                            $outcomegrade = $DB->get_record('grade_grades', array(
-                                'itemid' => $outcomeitem->id,
-                                'userid' => $assigngrade->userid,
-                            ));
-                            // Use $criterion->levelscore to set the outcome level for the user.
-                            if ($outcomegrade) {
-                                // Update the outcome grade.
-                                $this->log("Updating existing grade_grades row with new score of $filling->levelscore", 4);
-                                $outcomegrade->timemodified = time();
-                                $outcomegrade->rawgrade = $filling->levelscore;
-                                $outcomegrade->finalgrade = $filling->levelscore;
-                                $outcomegrade->usermodified = $fgrade->usermodified; // Same user as the main grade.
-                                $DB->update_record('grade_grades', $outcomegrade);
-                            } else {
-                                // Insert the outcome grade.
-                                $this->log("Inserting a new grade_grades row with score of $filling->levelscore", 4);
-                                $data = array(
-                                    'itemid' => $outcomeitem->id,
-                                    'userid' => $assigngrade->userid,
-                                    'rawgrade' => $filling->levelscore,
-                                    'usermodified' => $fgrade->usermodified, // Same user as the main grade.
-                                    'finalgrade' => $filling->levelscore,
-                                    'timemodified' => time(),
-                                );
-                                $DB->insert_record('grade_grades', $data);
-                            }
-                        }
+                    if (!$outcomeid) {
+                        continue;
+                    }
+                    if (!isset( $gradesbyoutcome[$outcomeid] )) {
+                        $gradesbyoutcome[$outcomeid] = array();
+                    }
+                    // Add the fractional grade (grade / max score in filling)
+                    $sql = "SELECT MAX(maxscore) FROM {gradingform_frubric_descript} where criterionid = $filling->criterionid";
+                    $maxscore = $DB->get_field_sql($sql);
+                    $filling->scaledscore = $filling->levelscore / $maxscore;
+                    $this->log("Scaled grade for criterion $filling->criterionid (contributing to outcome $outcomeid) is => $filling->levelscore (levelscore) / $maxscore (maxscore) = $filling->scaledscore (scaledscore)", 4);
+                    $gradesbyoutcome[$outcomeid][] = $filling;
+                }
+
+                foreach ($gradesbyoutcome as $outcomeid => &$outcomegrades) {
+                    // Get the grade item for the outcome that needs to be filled.
+                    $outcomeitem = $DB->get_record('grade_items', array(
+                        'iteminstance' => $fgrade->iteminstance,
+                        'outcomeid' => $outcomeid,
+                    ));
+                    if (!$outcomeitem) {
+                        continue;
+                    }
+                    $this->log("Grade item $outcomeitem->id is used for outcome $outcomeid", 4);
+
+                    // Get the scale length for this outcome.
+                    $scaleid = $DB->get_field('grade_outcomes', 'scaleid', array('id' => $outcomeid));
+                    $scale = $DB->get_record('scale', array('id' => $scaleid));
+                    $scale = explode(',', $scale->scale);
+                    $scalelength = count($scale);
+                    $outcomeslength = count($outcomegrades);
+                    $scaledscoresum = array_sum(array_column($outcomegrades, 'scaledscore'));
+                    $exactscore = $scalelength * $scaledscoresum / $outcomeslength;
+                    $roundedscore = round($exactscore);
+
+                    $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $scaledscoresum (scaledscoresum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
+
+                    // Look for existing outcome grade for the user.
+                    $outcomegrade = $DB->get_record('grade_grades', array(
+                        'itemid' => $outcomeitem->id,
+                        'userid' => $assigngrade->userid,
+                    ));
+                    // Use $criterion->levelscore to set the outcome level for the user.
+                    if ($outcomegrade) {
+                        // Update the outcome grade.
+                        $this->log("Updating existing grade_grades row with new score of $roundedscore", 5);
+                        $outcomegrade->timemodified = time();
+                        $outcomegrade->rawgrade = $roundedscore;
+                        $outcomegrade->finalgrade = $roundedscore;
+                        $outcomegrade->usermodified = $fgrade->usermodified; // Same user as the main grade.
+                        $DB->update_record('grade_grades', $outcomegrade);
+                    } else {
+                        // Insert the outcome grade.
+                        $this->log("Inserting a new grade_grades row with score of $roundedscore", 5);
+                        $data = array(
+                            'itemid' => $outcomeitem->id,
+                            'userid' => $assigngrade->userid,
+                            'rawgrade' => $roundedscore,
+                            'finalgrade' => $roundedscore,
+                            'usermodified' => $fgrade->usermodified, // Same user as the main grade.
+                            'timemodified' => time(),
+                        );
+                        $DB->insert_record('grade_grades', $data);
                     }
                 }
+
             }
         }
     
