@@ -90,7 +90,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                 $ginstance = $DB->get_record_sql($sql, [], IGNORE_MULTIPLE);
                 if (!$ginstance) {
                     $this->log("User $assigngrade->userid was not graded since last run - no grading instances found.", 3);
-                    return;
+                    continue;
                 }
                 $sql = "SELECT * 
                         FROM {gradingform_frubric_fillings}
