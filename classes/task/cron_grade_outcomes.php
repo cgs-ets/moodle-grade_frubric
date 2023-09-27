@@ -57,28 +57,42 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
         
         // Find frubric grades that have changed since last run.
         $this->log("Looking for frubric grades since last run: $lastrun");
-        $sql = "SELECT DISTINCT gi.*, gg.usermodified
-                FROM {grading_areas} ga
-                INNER JOIN {grade_items} gi ON gi.iteminstance = ga.id
-                INNER JOIN {grade_grades} gg on gg.itemid = gi.id
-                INNER JOIN {grade_outcomes_courses} oc ON oc.courseid = gi.courseid
+        $sql = "SELECT DISTINCT gi.*, gg.userid, gg.usermodified
+                FROM {grade_items} gi
+                INNER JOIN {grade_grades} gg 
+                    ON gg.itemid = gi.id
+                INNER JOIN {grade_outcomes_courses} oc 
+                    ON oc.courseid = gi.courseid
+                INNER JOIN {modules} m 
+                    ON m.name = gi.itemmodule
+                INNER JOIN {course_modules} cm 
+                    ON cm.instance = gi.iteminstance 
+                    AND cm.course = gi.courseid 
+                    AND cm.module = m.id
+                INNER JOIN {context} c 
+                    ON c.instanceid = cm.id
+                INNER JOIN {grading_areas} ga 
+                    ON ga.contextid = c.id 
                 WHERE ga.activemethod = 'frubric'
                 AND gi.itemmodule = 'assign'
                 AND gi.outcomeid IS NULL
+                AND gg.usermodified IS NOT NULL
                 AND oc.outcomeid > 0
-                AND gg.timemodified >= $lastrun";
+                AND (gg.timemodified >= $lastrun 
+                    OR gi.timemodified >= $lastrun)";
         $fgraded = $DB->get_records_sql($sql);
 
         foreach ($fgraded as $fgrade) {
-            $this->log("Processing outcome grades related to grade item $fgrade->id - $fgrade->itemname", 1);
-            // Get users that have been graded for this assignment
+            $this->log("Processing outcome grades related to grade item $fgrade->id - $fgrade->itemname for userid $fgrade->userid", 1);
+            // Get the assign_grades row for this user. 
             $sql = "SELECT * 
                     FROM {assign_grades}
-                    WHERE assignment = $fgrade->iteminstance";
-            $assigngrades = $DB->get_records_sql($sql);
-            // Save outcomes for each user.
-            foreach($assigngrades as $assigngrade) {
-                $this->log("Looking for grading instance/fillings for user $assigngrade->userid since last run", 2);
+                    WHERE assignment = $fgrade->iteminstance
+                    AND userid = $fgrade->userid";
+            $assigngrade = $DB->get_record_sql($sql);
+            // Save outcomes.
+            if ($assigngrade) { //foreach($assigngrades as $assigngrade) {
+                $this->log("Looking for grading instance/fillings for user $fgrade->userid since last run", 2);
                 // Get the latest filling for this user.
                 $sql = "SELECT i.* 
                         FROM {grading_instances} i
@@ -89,7 +103,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                         ORDER BY i.timemodified desc";
                 $ginstance = $DB->get_record_sql($sql, [], IGNORE_MULTIPLE);
                 if (!$ginstance) {
-                    $this->log("User $assigngrade->userid was not graded since last run - no grading instances found.", 3);
+                    $this->log("User $fgrade->userid was not graded since last run - no grading instances found.", 3);
                     continue;
                 }
                 $sql = "SELECT * 
