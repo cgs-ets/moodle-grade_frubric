@@ -92,7 +92,8 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
             $assigngrade = $DB->get_record_sql($sql);
             // Save outcomes.
             if ($assigngrade) { //foreach($assigngrades as $assigngrade) {
-                $this->log("Looking for grading instance/fillings for user $fgrade->userid since last run", 2);
+                $this->log("Found assign grade $assigngrade->id", 2);
+                $this->log("Looking for grading instance/fillings for user $fgrade->userid in $fgrade->iteminstance since last run", 2);
                 // Get the latest filling for this user.
                 $sql = "SELECT i.* 
                         FROM {grading_instances} i
