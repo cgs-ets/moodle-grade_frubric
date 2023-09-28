@@ -785,7 +785,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
     private function get_level_score($scorefield) {
 
-        if ($scorefield == 0) { // This is the lowest level. The only one it can have zero.
+        if ($scorefield === '0' || $scorefield === 0) { // This is the lowest level. The only one it can have zero.
             return [0, 0];
         }
 
