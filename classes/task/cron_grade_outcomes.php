@@ -125,7 +125,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     // Add the fractional grade (grade / max score in filling)
                     $sql = "SELECT MAX(maxscore) FROM {gradingform_frubric_descript} where criterionid = $filling->criterionid";
                     $maxscore = $DB->get_field_sql($sql);
-                    if (!$maxscore) {
+                    if ($maxscore == 0) {
                         $this->log("Scaled grade for criterion $filling->criterionid could not be calculated because maxscore was 0. Skipping this outcome grade.", 4);
                         continue;
                     }
