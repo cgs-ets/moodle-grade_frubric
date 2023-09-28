@@ -152,6 +152,9 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     $scalelength = count($scale);
                     $outcomeslength = count($outcomegrades);
                     $scaledscoresum = array_sum(array_column($outcomegrades, 'scaledscore'));
+                    if ($scaledscoresum == 0) {
+                        continue;
+                    }
                     $exactscore = $scalelength * $scaledscoresum / $outcomeslength;
                     $roundedscore = round($exactscore);
 
