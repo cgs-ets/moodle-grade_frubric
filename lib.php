@@ -101,6 +101,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     }
 
     public function render_preview($page) {
+        global $DB;
 
         if (!$this->is_form_defined()) {
             throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
@@ -126,6 +127,13 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         if ($showdescription) {
             $frubric .= $output->box($this->get_formatted_description(), 'gradingform_frubric-description');
+        }
+
+        // Add outcome names if outcomeid is present.
+        foreach($criteria as &$criterion) {
+            if ($criterion['outcomeid']) {
+                $criterion['outcomename'] = $DB->get_field('grade_outcomes', 'fullname', array('id' => $criterion['outcomeid']));
+            }
         }
 
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
@@ -1304,59 +1312,7 @@ class gradingform_frubric_instance extends gradingform_instance {
      * @return float|int the valid grade from $this->get_controller()->get_grade_range()
      */
     public function get_grade() {
-        $filling = $this->get_frubric_filling();
-
-        // CANNOT SAVE OUTCOMES HERE! mod > assign > locallib.php > save_grade always calls process_outcomes after saving the user's grade, and overwriting any change we do here.
-        // Suitable place to inject/save outcome grades.
-        /* On save, a new {grading_instances} row is inserted.
-        * {grading_instances.itemid} connects to {assign_grades.id}. This provides {assign_grades.userid}
-        * To determine whether the grading instance is for an assign, or another activity, you could use $this->get_controller()->get_areaid() to get {grading_areas.component}, or you could go via: {grading_instances.definitionid} => {mdl_grading_definitions.id}, {mdl_grading_definitions.areaid} => {grading_areas.id}, {grading_areas.component} 
-        */
-        /*
-        global $DB, $USER;
-        // Get the graded user (assign_grades.userid)
-        $assigngrade = $DB->get_record('assign_grades', array(
-            'id' => $this->data->itemid,
-        ));
-        foreach ($filling['criteria'] as $criterion) {
-            // If the rubric has a filled outcomeid, then the course had outcomes and the definition specified one for this criterion.
-            $outcomeid = $DB->get_field('gradingform_frubric_criteria', 'outcomeid', array('id' => $criterion['criterionid']));
-            if ($outcomeid) {
-                // Get the grade item for the outcome that needs to be filled.
-                $outcomeitem = $DB->get_record('grade_items', array(
-                    'iteminstance' => $this->get_controller()->get_areaid(),
-                    'outcomeid' => $outcomeid,
-                ));
-                if ($outcomeitem) {
-                    // Look for existing outcome grade for the user.
-                    $outcomegrade = $DB->get_record('grade_grades', array(
-                        'itemid' => $outcomeitem->id,
-                        'userid' => $assigngrade->userid,
-                    ));
-                    // Use $criterion->levelscore to set the outcome level for the user.
-                    if ($outcomegrade) {
-                        // Update the outcome grade.
-                        $outcomegrade->timemodified = time();
-                        $outcomegrade->rawgrade = $criterion['levelscore'];
-                        $outcomegrade->finalgrade = $criterion['levelscore'];
-                        $outcomegrade->usermodified = $USER->id;
-                        $DB->update_record('grade_grades', $outcomegrade);
-                    } else {
-                        // Insert the outcome grade.
-                        $data = array(
-                            'itemid' => $outcomeitem->id,
-                            'userid' => $assigngrade->userid,
-                            'rawgrade' => $criterion['levelscore'],
-                            'usermodified' => $USER->id,
-                            'finalgrade' => $criterion['levelscore'],
-                            'timemodified' => time(),
-                        );
-                        $DB->insert_record('grade_grades', $data);
-                    }
-                }
-            }
-        }
-        */
+        $grade = $this->get_frubric_filling();
 
         if (!($scores = $this->get_controller()->get_min_max_score()) || $scores['maxscore'] <= $scores['minscore']) {
             return -1;
