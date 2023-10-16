@@ -239,6 +239,18 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
         $this->format_criteria_array($data['criteria']);
         $this->page->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/togglelevels.js'));
+        
+        // If this rubric has outcomes hide the overall grade.
+        $hasoutcomes = false;
+        foreach($criteria as $c) {
+            if ($c['outcomeid']) {
+                $hasoutcomes = true;
+                break;
+            }
+        }
+        if ($hasoutcomes) {
+            $this->page->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/hidemypgrade.js'));
+        }
 
         return $this->output->render_from_template('gradingform_frubric/editor_evaluated', $data);
     }
