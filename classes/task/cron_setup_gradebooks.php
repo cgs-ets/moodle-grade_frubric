@@ -68,13 +68,17 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
         foreach ($courses as $course) {
             $this->log("Processing $course->id: $course->fullname");
             // Check start, end and visible.
-            if ($course->startdate > time()) {
+            $now = time();
+            if ($course->startdate > $now) {
+                $this->log("Skipping: $course->startdate > $now", 1);
                 continue;
             }
-            if ($course->enddate < time()) {
+            if ($course->enddate < $now) {
+                $this->log("Skipping: $course->enddate < $now", 1);
                 continue;
             }
             if (!$course->visible) {
+                $this->log("Skipping: Not visible", 1);
                 continue;
             }
             $cats = \grade_category::fetch_all(array('courseid' => $course->id));
