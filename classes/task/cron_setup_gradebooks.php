@@ -73,7 +73,7 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
                 $this->log("Skipping: $course->startdate > $now", 1);
                 continue;
             }
-            if ($course->enddate < $now) {
+            if ($course->enddate && $course->enddate < $now) {
                 $this->log("Skipping: $course->enddate < $now", 1);
                 continue;
             }
