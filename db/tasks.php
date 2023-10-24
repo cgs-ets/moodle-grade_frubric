@@ -34,4 +34,13 @@ $tasks = array(
         'month' => '*',
         'dayofweek' => '*'
     ),
+    array(
+        'classname' => 'gradingform_frubric\task\cron_setup_gradebooks',
+        'blocking' => 0,
+        'minute' => '30',
+        'hour' => '3',
+        'day' => '6',
+        'month' => '*',
+        'dayofweek' => '*'
+    ),
 );
