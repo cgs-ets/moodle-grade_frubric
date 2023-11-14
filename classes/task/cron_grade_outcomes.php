@@ -53,11 +53,15 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
         }
 
         // Immediately update last run time.
-        //$DB->execute("UPDATE {config} SET value = ? WHERE name = 'frubric_gradeoutcomes_lastrun'", [time()]);
+        $DB->execute("UPDATE {config} SET value = ? WHERE name = 'frubric_gradeoutcomes_lastrun'", [time()]);
         
         // Find frubric grades that have changed since last run.
         $this->log("Looking for frubric grades since last run: $lastrun");
-        $sql = "SELECT DISTINCT gi.*, gg.userid, gg.usermodified
+        $sql = "SELECT DISTINCT 
+                    CONCAT(gi.id, '-', gg.userid) AS gradeiduserid, 
+                    gi.*, 
+                    gg.userid, 
+                    gg.usermodified
                 FROM {grade_items} gi
                 INNER JOIN {grade_grades} gg 
                     ON gg.itemid = gi.id
