@@ -133,8 +133,8 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                         $this->log("Scaled grade for criterion $filling->criterionid could not be calculated because maxscore was 0. Skipping this outcome grade.", 4);
                         continue;
                     }
-                    $filling->fractiongrade = $filling->levelscore / $maxscore;
-                    $this->log("Scaled grade for criterion $filling->criterionid (contributing to outcome $outcomeid) is => $filling->levelscore (levelscore) / $maxscore (maxscore) = $filling->fractiongrade (fractiongrade)", 4);
+                    $filling->scaledscore = $filling->levelscore / $maxscore;
+                    $this->log("Scaled grade for criterion $filling->criterionid (contributing to outcome $outcomeid) is => $filling->levelscore (levelscore) / $maxscore (maxscore) = $filling->scaledscore (scaledscore)", 4);
                     $gradesbyoutcome[$outcomeid][] = $filling;
                 }
 
@@ -154,20 +154,15 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     $scale = $DB->get_record('scale', array('id' => $scaleid));
                     $scale = explode(',', $scale->scale);
                     $scalelength = count($scale);
-                    // Major assumption - rubrics will have a 0 score, and the scale used will align with the maxscore defined in the rubric. For example, if criterions are 0-5 the scale length will be 6.
-                    // When picking up the scale "word" the grade (averaged because multiple criteria can point to a single outcome) will pick up the correct word in the scale array because php arrays are 0 indexed.
-                    // We -1 from the scale length to account for a 0 index. For example, Level 0 to Level 5.
-                    // TODO: Scale may have multiple 0 indexes, or none... Need a way to configure this in the rubric...
-                    $scalelength = $scalelength - 1;
                     $outcomeslength = count($outcomegrades);
-                    $fractiongradesum = array_sum(array_column($outcomegrades, 'fractiongrade'));
-                    if ($fractiongradesum == 0) {
+                    $scaledscoresum = array_sum(array_column($outcomegrades, 'scaledscore'));
+                    if ($scaledscoresum == 0) {
                         continue;
                     }
-                    $exactscore = $scalelength * $fractiongradesum / $outcomeslength;
+                    $exactscore = $scalelength * $scaledscoresum / $outcomeslength;
                     $roundedscore = round($exactscore);
 
-                    $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $fractiongradesum (fractiongradesum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
+                    $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $scaledscoresum (scaledscoresum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
 
                     // Look for existing outcome grade for the user.
                     $outcomegrade = $DB->get_record('grade_grades', array(
