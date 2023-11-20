@@ -82,7 +82,10 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
                 continue;
             }
             $cats = \grade_category::fetch_all(array('courseid' => $course->id));
-            $catnames = array_column($cats, 'fullname');
+            $catnames = [];
+            if (!empty($cats)) {
+                $catnames = array_column($cats, 'fullname');
+            }
             $missingcats = array_diff($requiredcats, $catnames);
             foreach ($missingcats as $missingcat) {
                 // Create new gradecategory item.

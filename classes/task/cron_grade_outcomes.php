@@ -166,8 +166,10 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     }
                     $exactscore = $scalelength * $fractiongradesum / $outcomeslength;
                     $roundedscore = round($exactscore);
-
                     $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $fractiongradesum (fractiongradesum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
+                    // Now +1 to account for the 0 index.
+                    $roundedscore = $roundedscore + 1;
+                    $this->log("Adding 1 to grade to account for 0 index scale. Final grade is $roundedscore", 5);
 
                     // Look for existing outcome grade for the user.
                     $outcomegrade = $DB->get_record('grade_grades', array(
