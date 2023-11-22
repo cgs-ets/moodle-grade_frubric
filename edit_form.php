@@ -280,7 +280,7 @@ class gradingform_frubric_editrubric extends moodleform {
                     $d->criteriongroupid = $criterion->id;
                     $d->description = $criterion->description;
                     $d->definitionid = $definitionid;
-                    $d->outcomeid = $criterion->outcomeid;
+                    $d->outcomeid = isset($criterion->outcomeid) ? $criterion->outcomeid : 0;
                     $leveldbids = [];
 
                     if (count((array)$criterion->levels) == 0) {
