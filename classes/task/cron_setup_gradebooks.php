@@ -49,12 +49,18 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $requiredcats = ['CGS Reports', 'CGS Feedback', 'CGS Effort', 'Classwork'];
+        $requiredcats = ['FINAL', 'SEMESTER 1', 'SEMESTER 2', 'SEMESTER 3', 'CGS Effort', 'Classwork'];
         $requiredgradeitems = [
-            'CGS Reports' => array(
-                'Semester 1',
-                'Semester 2'
+            '' => array(
+                'Semester 1 Grade|S1',
+                'Semester 2 Grade|S2',
+                'Semester 3 Grade|S3',
             )
+        ];
+        $requiredrefs = [
+            'SEMESTER 1' => 'S1',
+            'SEMESTER 2' => 'S2',
+            'SEMESTER 3' => 'S3',
         ];
 
         // Get courses under Senior Academic
@@ -96,32 +102,83 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
                 $gradecategory->fullname = $missingcat;
                 $gradecategory->insert();
             }
-            // Refetch the cats, now that they've all be checked and created.
-            // $cats = \grade_category::fetch_all(array('courseid' => $course->id));
-            // Create a grade items.
+
+            // Creating category causes new entries into the gradeitem table too.
+            // Add ID numbers to the category grade items so that it can be referenced in the formulas later.
+            foreach ($requiredrefs as $catname => $requiredref) {
+                // Get the category.
+                $cat = \grade_category::fetch(array(
+                    'courseid' => $course->id, 
+                    'fullname' => $catname, 
+                ));
+                if (!$cat) {
+                    $this->log("Issue fetching cat '$catname', failed to insert idnumber reference");
+                    continue;
+                }
+                // Now find the associated grade item.
+                $gradeitem = \grade_item::fetch(array('courseid'=> $course->id, 'iteminstance'=> $cat->id));
+                if (!$gradeitem) {
+                    $this->log("Grade item for category not found: $catname");
+                    continue;
+                }
+                if ($gradeitem->idnumber != $requiredref) {
+                    $this->log("Updating idnumber (for formula reference) for grade item $gradeitem->id to $requiredref");
+                    $gradeitem->idnumber = $requiredref;
+                    $gradeitem->update();
+                }
+            }
+
+            // Create requiredgrade items.
             foreach ($requiredgradeitems as $catname => $catgradeitems) {
                 foreach ($catgradeitems as $gradeitemname) {
-                    $cat = \grade_category::fetch(array(
-                        'courseid' => $course->id, 
-                        'fullname' => $catname, 
-                    ));
+                    list($gradeitemname, $refidnumber) = explode('|', $gradeitemname);
+                    // Get the category where to insert this grade item. Empty means root.
+                    $cat = null;
+                    if (empty($catname)) {
+                        $cat = \grade_category::fetch(array(
+                            'courseid' => $course->id, 
+                            'fullname' => '?', 
+                            'depth' => 1, 
+                        ));
+                    } else {
+                        $cat = \grade_category::fetch(array(
+                            'courseid' => $course->id, 
+                            'fullname' => $catname, 
+                        ));
+                    }
                     if (!$cat) {
                         $this->log("Issue fetching cat: $catname");
                         continue;
                     }
-                    // Check if the grade item already exists under the grade category.
-                    $gradeitem = \grade_item::fetch_all(array('courseid'=>$course->id, 'itemname'=>$gradeitemname));
+                    
+                    // Check if the grade item already exists for the course.
+                    $gradeitem = \grade_item::fetch(array('courseid'=> $course->id, 'itemname'=> $gradeitemname));
                     if ($gradeitem) {
                         $this->log("Grade item already exists: $gradeitemname");
                         continue;
                     }
-                    $this->log("Adding grade item '$gradeitemname' to category '$catname'");
+
+                    // Find the relevant category grade item, needed for the calculation.
+                    $calculation = '';
+                    $refgradeitem = \grade_item::fetch(array('courseid'=> $course->id, 'idnumber'=> $refidnumber, 'itemtype' => 'category'));
+                    if (!$refgradeitem) {
+                        $this->log("Failed to find ref grade item for: $refidnumber");
+                    } else {
+                        $rid = $refgradeitem->id;
+                        $calculation = "=(##gi$rid##>0)+(##gi$rid##>20)+(##gi$rid##>40)+(##gi$rid##>50)+(##gi$rid##>65)+(##gi$rid##>75)+(##gi$rid##>85)";
+                    }
+
+                    $this->log("Adding grade item '$gradeitemname' to category '$cat->id'");
                     $params = array(
                         'itemtype'  => 'manual',
                         'itemname'  => $gradeitemname,
                         'gradetype' => GRADE_TYPE_VALUE,
                         'courseid'  => $course->id,
                         'categoryid' => $cat->id,
+                        'gradetype' => 2,
+                        'grademax' => 6,
+                        'grademin' => 1,
+                        'calculation' => $calculation,
                     );
                     $gradeitem = new \grade_item($params, false);
                     $gradeitemid = $gradeitem->insert();
