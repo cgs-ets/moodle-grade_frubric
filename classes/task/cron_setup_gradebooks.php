@@ -64,9 +64,9 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
         ];
 
         // Get courses under Senior Academic
-        $cat = $DB->get_record('course_categories', array('idnumber' => 'SEN-ACADEMIC'));
+        $cat = $DB->get_record('course_categories', array('idnumber' => 'SEN-ACADEMIC-2024'));
         if (!$cat) {
-            $this->log("Category 'SEN-ACADEMIC' not found");
+            $this->log("Category 'SEN-ACADEMIC-2024' not found");
             return;
         }
         $cat = \core_course_category::get($cat->id);
