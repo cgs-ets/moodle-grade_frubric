@@ -500,6 +500,7 @@ class gradingform_frubric_controller extends gradingform_controller {
                 //echo "<pre>"; var_export($criterion); exit;
                 // Insert criterion into DB.
                 $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE);
+                $data['outcomeid'] = $criterion->outcomeid;
 
                 foreach ($criteriafields as $key) {
                     if ($key == 'descriptionformat' || $key == 'criteriajson') {
@@ -551,6 +552,8 @@ class gradingform_frubric_controller extends gradingform_controller {
                 $haschanges[4] = true;
             } else if ($criterion->status == "CREATED" || $criterion->status == "UPDATED") {
                 $id = $criterion->id;
+                // Backfill outcomeid.
+                $DB->execute('UPDATE {gradingform_frubric_criteria} SET outcomeid = ? where id = ?', [$criterion->outcomeid, $id]);
             }
 
             foreach ($levels as $l => $level) {
