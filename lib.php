@@ -474,6 +474,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $levelstodelete      = [];
 
         foreach ($newcriteria as $i => &$criterion) {
+            $criterion->outcomeid = $criterion->outcomeid ? $criterion->outcomeid : 0;
             $dummylevel = new \stdClass();
             $dummylevel->status = 'NEW';
             $dummylevel->score = 0;
