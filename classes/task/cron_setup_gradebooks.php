@@ -69,20 +69,20 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
                 array('Term 1 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T1A'),
                 array('Term 1 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T1D'),
                 
-                array('Term 2 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T1P'),
-                array('Term 2 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T1C'),
-                array('Term 2 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T1A'),
-                array('Term 2 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T1D'),
+                /*array('Term 2 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T2P'),
+                array('Term 2 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T2C'),
+                array('Term 2 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T2A'),
+                array('Term 2 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T2D'),
 
-                array('Term 3 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T1P'),
-                array('Term 3 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T1C'),
-                array('Term 3 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T1A'),
-                array('Term 3 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T1D'),
+                array('Term 3 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T3P'),
+                array('Term 3 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T3C'),
+                array('Term 3 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T3A'),
+                array('Term 3 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T3D'),
                 
-                array('Term 4 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T1P'),
-                array('Term 4 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T1C'),
-                array('Term 4 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T1A'),
-                array('Term 4 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T1D'),
+                array('Term 4 Punctuality', 'Punctuality and Organisation includes prompt arrival to class, ensuring that you have all the correct equipment and that you respond to correspondence with staff.', 'T4P'),
+                array('Term 4 Classwork', 'Effective use of class time and technology includes working constructively, engaging in class discussions, listening well, taking notes, working collaboratively and utilising a mobile device effectively.', 'T4C'),
+                array('Term 4 Approach', 'Independent approach to learning emphasises self-discipline and active learning, for example, drafting work for peer/teacher feedback or persisting with tasks when concepts are challenging or reading more broadly on topics. You are responsible for your learning.', 'T4A'),
+                array('Term 4 Deadines', 'Meeting deadlines includes effective time management and thorough completion of homework and assignment tasks', 'T4D'),*/
             )
         ];
 
