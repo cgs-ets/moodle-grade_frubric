@@ -195,11 +195,10 @@ class cron_setup_gradebooks extends \core\task\scheduled_task {
                     $params = array(
                         'itemtype'  => 'manual',
                         'itemname'  => $gradeitemname,
-                        'gradetype' => GRADE_TYPE_VALUE,
                         'courseid'  => $course->id,
                         'categoryid' => $cat->id,
                         'gradetype' => 2,
-                        'grademax' => 6,
+                        'grademax' => 5,
                         'grademin' => 1,
                         'calculation' => $calculation,
                     );
