@@ -103,7 +103,6 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                         FROM {grading_instances} i
                         INNER JOIN {grading_definitions} d on d.id = i.definitionid
                         WHERE i.itemid = $assigngrade->id
-                        AND i.timemodified >= $lastrun
                         ORDER BY i.timemodified desc";
                 $ginstance = $DB->get_record_sql($sql, [], IGNORE_MULTIPLE);
                 if (!$ginstance) {
