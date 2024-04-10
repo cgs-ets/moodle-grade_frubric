@@ -153,11 +153,12 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     $scale = $DB->get_record('scale', array('id' => $scaleid));
                     $scale = explode(',', $scale->scale);
                     $scalelength = count($scale);
-                    // Major assumption - rubrics will have a 0 score, and the scale used will align with the maxscore defined in the rubric. For example, if criterions are 0-5 the scale length will be 6.
-                    // When picking up the scale "word" the grade (averaged because multiple criteria can point to a single outcome) will pick up the correct word in the scale array because php arrays are 0 indexed.
-                    // We -1 from the scale length to account for a 0 index. For example, Level 0 to Level 5.
-                    // TODO: Scale may have multiple 0 indexes, or none... Need a way to configure this in the rubric...
-                    $scalelength = $scalelength - 1;
+
+                    // If the scale has 0, need to -1 to account.
+                    if ($scalelength && $scale[0] == '0') {
+                        $scalelength = $scalelength - 1;
+                    }
+
                     $outcomeslength = count($outcomegrades);
                     $fractiongradesum = array_sum(array_column($outcomegrades, 'fractiongrade'));
                     if ($fractiongradesum == 0) {
@@ -166,9 +167,6 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     $exactscore = $scalelength * $fractiongradesum / $outcomeslength;
                     $roundedscore = round($exactscore);
                     $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $fractiongradesum (fractiongradesum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
-                    // Now +1 to account for the 0 index.
-                    $roundedscore = $roundedscore + 1;
-                    $this->log("Adding 1 to grade to account for 0 index scale. Final grade is $roundedscore", 5);
 
                     // Look for existing outcome grade for the user.
                     $outcomegrade = $DB->get_record('grade_grades', array(
