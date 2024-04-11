@@ -657,6 +657,10 @@ class gradingform_frubric_controller extends gradingform_controller {
                                     $haschanges[3] = true;
                                 }
 
+                                list($score, $maxscore) = $this->get_level_score($level->score);
+                                $descupdate->score = $maxscore / count($level->descriptors);
+                                $descupdate->maxscore = $maxscore;
+
                                 $DB->update_record('gradingform_frubric_descript', $descupdate);
                             }
                         }
