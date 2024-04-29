@@ -1317,6 +1317,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     /**
      * Calculates the grade to be pushed to the gradebook
+     * Called from assign/locallib.php: apply_grade_to_user($formdata, $userid, $attemptnumber)
      *
      * @return float|int the valid grade from $this->get_controller()->get_grade_range()
      */
