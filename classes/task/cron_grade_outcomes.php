@@ -161,9 +161,9 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
 
                     $outcomeslength = count($outcomegrades);
                     $fractiongradesum = array_sum(array_column($outcomegrades, 'fractiongrade'));
-                    if ($fractiongradesum == 0) {
-                        continue;
-                    }
+                    //if ($fractiongradesum == 0) {
+                    //    continue;
+                    //}
                     $exactscore = $scalelength * $fractiongradesum / $outcomeslength;
                     $roundedscore = round($exactscore);
                     $this->log("Grade for outcome $outcomeid is => $scalelength (scalelength) * $fractiongradesum (fractiongradesum) / $outcomeslength (outcomeslength) = $exactscore (exactscore) = $roundedscore (roundedscore) out of $scalelength", 5);
@@ -174,22 +174,23 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                         'userid' => $assigngrade->userid,
                     ));
                     // Use $criterion->levelscore to set the outcome level for the user.
+                    $withNullScore = $roundedscore ? $roundedscore : null;
                     if ($outcomegrade) {
                         // Update the outcome grade.
-                        $this->log("Updating existing grade_grades row with new score of $roundedscore", 5);
+                        $this->log("Updating existing grade_grades row with new score of $withNullScore", 5);
                         $outcomegrade->timemodified = time();
-                        $outcomegrade->rawgrade = $roundedscore;
-                        $outcomegrade->finalgrade = $roundedscore;
+                        $outcomegrade->rawgrade = $withNullScore;
+                        $outcomegrade->finalgrade = $withNullScore;
                         $outcomegrade->usermodified = $fgrade->usermodified; // Same user as the main grade.
                         $DB->update_record('grade_grades', $outcomegrade);
                     } else {
                         // Insert the outcome grade.
-                        $this->log("Inserting a new grade_grades row with score of $roundedscore", 5);
+                        $this->log("Inserting a new grade_grades row with score of $withNullScore", 5);
                         $data = array(
                             'itemid' => $outcomeitem->id,
                             'userid' => $assigngrade->userid,
-                            'rawgrade' => $roundedscore,
-                            'finalgrade' => $roundedscore,
+                            'rawgrade' => $withNullScore,
+                            'finalgrade' => $withNullScore,
                             'usermodified' => $fgrade->usermodified, // Same user as the main grade.
                             'timemodified' => time(),
                         );
