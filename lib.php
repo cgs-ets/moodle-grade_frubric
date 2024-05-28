@@ -1346,7 +1346,7 @@ class gradingform_frubric_instance extends gradingform_instance {
         $allowdecimals = $this->get_controller()->get_allow_grade_decimals();
         $options = $this->get_controller()->get_options();
 
-        if ($options['lockzeropoints']) {
+        if ($options['lockzeropoints'] || $mingrade > 0) {
             // Grade calculation method when 0-level is locked.
             $grade = max($mingrade, $curscore / $scores['maxscore'] * $maxgrade);
             return $allowdecimals ? $grade : round($grade, 0);
