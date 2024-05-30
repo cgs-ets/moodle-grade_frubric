@@ -87,6 +87,4 @@ $string['disablecriteriacomments']                      = 'Disable criteria comm
 $string['frubricoptions']                               = 'Flexrubric options';
 
 $string['cron_grade_outcomes']                          = 'Flexrubric grade outcomes';
-$string['cron_setup_gradebooks']                        = 'Setup gradebooks';
-
 $string['gradeoutcomes_lastrun']                        = 'Grade outcomes last run';
