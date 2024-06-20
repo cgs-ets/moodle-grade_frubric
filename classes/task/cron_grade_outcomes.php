@@ -139,8 +139,6 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                         // Format MIN/MAX.
                         $maxscore = explode('/', $maxscore)[1];
                     }
-                    $this->log("Fraction grade for criterion $filling->criterionid (contributing to outcome $outcomeid) is => $filling->levelscore (levelscore) / $maxscore (maxscore) = $filling->fractiongrade (fractiongrade)", 4);
-                    continue;
                     if ($maxscore == 0) {
                         $this->log("Fraction grade for criterion $filling->criterionid could not be calculated because maxscore was 0. Skipping this outcome grade.", 4);
                         continue;
