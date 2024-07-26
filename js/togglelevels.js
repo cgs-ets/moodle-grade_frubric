@@ -23,27 +23,30 @@
  */
 
 
-document.querySelector('.frubric-show-hide-levels').addEventListener('click', function (e) {
+if (document.querySelector('.graded-form > .frubric-show-hide-levels') != null) {
 
-    const icon = e.target;
+    document.querySelector('.graded-form > .frubric-show-hide-levels').addEventListener('click', function (e) {
 
-    if (icon.classList.contains('fa-eye')) {
+        const icon = e.target;
 
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-        icon.setAttribute('title', 'Show levels');
+        if (icon.classList.contains('fa-eye')) {
 
-        // Hide all levels
-        document.querySelectorAll('.inner-level-table').forEach(level => {
-            level.style.display = 'none';
-        });
-    } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            icon.setAttribute('title', 'Show levels');
 
-        icon.classList.add('fa-eye');
-        icon.classList.remove('fa-eye-slash');
-        icon.setAttribute('title', 'Hide levels');
-        document.querySelectorAll('.inner-level-table').forEach(level => {
-            level.style.display = '';
-        });
-    }
-});
+            // Hide all levels
+            document.querySelectorAll('.inner-level-table').forEach(level => {
+                level.style.display = 'none';
+            });
+        } else {
+
+            icon.classList.add('fa-eye');
+            icon.classList.remove('fa-eye-slash');
+            icon.setAttribute('title', 'Hide levels');
+            document.querySelectorAll('.inner-level-table').forEach(level => {
+                level.style.display = '';
+            });
+        }
+    });
+}
