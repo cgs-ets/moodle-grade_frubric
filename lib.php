@@ -22,6 +22,11 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_format_value;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/grade/grading/form/lib.php');
@@ -101,7 +106,7 @@ class gradingform_frubric_controller extends gradingform_controller {
     }
 
     public function render_preview($page) {
-        global $DB;
+        global $DB, $PAGE, $CFG;
 
         if (!$this->is_form_defined()) {
             throw new coding_exception('It is the caller\'s responsibility to make sure that the form is actually defined');
@@ -138,6 +143,7 @@ class gradingform_frubric_controller extends gradingform_controller {
 
         if (has_capability('moodle/grade:managegradingforms', $page->context)) {
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW, $criteria);
+            $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/pickfrubricview.js'));
         } else {
             $frubric .= $renderer->render_template(self::DISPLAY_PREVIEW_GRADED, $criteria);
         }
@@ -237,14 +243,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             $d->description = get_string('editcriterion', 'gradingform_frubric');
             $d->outcomeid = 0;
             $d->new = 1;
-
-            //$dataobject = new \stdClass();
-            //$dataobject->editfull = self::DISPLAY_EDIT_FULL;
-            //$dataobject->definitionid = 0;
-            //$dataobject->id = "frubric-criteria-NEWID1";
-            //$dataobject->description = "Click to edit criterion";
-            //$dataobject->new = 1;
-
+         
             $data = [
                 'criteria' => [$d],
                 'definitionid' => 0,
