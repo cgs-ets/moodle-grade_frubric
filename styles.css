@@ -402,7 +402,8 @@ span.frubric-show-hide-levels {
 }
 
 .box.py-3.template-preview.hidden-in-form-search,
-.box.py-3.template-actions.hidden-in-form-search {
+.box.py-3.template-actions.hidden-in-form-search,
+.box.py-3.template-description.hidden-in-form-search {
     display: none;
 }
 
