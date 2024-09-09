@@ -26,39 +26,14 @@
 if (document.getElementById('page-grade-grading-pick') != null) {
 
     Array.from(document.querySelectorAll('h2.template-name')).forEach(templateNameEl => {
-
         InsertCaretElements(templateNameEl);
-
-        const spanElements = templateNameEl.querySelectorAll('.template-view-control');
-
-        spanElements.forEach(spanEl => {
-
-            const children = Array.from(spanEl.children);
-
-            children.forEach(child => {
-                if (child.tagName.toLowerCase() === 'i' &&
-                    (child.classList.contains('fa-caret-down') || child.classList.contains('fa-caret-up'))) {
-                    // Keep this element
-                } else {
-                    child.remove();
-                }
-            });
-
-            // Remove any text nodes or other elements within the span
-            spanEl.childNodes.forEach(node => {
-                if (node.nodeType === Node.TEXT_NODE || (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'i')) {
-                    node.remove();
-                }
-            });
-
-            // Attach event
-
-            spanEl.addEventListener('click', toggleTemplateBody);
-        });
-
     });
 
     Array.from(document.querySelectorAll('.template-preview')).forEach(el => {
+        el.classList.add('hidden-in-form-search');
+    });
+
+    Array.from(document.querySelectorAll('.template-description')).forEach(el => {
         el.classList.add('hidden-in-form-search');
     });
 
@@ -66,16 +41,12 @@ if (document.getElementById('page-grade-grading-pick') != null) {
         el.classList.add('hidden-in-form-search');
     });
 
-
-
-
 }
 
-// 
 function InsertCaretElements(templateNameEl) {
 
     //  Create <span><i class="fa-solid fa-caret-down rubric-expand-body"></i></span>
-    const spanEl = document.querySelector('span');
+    const spanEl = document.createElement('span');
     const iconEl = document.createElement('i');
 
     // Set the class and title attributes
@@ -90,6 +61,8 @@ function InsertCaretElements(templateNameEl) {
     // Insert span in h2 title element.
     templateNameEl.insertAdjacentElement('beforeend', spanEl);
 
+    spanEl.addEventListener('click', toggleTemplateBody);
+
 }
 
 function hideCaretDown(e) {
@@ -97,16 +70,14 @@ function hideCaretDown(e) {
 
     e.target.classList.remove('fa-caret-down')
     e.target.classList.add('fa-caret-up')
-
     e.target.title = 'Hide Template';
+
     // Display the template
     const previewEl = findClosestSiblingWithClass(e.target, ['template-preview']);
     const actionsEl = findClosestSiblingWithClass(e.target, ['template-actions']);
-    // console.log(actionsEl);
-    // console.log(previewEl);
+
     previewEl.classList.remove('hidden-in-form-search');
     actionsEl.classList.remove('hidden-in-form-search');
-
 
 }
 
@@ -114,22 +85,19 @@ function hideCaretUp(e) {
 
     e.target.classList.add('fa-caret-down')
     e.target.classList.remove('fa-caret-up')
-
     e.target.title = 'Display Template';
 
     // Hide the template
     const previewEl = findClosestSiblingWithClass(e.target, ['template-preview']); //document.querySelector('.template-preview');
     const actionsEl = findClosestSiblingWithClass(e.target, ['template-actions']);//document.querySelector('.template-actions');
 
-    // console.log(actionsEl);
-    // console.log(previewEl);
 
     previewEl.classList.add('hidden-in-form-search');
     actionsEl.classList.add('hidden-in-form-search');
 }
 
 function toggleTemplateBody(e) {
-    console.log(e.target.classList);
+
     if (e.target.classList.contains('fa-caret-down')) {
         hideCaretDown(e);
     } else {
