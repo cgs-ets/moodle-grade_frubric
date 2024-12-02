@@ -243,7 +243,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             $d->description = get_string('editcriterion', 'gradingform_frubric');
             $d->outcomeid = 0;
             $d->new = 1;
-         
+
             $data = [
                 'criteria' => [$d],
                 'definitionid' => 0,
@@ -312,11 +312,11 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function get_course_outcomes($courseid) {
         global $DB;
 
-        $sql = "SELECT o.* 
+        $sql = "SELECT o.*
                 FROM {grade_outcomes} o, {grade_outcomes_courses} oc
                 WHERE o.id = oc.id
                 AND oc.courseid = ?";
-        return $DB->get_records_sql($sql, [$courseid]);   
+        return $DB->get_records_sql($sql, [$courseid]);
     }
 
     /**
@@ -325,12 +325,12 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function get_assign_outcomes($instanceid) {
         global $DB;
 
-        $sql = "SELECT o.* 
+        $sql = "SELECT o.*
                 FROM {grade_outcomes} o, {grade_items} gi
                 WHERE o.id = gi.outcomeid
                 AND gi.iteminstance = ?
                 AND gi.itemnumber > 0";
-        return $DB->get_records_sql($sql, [$instanceid]);   
+        return $DB->get_records_sql($sql, [$instanceid]);
     }
 
     /**
@@ -1585,6 +1585,9 @@ class gradingform_frubric_instance extends gradingform_instance {
                             }
                             $lf = $levelfilling->{$level->id};
                             // Checks if there were updates on the number of descriptors.
+                             if(is_null($lf->descriptors)) {
+                               continue;
+                             }
                             if (count($level->definition['descriptors']['descriptor']) > count($lf->descriptors)) {
                                 $deschecker                     = $this->descriptorschecker($lf->descriptors,
                                                                         $level->definition['descriptors']['descriptor']);
@@ -1789,11 +1792,26 @@ function sortlevels (&$levels) {
     // Sort the levels from in descent order.
     usort($levels, function($l1, $l2) {
         $score1 = explode('-', $l1->score);
+        // Prepare the score. Example, instead of puting 0-0, they put 0
+        if (count($score1) == 1) {
+            $val = $score1[count($score1) - 1];
+            array_push($score1, $val);
+        }
+
         $score1 = trim($score1[count($score1) - 1]);
+
+
         $score2 = explode('-', $l2->score);
+
+        if (count($score2) == 1) {
+            $val = $score2[count($score2) - 1];
+            array_push($score2, $val);
+        }
+
         $score2 = trim($score2[count($score2) - 1]);
         return ( (int)$score1 < (int)$score2);
     });
+
 
     return $levels;
 }
