@@ -747,7 +747,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $frubriccriteria        = $currentdefinition->frubric_criteria;
         $countcurrentcriteria   = count($frubriccriteria);
         $countnewcriteria       = count($newcriteria);
-
+ 
         if ($countnewcriteria > $countcurrentcriteria) {
             return true;
         }
@@ -1572,7 +1572,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function set_criteria_fillings_level(&$criteria, $criteriaid, $leveljson, &$haschanges) {
         $levelfilling = json_decode($leveljson);
-
+        
         foreach ($criteria as $i => $criterion) {
             if (is_array($criterion)) {
                 foreach ($criterion as $j => $cri) {
@@ -1585,6 +1585,9 @@ class gradingform_frubric_instance extends gradingform_instance {
                             }
                             $lf = $levelfilling->{$level->id};
                             // Checks if there were updates on the number of descriptors.
+                             if(is_null($lf->descriptors)) {
+                               continue;
+                             }
                             if (count($level->definition['descriptors']['descriptor']) > count($lf->descriptors)) {
                                 $deschecker                     = $this->descriptorschecker($lf->descriptors,
                                                                         $level->definition['descriptors']['descriptor']);
@@ -1789,11 +1792,26 @@ function sortlevels (&$levels) {
     // Sort the levels from in descent order.
     usort($levels, function($l1, $l2) {
         $score1 = explode('-', $l1->score);
+        // Prepare the score. Example, instead of puting 0-0, they put 0
+        if (count($score1) == 1) {
+            $val = $score1[count($score1) - 1];
+            array_push($score1, $val);
+        }
+
         $score1 = trim($score1[count($score1) - 1]);
+
+
         $score2 = explode('-', $l2->score);
+
+        if (count($score2) == 1) {
+            $val = $score2[count($score2) - 1];
+            array_push($score2, $val);
+        }
+
         $score2 = trim($score2[count($score2) - 1]);
         return ( (int)$score1 < (int)$score2);
     });
+
 
     return $levels;
 }

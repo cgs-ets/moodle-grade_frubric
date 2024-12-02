@@ -80,6 +80,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     private function preview_prepare_data($criteria, $hide = null) {
         // When deleting all descriptors from  a level that is already in the DB.
         // When adding new descriptors to this level. the order changes. to latest to earliest.
+
         ksort($criteria);
 
         $criteria = array_values($criteria);
@@ -260,6 +261,11 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $aux = [];
         foreach ($levels as $id => $level) {
             $maxscore = explode('-', $level->score);
+            if (count($maxscore) == 1) {
+                $val = $maxscore[count($maxscore) - 1];
+                array_push($maxscore, $val);
+            }
+          
             $aux[$id] = trim($maxscore[count($maxscore) - 1]);
         }
 
@@ -305,6 +311,10 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
         $aux = [];
         foreach ($levels as $id => $level) {
             $maxscore = explode('-', $level['score']);
+             if (count($maxscore) == 1) {
+                $val = $maxscore[count($maxscore) - 1];
+                array_push($maxscore, $val);
+            }
             $aux[$id] = trim($maxscore[count($maxscore) - 1]);
         }
 
