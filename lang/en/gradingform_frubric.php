@@ -88,4 +88,4 @@ $string['frubricoptions']                               = 'Flexrubric options';
 
 $string['cron_grade_outcomes']                          = 'Flexrubric grade outcomes';
 $string['gradeoutcomes_lastrun']                        = 'Grade outcomes last run';
-$string['frubricdefinitionincomplete']                  = 'Please review the Flexrubric definitions for errors';
+$string['frubricdefinitionincomplete']                  = 'Please review the Flexrubric definition for errors';
