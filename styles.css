@@ -107,6 +107,7 @@ table.level-mark-desc-table td.level-mark {
     display: block;
     height: 22px;
     overflow: hidden;
+    display: none;
 }
 
 #fitem_id_criteria.has-danger:before {
@@ -381,6 +382,11 @@ span.frubric-show-hide-levels {
 /* Show the checkmark when checked */
 .frubric-evaluated-checkbox input:checked~.checkmark:after {
     display: block;
+}
+
+.frubric-error-when-saving {
+    width: 26rem;
+    margin-left: 50rem;
 }
 
 /* Style the checkmark/indicator */

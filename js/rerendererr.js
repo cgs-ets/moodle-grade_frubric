@@ -51,7 +51,6 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
                                         if (tdch.classList.contains('level-mark')) {
 
                                             Array.from(tdch.children).forEach(function (mark) {
-
                                                 if (mark.value == '') {
                                                     mark.classList.add('form-control', 'is-invalid');
                                                     mark.setAttribute('title', 'Score cannot be empty');
@@ -89,7 +88,11 @@ if (document.getElementById('fitem_id_criteria').classList.contains('has-danger'
         }
     });
 
+    document.querySelector('.frubric-error-when-saving').removeAttribute('hidden'); // Display error.
+
     //Rebuild the criterionjson in case the error came because hte user didnt add a level to the descriptor.
     //For some reason, the form doesn't refresh json
+
+
 
 }

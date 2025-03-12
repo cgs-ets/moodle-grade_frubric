@@ -56,6 +56,12 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     public function render_regregade_content() {
         return $this->output->render_from_template('gradingform_frubric/editor_regrade_content', '');
     }
+
+    public function render_error_saving() {
+        return $this->output->render_from_template('gradingform_frubric/editor_error_saving', '');
+    }
+
+
     public function display_preview_graded($criteria) {
         $criteria = array_values($criteria);
 
