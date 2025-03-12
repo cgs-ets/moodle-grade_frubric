@@ -56,6 +56,12 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
     public function render_regregade_content() {
         return $this->output->render_from_template('gradingform_frubric/editor_regrade_content', '');
     }
+
+    public function render_error_saving() {
+        return $this->output->render_from_template('gradingform_frubric/editor_error_saving', '');
+    }
+
+
     public function display_preview_graded($criteria) {
         $criteria = array_values($criteria);
 
@@ -240,7 +246,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
 
         $this->format_criteria_array($data['criteria']);
         $this->page->requires->js(new moodle_url($CFG->wwwroot . '/grade/grading/form/frubric/js/togglelevels.js'));
-        
+
         // If this rubric has outcomes hide the overall grade.
         $hasoutcomes = false;
         foreach($criteria as $c) {
@@ -265,7 +271,7 @@ class gradingform_frubric_renderer extends plugin_renderer_base {
                 $val = $maxscore[count($maxscore) - 1];
                 array_push($maxscore, $val);
             }
-          
+
             $aux[$id] = trim($maxscore[count($maxscore) - 1]);
         }
 

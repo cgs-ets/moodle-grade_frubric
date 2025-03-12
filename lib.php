@@ -243,7 +243,7 @@ class gradingform_frubric_controller extends gradingform_controller {
             $d->description = get_string('editcriterion', 'gradingform_frubric');
             $d->outcomeid = 0;
             $d->new = 1;
-         
+
             $data = [
                 'criteria' => [$d],
                 'definitionid' => 0,
@@ -312,11 +312,11 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function get_course_outcomes($courseid) {
         global $DB;
 
-        $sql = "SELECT o.* 
+        $sql = "SELECT o.*
                 FROM {grade_outcomes} o, {grade_outcomes_courses} oc
                 WHERE o.id = oc.id
                 AND oc.courseid = ?";
-        return $DB->get_records_sql($sql, [$courseid]);   
+        return $DB->get_records_sql($sql, [$courseid]);
     }
 
     /**
@@ -325,12 +325,12 @@ class gradingform_frubric_controller extends gradingform_controller {
     public function get_assign_outcomes($instanceid) {
         global $DB;
 
-        $sql = "SELECT o.* 
+        $sql = "SELECT o.*
                 FROM {grade_outcomes} o, {grade_items} gi
                 WHERE o.id = gi.outcomeid
                 AND gi.iteminstance = ?
                 AND gi.itemnumber > 0";
-        return $DB->get_records_sql($sql, [$instanceid]);   
+        return $DB->get_records_sql($sql, [$instanceid]);
     }
 
     /**

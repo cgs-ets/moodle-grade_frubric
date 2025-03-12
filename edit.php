@@ -83,8 +83,6 @@ if ($mform->is_cancelled()) {
     // Everything ok, validated, re-grading confirmed if needed. Make changes to the rubric.
     $data = $mform->get_data();
     $data->regrade = $regradeoptselected;
-    //echo "<pre>"; var_export($data); exit;
-    
     $controller->update_definition($data);
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.
     $warning = null;

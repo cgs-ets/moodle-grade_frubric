@@ -103,11 +103,15 @@ class gradingform_frubric_editrubric extends moodleform {
             $form->setDefault('criteriahelper', $criteriajson);
         }
 
+
         $form->addElement('hidden', 'criteriajsonhelper');
         $form->setType('criteriajsonhelper', PARAM_RAW);
         $renderer = $PAGE->get_renderer('gradingform_frubric');
         $regrademsg = $renderer->render_regregade_content();
         $form->addElement('html', $regrademsg);
+
+        $errorwhensaving = $renderer->render_error_saving();
+        $form->addElement('html', $errorwhensaving);
 
         // Frubric editor.
         $form->setType('frubric', PARAM_RAW);
@@ -385,13 +389,13 @@ class gradingform_frubric_editrubric extends moodleform {
                             continue;
                         }
 
-                        if ($level->score == 0 && count($criterion->levels) == $i - 1) { // The last level can have a zero val.
-                            $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
-                        }
+                        // if ($level->score == 0 && count($criterion->levels) == $i - 1) { // The last level can have a zero val.
+                        //     $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
+                        // }
 
-                        if ($level->score == "0-0" && count($criterion->levels) == 1) { // The last level can have a zero val.
-                            $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
-                        }
+                        // if ($level->score == "0-0" && count($criterion->levels) == 1) { // The last level can have a zero val.
+                        //     $err['criteria'] = get_string('err_noscore', 'gradingform_frubric');
+                        // }
 
                         if (count($level->descriptors) == 0) {
                             $err['criteria'] = get_string('err_nocriteria', 'gradingform_frubric');
@@ -406,6 +410,9 @@ class gradingform_frubric_editrubric extends moodleform {
                 }
             }
         }
+
+        // echo "<pre>"; var_export($err); exit;
+
 
         return $err;
     }
