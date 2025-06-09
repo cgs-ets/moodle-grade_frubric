@@ -17,7 +17,7 @@
 
 <tr data-criterion-group="{{criteriongroupid}}" data-row-type="criterion-add-level" class="level-{{criteriongroupid}} add-level-r">
     <td>
-        <button type="button" class="btn btn-primary btn-block btn-add-level">Add level</button> 
+        <button type="button" class="btn btn-primary btn-block btn-add-level">Add level</button>
     </td>
     <td></td>
 </tr>
@@ -25,27 +25,34 @@
 <tr data-criterion-group="{{criteriongroupid}}" data-row-type="result" class="level-{{criteriongroupid}} result-r">
     <td>
         {{^edit}}
-          <strong>CRITERION {{criteriongroupid}} </strong> 
+          <strong>CRITERION {{criteriongroupid}} </strong>
         {{/edit}}
 
         {{#edit}}
-          <strong> {{titlefortotal}} </strong> 
+          <strong> {{titlefortotal}} </strong>
         {{/edit}}
     </td>
-    
+
     <td>
         <div class="criterion-total-result">
             <input type="number" class="total-input" disabled  value="{{sumscore}}"><strong><span id="out-of-value-{{criteriongroupid}}"> /{{totaloutof}}</span></strong>
             {{#hasoutcomes}}
-              &nbsp;&nbsp;&nbsp;&nbsp; 
-              <span>Criterion maps to</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <span class ='span-outcome-frubric text-danger'>Criterion maps to</span>
               <select class="sel-outcomes">
                 <option value="0">Select an outcome</option>
                 {{#outcomes}}
                   <option value="{{id}}" {{}}>{{fullname}}</option>
                 {{/outcomes}}
               </select>
+              <span class="text-danger outcome-frubric-exclamation"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title=""
+                    data-original-title="You must select an outcome">
+                  <i class="fa fa-exclamation-triangle"></i>
+              </span>
             {{/hasoutcomes}}
-        </div>       
+        </div>
     </td>
 </tr>

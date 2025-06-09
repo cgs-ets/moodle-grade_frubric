@@ -402,6 +402,23 @@ span.frubric-show-hide-levels {
     transform: rotate(45deg);
 }
 
+/* Outcome title */
+.span-outcome-frubric {
+    font-size: larger;
+    font-weight: 800;
+    color: black;
+}
+
+.sel-outcomes {
+    border: 2px, solid;
+    font-weight: 800;
+    font-size: larger;
+    margin-left: 1rem;
+}
+
+.outcome-frubric-exclamation {
+    font-size: larger;
+}
 /* Arrow in the pick.php template title*/
 .rubric-expand-body {
     margin-left: 1rem;
