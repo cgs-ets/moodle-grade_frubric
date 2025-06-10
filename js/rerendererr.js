@@ -25,7 +25,8 @@
 
 const hasoutcomes  = (JSON.parse(document.querySelector('[name ="outcomesjson"]').value)).hasoutcomes;
 
-const to = hasoutcomes == 1 ?  5000 : 0
+const to = hasoutcomes >= 1 ?  2000 : 0;
+
 setTimeout(() => {
     validate(hasoutcomes);
 }, to)
@@ -35,15 +36,13 @@ setTimeout(() => {
  * display a red border to the elements that are missing and a ! icon
  */
 function validate(hasoutcomes) {
+    console.log(validate);
     if (document.getElementById('fitem_id_criteria').classList.contains('has-danger')) {
-    //check if the assignment needs to map outcomes
-
 
         Array.from((document.getElementById('criteriaTable').querySelector('tbody').children)).forEach(function (tr) {
 
             if (tr.classList.contains('result-r') && hasoutcomes && tr.classList.contains('no-outcome-selected')) {
 
-                console.log(tr);
                 tr.style.border = '2px solid #cd2c2c';
 
             } else {
