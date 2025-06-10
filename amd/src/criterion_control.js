@@ -347,15 +347,28 @@ define(['core/log', 'core/templates',
           const criterion = FeditorHelper.getCriterionFromCriteriaCollection(resultRow, criteria);
           sel.value=criterion[0].outcomeid
 
+          if (sel.value != 0) {
+             resultRow.classList.add('outcome-selected');
+          } else {
+             resultRow.classList.add('no-outcome-selected');
+          }
+
+         //set up this to  validate
+
           sel.addEventListener('change', event => {
             const criteria = FeditorHelper.getCriteriaJSON();
             const criterion = FeditorHelper.getCriterionFromCriteriaCollection(resultRow, criteria);
-            if (criterion[0].outcomeid != event.currentTarget.value && 
+            if (criterion[0].outcomeid != event.currentTarget.value &&
                 FeditorHelper.getMode() == 'edit' &&
                 !criterion[0].cid.includes('frubric-criteria-NEWID')) {
                   criterion[0].status = 'UPDATE';
             }
             criterion[0].outcomeid = event.currentTarget.value;
+
+            if(criterion[0].outcomeid != 0 ) {
+                resultRow.classList.remove('no-outcome-selected');
+                resultRow.classList.add('outcome-selected');
+            }
             FeditorHelper.setCriteriaJSON(criteria);
             FeditorHelper.setHiddenCriteriaJSON(criteria);
             console.log(criterion)
