@@ -36,20 +36,6 @@
     <td>
         <div class="criterion-total-result">
             <input type="number" class="total-input" disabled  value="{{sumscore}}"><strong><span id="out-of-value-{{criteriongroupid}}"> /{{totaloutof}}</span></strong>
-            {{#hasoutcomes}}
-              &nbsp;&nbsp;&nbsp;&nbsp;
-              <span class ='span-outcome-frubric text-danger'>Criterion maps to</span>
-              <select class="sel-outcomes">
-                <option value="0">Select an outcome</option>
-                {{#outcomes}}
-                  <option value="{{id}}" {{}}>{{fullname}}</option>
-                {{/outcomes}}
-              </select>
-              <span class="text-danger outcome-frubric-exclamation"
-                    title="You must select an outcome">
-                  <i class="fa fa-exclamation-triangle"></i>
-              </span>
-            {{/hasoutcomes}}
         </div>
     </td>
 </tr>

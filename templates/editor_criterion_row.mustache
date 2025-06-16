@@ -39,7 +39,19 @@
         </th>
         <th class="fr-header crit-desc">
             <textarea rows="4"  cols="131" class="criterion-description" placeholder= "Click to edit description">{{description}}</textarea>
+         {{#hasoutcomes}}
+
+              <span class ='span-outcome-frubric text-danger'>Maps to</span>
+              <select class="sel-outcomes">
+                <option value="0">Select an outcome</option>
+                {{#outcomes}}
+                  <option value="{{id}}" {{}}>{{fullname}}</option>
+                {{/outcomes}}
+              </select>
+
+            {{/hasoutcomes}}
         </th>
+
     {{/preview}}
 
     {{#preview}}

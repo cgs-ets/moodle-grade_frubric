@@ -41,12 +41,8 @@ function validate(hasoutcomes) {
 
         Array.from((document.getElementById('criteriaTable').querySelector('tbody').children)).forEach(function (tr) {
 
-            if (tr.classList.contains('result-r') && hasoutcomes && tr.classList.contains('no-outcome-selected')) {
+            if (!tr.classList.contains('result-r')) {
 
-                console.log(tr);
-                tr.style.border = '2px solid #cd2c2c';
-
-            } else {
                 Array.from(tr.children).forEach(function (th) {
 
                     if (th.classList.contains('fr-header') && th.classList.contains('crit-desc')) {
@@ -54,6 +50,15 @@ function validate(hasoutcomes) {
                             th.children[0].classList.add('form-control', 'is-invalid');
                             th.children[0].setAttribute('title', 'Description cannot be empty');
 
+                        }
+
+                        if(hasoutcomes){
+
+                            if (tr.classList.contains('no-outcome-selected')) {
+                                const childWithSelect = th.children[2];
+                                childWithSelect.insertAdjacentHTML('afterend',
+                                        '<span style="color:red;">&nbsp;<i class="fa fa-exclamation-circle"></i> Please select an outcome</span>');
+                            }
                         }
                     } else if (!(th.classList.contains('fr-header') && th.classList.contains('act'))) {
                         Array.from(th.children).forEach(function (ch, index) {

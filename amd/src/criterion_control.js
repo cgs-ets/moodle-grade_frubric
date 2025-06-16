@@ -93,6 +93,7 @@ define(['core/log', 'core/templates',
             const description = currentRow.querySelector('.crit-desc'); // Get description
             description.addEventListener('click', self.editCriterionDescription.bind(this));
             //description.addEventListener('focusout', self.focusoutHandlerDisabled);
+            // Get the outcomes
 
             // Get the previous criterion to attach events to the total criterion row at the top of this one.
             const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
@@ -335,9 +336,9 @@ define(['core/log', 'core/templates',
         }
 
         CriterionControl.prototype.handleOutcomeSelect = function (currentRow) {
-          const resultRow = FeditorHelper.getNextElement(currentRow, '.result-r');
+          const resultRow = currentRow; //FeditorHelper.getNextElement(currentRow, '.result-r');
           const sel = resultRow.querySelector('.sel-outcomes');
-
+            console.log(sel);
           if (!sel) {
             return;
           }

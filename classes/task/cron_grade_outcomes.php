@@ -54,42 +54,55 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
 
         // Immediately update last run time.
         $DB->execute("UPDATE {config} SET value = ? WHERE name = 'frubric_gradeoutcomes_lastrun'", [time()]);
-        
+
         // Find frubric grades that have changed since last run.
         $this->log("Looking for frubric grades since last run: $lastrun");
-        $sql = "SELECT DISTINCT 
-                    CONCAT(gi.id, '-', gg.userid) AS gradeiduserid, 
-                    gi.*, 
-                    gg.userid, 
-                    gg.usermodified
-                FROM {grade_items} gi
-                INNER JOIN {grade_grades} gg 
-                    ON gg.itemid = gi.id
-                INNER JOIN {grade_outcomes_courses} oc 
-                    ON oc.courseid = gi.courseid
-                INNER JOIN {modules} m 
-                    ON m.name = gi.itemmodule
-                INNER JOIN {course_modules} cm 
-                    ON cm.instance = gi.iteminstance 
-                    AND cm.course = gi.courseid 
-                    AND cm.module = m.id
-                INNER JOIN {context} c 
-                    ON c.instanceid = cm.id
-                INNER JOIN {grading_areas} ga 
-                    ON ga.contextid = c.id 
-                WHERE ga.activemethod = 'frubric'
-                AND gi.itemmodule = 'assign'
-                AND gi.outcomeid IS NULL
-                AND gg.usermodified IS NOT NULL
-                AND oc.outcomeid > 0
-                AND (gg.timemodified >= $lastrun 
-                    OR gi.timemodified >= $lastrun)";
-        $fgraded = $DB->get_records_sql($sql);
+
+        $sql = "SELECT DISTINCT
+            CONCAT(gi.id, '-', gg.userid) AS gradeiduserid,
+            gi.*,
+            gg.userid,
+            gg.usermodified
+            FROM {grade_items} gi
+            INNER JOIN {grade_grades} gg
+                ON gg.itemid = gi.id
+            INNER JOIN {grade_outcomes_courses} oc
+                ON oc.courseid = gi.courseid
+            INNER JOIN {modules} m
+                ON m.name = gi.itemmodule
+            INNER JOIN {course_modules} cm
+                ON cm.instance = gi.iteminstance
+                AND cm.course = gi.courseid
+                AND cm.module = m.id
+            INNER JOIN {context} c
+                ON c.instanceid = cm.id
+            INNER JOIN {grading_areas} ga
+                ON ga.contextid = c.id
+            WHERE ga.activemethod = 'frubric'
+            AND gi.itemmodule = 'assign'
+            AND gi.outcomeid IS NULL
+            AND gg.usermodified IS NOT NULL
+            AND oc.outcomeid > 0
+            AND (
+                    gg.timemodified >= :lastrun1
+                    OR gi.timemodified >= :lastrun2
+                    OR EXISTS (
+                        SELECT 1
+                        FROM {grading_instances} gri
+                        INNER JOIN {assign_grades} ag ON ag.id = gri.itemid
+                        WHERE ag.assignment = cm.instance
+                        AND ag.userid = gg.userid
+                        AND gri.timemodified >= :lastrun3
+                    )
+          )"; // Check the grade_instances timemodified. Now it covers all cases --> all graded at once, or graded differently. If not, if you graded a student and then try to grade another in another time, the job wont run unless you update the definition of the assessment.
+
+         $fgraded = $DB->get_records_sql($sql, ['lastrun1' => $lastrun,'lastrun2' => $lastrun,'lastrun3' => $lastrun]);
+
 
         foreach ($fgraded as $fgrade) {
             $this->log("Processing outcome grades related to grade item $fgrade->id - $fgrade->itemname for userid $fgrade->userid", 1);
-            // Get the assign_grades row for this user. 
-            $sql = "SELECT * 
+            // Get the assign_grades row for this user.
+            $sql = "SELECT *
                     FROM {assign_grades}
                     WHERE assignment = $fgrade->iteminstance
                     AND userid = $fgrade->userid";
@@ -99,7 +112,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                 $this->log("Found assign grade $assigngrade->id", 2);
                 $this->log("Looking for grading instance/fillings for user $fgrade->userid in $fgrade->iteminstance since last run", 2);
                 // Get the latest filling for this user.
-                $sql = "SELECT i.* 
+                $sql = "SELECT i.*
                         FROM {grading_instances} i
                         INNER JOIN {grading_definitions} d on d.id = i.definitionid
                         WHERE i.itemid = $assigngrade->id
@@ -109,7 +122,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     $this->log("User $fgrade->userid was not graded since last run - no grading instances found.", 3);
                     continue;
                 }
-                $sql = "SELECT * 
+                $sql = "SELECT *
                         FROM {gradingform_frubric_fillings}
                         WHERE instanceid = $ginstance->id";
                 $fillings = $DB->get_records_sql($sql);
@@ -132,10 +145,10 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
                     if (!$maxscore) {
                         $maxscore = 0;
                     }
-                    if (strpos($maxscore, '-') !== false) { 
+                    if (strpos($maxscore, '-') !== false) {
                         // Format MIN-MAX.
                         $maxscore = explode('-', $maxscore)[1];
-                    } else { 
+                    } else {
                         // Format MIN/MAX.
                         $maxscore = explode('/', $maxscore)[1];
                     }
@@ -211,7 +224,7 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
 
             }
         }
-    
+
         return 1;
     }
 

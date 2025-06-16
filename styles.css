@@ -234,10 +234,14 @@ td.level-mark {
 
 div.criterion-total-result {
     text-align: left;
-    height: 3rem;
-    padding-top: 1rem;
-    padding-left: 1rem;
+    /* height: 3rem; */
+    /* padding-top: 1rem;
+    padding-left: 1rem; */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    vertical-align: top;
 }
+
 
 input.total-input {
     outline-width: 0;
@@ -419,6 +423,10 @@ span.frubric-show-hide-levels {
 .outcome-frubric-exclamation {
     font-size: larger;
 }
+
+.outcome-frubric-note {
+    margin-left: 10%;
+}
 /* Arrow in the pick.php template title*/
 .rubric-expand-body {
     margin-left: 1rem;
@@ -439,6 +447,12 @@ span.frubric-show-hide-levels {
 
     textarea.standard-desc {
         width: 80%;
+    }
+
+   .outcome-frubric-note {
+        display: block;
+        max-width: 100%;
+        margin-top: 1.5rem;
     }
 }
 
