@@ -58,45 +58,81 @@ class cron_grade_outcomes extends \core\task\scheduled_task {
         // Find frubric grades that have changed since last run.
         $this->log("Looking for frubric grades since last run: $lastrun");
 
-        $sql = "SELECT DISTINCT
-            CONCAT(gi.id, '-', gg.userid) AS gradeiduserid,
-            gi.*,
-            gg.userid,
-            gg.usermodified
-            FROM {grade_items} gi
-            INNER JOIN {grade_grades} gg
-                ON gg.itemid = gi.id
-            INNER JOIN {grade_outcomes_courses} oc
-                ON oc.courseid = gi.courseid
-            INNER JOIN {modules} m
-                ON m.name = gi.itemmodule
-            INNER JOIN {course_modules} cm
-                ON cm.instance = gi.iteminstance
-                AND cm.course = gi.courseid
-                AND cm.module = m.id
-            INNER JOIN {context} c
-                ON c.instanceid = cm.id
-            INNER JOIN {grading_areas} ga
-                ON ga.contextid = c.id
-            WHERE ga.activemethod = 'frubric'
-            AND gi.itemmodule = 'assign'
-            AND gi.outcomeid IS NULL
-            AND gg.usermodified IS NOT NULL
-            AND oc.outcomeid > 0
-            AND (
-                    gg.timemodified >= :lastrun1
-                    OR gi.timemodified >= :lastrun2
-                    OR EXISTS (
-                        SELECT 1
-                        FROM {grading_instances} gri
-                        INNER JOIN {assign_grades} ag ON ag.id = gri.itemid
-                        WHERE ag.assignment = cm.instance
-                        AND ag.userid = gg.userid
-                        AND gri.timemodified >= :lastrun3
-                    )
-          )"; // Check the grade_instances timemodified. Now it covers all cases --> all graded at once, or graded differently. If not, if you graded a student and then try to grade another in another time, the job wont run unless you update the definition of the assessment.
+        $startofmonth = strtotime(date('Y-m-01 00:00:00'));
 
-         $fgraded = $DB->get_records_sql($sql, ['lastrun1' => $lastrun,'lastrun2' => $lastrun,'lastrun3' => $lastrun]);
+        // $sql = "SELECT DISTINCT
+        //     CONCAT(gi.id, '-', gg.userid) AS gradeiduserid,
+        //     gi.*,
+        //     gg.userid,
+        //     gg.usermodified
+        //     FROM {grade_items} gi
+        //     INNER JOIN {grade_grades} gg
+        //         ON gg.itemid = gi.id
+        //     INNER JOIN {grade_outcomes_courses} oc
+        //         ON oc.courseid = gi.courseid
+        //     INNER JOIN {modules} m
+        //         ON m.name = gi.itemmodule
+        //     INNER JOIN {course_modules} cm
+        //         ON cm.instance = gi.iteminstance
+        //         AND cm.course = gi.courseid
+        //         AND cm.module = m.id
+        //     INNER JOIN {context} c
+        //         ON c.instanceid = cm.id
+        //     INNER JOIN {grading_areas} ga
+        //         ON ga.contextid = c.id
+        //     WHERE ga.activemethod = 'frubric'
+        //     AND gi.itemmodule = 'assign'
+        //     AND gi.outcomeid IS NULL
+        //     AND gg.usermodified IS NOT NULL
+        //     AND oc.outcomeid > 0
+        //     AND (
+        //             gg.timemodified >= :lastrun1
+        //             OR gi.timemodified >= :lastrun2
+        //             OR EXISTS (
+        //                 SELECT 1
+        //                 FROM {grading_instances} gri
+        //                 INNER JOIN {assign_grades} ag ON ag.id = gri.itemid
+        //                 WHERE ag.assignment = cm.instance
+        //                 AND ag.userid = gg.userid
+        //                 AND gri.timemodified >= :lastrun3
+        //                 AND gri.timemodified >= :startofmonth
+        //             )
+        //   )"; // Check the grade_instances timemodified. Now it covers all cases --> all graded at once, or graded differently. If not, if you graded a student and then try to grade another in another time, the job wont run unless you update the definition of the assessment.
+
+        //  $fgraded = $DB->get_records_sql($sql, ['lastrun1' => $lastrun,
+        //     'lastrun2' => $lastrun,
+        //     'lastrun3' => $lastrun,
+        // 'startofmonth' => $startofmonth]);
+
+            // TODO: This queyr should be replaced by the one commented out but needs to be fixed so it doesnt pick up all the work done so far. It takes too long to execute
+          $sql = "SELECT DISTINCT 
+                    CONCAT(gi.id, '-', gg.userid) AS gradeiduserid, 
+                    gi.*, 
+                    gg.userid, 
+                    gg.usermodified
+                FROM {grade_items} gi
+                INNER JOIN {grade_grades} gg 
+                    ON gg.itemid = gi.id
+                INNER JOIN {grade_outcomes_courses} oc 
+                    ON oc.courseid = gi.courseid
+                INNER JOIN {modules} m 
+                    ON m.name = gi.itemmodule
+                INNER JOIN {course_modules} cm 
+                    ON cm.instance = gi.iteminstance 
+                    AND cm.course = gi.courseid 
+                    AND cm.module = m.id
+                INNER JOIN {context} c 
+                    ON c.instanceid = cm.id
+                INNER JOIN {grading_areas} ga 
+                    ON ga.contextid = c.id 
+                WHERE ga.activemethod = 'frubric'
+                AND gi.itemmodule = 'assign'
+                AND gi.outcomeid IS NULL
+                AND gg.usermodified IS NOT NULL
+                AND oc.outcomeid > 0
+                AND (gg.timemodified >= $lastrun 
+                    OR gi.timemodified >= $lastrun)";
+        $fgraded = $DB->get_records_sql($sql);
 
 
         foreach ($fgraded as $fgrade) {
