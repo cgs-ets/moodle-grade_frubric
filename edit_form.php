@@ -369,7 +369,6 @@ class gradingform_frubric_editrubric extends moodleform {
         $err = array();
 
         $hasoutcomes = (json_decode($data['outcomesjson']))->hasoutcomes;
-        error_log(print_r($hasoutcomes, true));
         if (isset($data['savefrubric']) && $data['savefrubric']) {
             $frubricel = json_decode($data['criteria']);
 
@@ -411,7 +410,6 @@ class gradingform_frubric_editrubric extends moodleform {
 
                         // Check if the assignment has to be mapped to an outcome
                        if ($hasoutcomes) {
-                        error_log(print_r($criterion, true));
                              if($criterion->outcomeid == 0) {
                                     $err['criteria'] = 'An outcome must be selected';
                              }
