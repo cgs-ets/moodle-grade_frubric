@@ -747,7 +747,7 @@ class gradingform_frubric_controller extends gradingform_controller {
         $frubriccriteria        = $currentdefinition->frubric_criteria;
         $countcurrentcriteria   = count($frubriccriteria);
         $countnewcriteria       = count($newcriteria);
- 
+
         if ($countnewcriteria > $countcurrentcriteria) {
             return true;
         }
@@ -1342,6 +1342,13 @@ class gradingform_frubric_instance extends gradingform_instance {
             $curscore += $record['levelscore'];
         }
 
+        // If no criteria have been scored (total score is 0), return -1 (no grade)
+        // This prevents assigning the minimum scale value when no actual grading has occurred
+
+        if ($curscore == 0 ) {
+            return -1;
+        }
+
         $allowdecimals = $this->get_controller()->get_allow_grade_decimals();
         $options = $this->get_controller()->get_options();
 
@@ -1572,7 +1579,7 @@ class gradingform_frubric_instance extends gradingform_instance {
 
     private function set_criteria_fillings_level(&$criteria, $criteriaid, $leveljson, &$haschanges) {
         $levelfilling = json_decode($leveljson);
-        
+
         foreach ($criteria as $i => $criterion) {
             if (is_array($criterion)) {
                 foreach ($criterion as $j => $cri) {
