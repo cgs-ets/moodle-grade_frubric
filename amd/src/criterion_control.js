@@ -262,6 +262,10 @@ define(['core/log', 'core/templates',
             e.stopPropagation();
 
             let textarea = e.target;
+            // Only handle clicks on the textarea itself, not on other elements inside .crit-desc (e.g. the outcome select).
+            if (!textarea.classList.contains('criterion-description')) {
+                return;
+            }
 
             textarea.removeAttribute('disabled');
             textarea.focus();
@@ -338,7 +342,6 @@ define(['core/log', 'core/templates',
         CriterionControl.prototype.handleOutcomeSelect = function (currentRow) {
           const resultRow = currentRow; //FeditorHelper.getNextElement(currentRow, '.result-r');
           const sel = resultRow.querySelector('.sel-outcomes');
-            console.log(sel);
           if (!sel) {
             return;
           }
@@ -359,6 +362,7 @@ define(['core/log', 'core/templates',
           sel.addEventListener('change', event => {
             const criteria = FeditorHelper.getCriteriaJSON();
             const criterion = FeditorHelper.getCriterionFromCriteriaCollection(resultRow, criteria);
+           
             if (criterion[0].outcomeid != event.currentTarget.value &&
                 FeditorHelper.getMode() == 'edit' &&
                 !criterion[0].cid.includes('frubric-criteria-NEWID')) {
@@ -372,7 +376,6 @@ define(['core/log', 'core/templates',
             }
             FeditorHelper.setCriteriaJSON(criteria);
             FeditorHelper.setHiddenCriteriaJSON(criteria);
-            console.log(criterion)
           });
         };
 
