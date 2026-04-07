@@ -1280,6 +1280,15 @@ class gradingform_frubric_instance extends gradingform_instance {
         $currentgrade = $this->get_frubric_filling();
         parent::update($data);
 
+        // If any criterion has an outcome, touch grading_instances.timemodified so
+        // cron_grade_outcomes detects this save via grading_instances.timemodified >= lastrun.
+        $criterionids = array_keys($data['criteria']);
+        list($insql, $inparams) = $DB->get_in_or_equal($criterionids);
+        $hasoutcome = $DB->record_exists_select('gradingform_frubric_criteria', "id $insql AND outcomeid <> 0", $inparams);
+        if ($hasoutcome) {
+            $DB->set_field('grading_instances', 'timemodified', time(), ['id' => $this->get_id()]);
+        }
+
         foreach ($data['criteria'] as $criterionid => $record) {
             if (!array_key_exists($criterionid, $currentgrade['criteria'])) {
 
